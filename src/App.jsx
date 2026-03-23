@@ -452,7 +452,7 @@ const PersonaliseNudge = ({ personalised, onOpenDrawer }) =>
 const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect }) => (
   <div style={{ display: "flex", flexDirection: "column", gap: S.m }}>
     {/* CTA card — sticky so apply buttons stay visible while scrolling */}
-    <div style={{ position: "sticky", top: 48, background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 5, padding: `${S.m}px ${S.m2}px` }}>
+    <div style={{ position: "sticky", top: 48, zIndex: 10, background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 5, padding: `${S.m}px ${S.m2}px` }}>
       <div style={{ padding: `${S.s2}px ${S.s2}px`, background: COLORS.amberBg, border: `1px solid ${COLORS.amberBorder}`, borderRadius: 4, ...T.body2, color: COLORS.amberText, marginBottom: S.m, fontFamily: FONT }}>
         ⚠ <strong>Rated below average by workers.</strong> Pay and working conditions have mixed reviews — read the full picture before applying.
       </div>
