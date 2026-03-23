@@ -317,7 +317,7 @@ export default function JobTriagePage() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
             <h2 style={{ fontSize: 18, fontWeight: 700, margin: 0, fontFamily: "'Fraunces', serif" }}>Similar jobs nearby</h2>
             <button onClick={() => setDrawerOpen(true)} style={{ fontSize: 11, color: COLORS.accent, fontWeight: 600, background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", textDecoration: "underline" }}>
-              Personalise ✎
+              Match me ✎
             </button>
           </div>
           <p style={{ fontSize: 12, color: COLORS.muted, margin: "4px 0 14px" }}>
