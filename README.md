@@ -30,7 +30,13 @@ npm run dev
 
 ## Deploy
 
-### Vercel (recommended, zero config)
+### GitHub Pages (live)
+
+The app is deployed at **https://breakroom.github.io/job-triage-prototype/**
+
+Deployment is automatic — every push to `main` triggers a GitHub Actions workflow that builds the app and publishes the `dist/` folder to GitHub Pages.
+
+### Vercel
 ```bash
 npx vercel
 ```
@@ -41,15 +47,11 @@ npm run build
 # drag dist/ folder to netlify.com/drop
 ```
 
-### GitHub Pages
-```bash
-npm run build
-# push dist/ contents to gh-pages branch
-```
-
 ## Project Structure
 
 ```
+├── .github/workflows/
+│   └── deploy.yml      # GitHub Pages deployment
 ├── index.html          # Entry point
 ├── src/
 │   ├── main.jsx        # React mount
