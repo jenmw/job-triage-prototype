@@ -28,7 +28,6 @@ const COLORS = {
 const S = { xs: 4, s: 8, s2: 12, m: 16, m2: 24, l: 32, l2: 40, xl: 64, xxl: 96 };
 
 // Breakroom type scale — /assets/css/shared/helpers/_typography.scss
-// Using mobile sizes throughout; desktop variants applied via isDesktop check
 const T = {
   heading2:  { fontSize: 24, lineHeight: "32px", fontWeight: 700 },
   heading2Lg:{ fontSize: 34, lineHeight: "42px", fontWeight: 700 },
@@ -41,7 +40,119 @@ const T = {
   smallcaps: { fontSize: 11, lineHeight: "16px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" },
 };
 
-const SHADOW = "0px 4px 4px rgba(0, 0, 0, 0.05)";
+// Jobs data — the current listing plus the five alternatives
+const JOBS = [
+  {
+    id: 0,
+    title: "Warehouse Operative",
+    company: "The Best Connection",
+    companyType: "Agency",
+    pay: "£12.58/hr",
+    location: "Hounslow",
+    hours: "Full time",
+    hoursSub: "4 on / 4 off",
+    shifts: "12hr shifts",
+    rating: 5.2,
+    quizCount: 53,
+    highlights: ["Respectful managers", "Proper breaks"],
+    listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/56629861",
+    altBadge: null,
+    altHighlight: null,
+  },
+  {
+    id: 1,
+    title: "Warehouse Operative",
+    company: "Gap Personnel",
+    companyType: "Agency",
+    pay: "£13.25–17.25/hr",
+    location: "London",
+    hours: "Full time",
+    hoursSub: null,
+    shifts: "8hr shifts",
+    rating: 7.4,
+    quizCount: 121,
+    highlights: ["Proper breaks", "Respectful managers"],
+    listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/67890",
+    altBadge: { text: "BETTER RATED", bg: COLORS.greenBg, color: COLORS.green, border: COLORS.greenBorder },
+    altHighlight: "Rated 'Good Employer' · +£0.67–4.67/hr more · Proper breaks & respectful managers",
+  },
+  {
+    id: 2,
+    title: "Logistics Operator",
+    company: "Shorterm Group",
+    companyType: "Agency",
+    pay: "£14.24–18.37/hr",
+    location: "London SE25",
+    hours: "Full time",
+    hoursSub: null,
+    shifts: "Day shifts",
+    rating: 6.3,
+    quizCount: 44,
+    highlights: ["Paid breaks", "Regular hours"],
+    listingUrl: "https://www.reed.co.uk/jobs/logistics-operator/11111",
+    altBadge: { text: "+£1.66/HR", bg: COLORS.accentBg, color: COLORS.accent, border: COLORS.accentBorder },
+    altHighlight: "Significantly higher pay · Better employer rating (6.3 vs 5.2)",
+  },
+  {
+    id: 3,
+    title: "Warehouse Operative",
+    company: "Gi Group",
+    companyType: "Agency",
+    pay: "£14.69/hr",
+    location: "London",
+    hours: "Part time",
+    hoursSub: null,
+    shifts: "Day shifts",
+    rating: 6.0,
+    quizCount: 67,
+    highlights: ["Proper breaks", "Respectful managers"],
+    listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/22222",
+    altBadge: null,
+    altHighlight: "£2.11/hr more · Part time available · Proper breaks & respectful managers",
+  },
+  {
+    id: 4,
+    title: "Warehouse Operator (Nights)",
+    company: "DSV",
+    companyType: "Employer",
+    pay: "TBC",
+    location: "Hounslow",
+    hours: "Full time",
+    hoursSub: null,
+    shifts: "Night shifts",
+    rating: 7.7,
+    quizCount: 89,
+    highlights: ["People enjoy this job", "Learn new skills"],
+    listingUrl: "https://www.reed.co.uk/jobs/warehouse-operator/33333",
+    altBadge: { text: "TOP RATED", bg: COLORS.greenBg, color: COLORS.green, border: COLORS.greenBorder },
+    altHighlight: "7.7/10 score · Same area · People enjoy this job & learn new skills",
+  },
+  {
+    id: 5,
+    title: "FLT Driver",
+    company: "Manpower",
+    companyType: "Agency",
+    pay: "£13/hr",
+    location: "Hounslow",
+    hours: "Full time",
+    hoursSub: null,
+    shifts: "Day shifts",
+    rating: 6.2,
+    quizCount: 38,
+    highlights: ["Same location", "Higher employer score"],
+    listingUrl: "https://www.reed.co.uk/jobs/flt-driver/44444",
+    altBadge: null,
+    altHighlight: "Same location · Higher employer score · £0.42/hr more",
+  },
+];
+
+// Returns badge colours matching the rating dial thresholds
+const ratingBadge = (score) =>
+  score >= 7.0
+    ? { bg: COLORS.greenBg, textColor: COLORS.green }
+    : score >= 5.5
+    ? { bg: COLORS.amberBg, textColor: COLORS.amberText }
+    : { bg: COLORS.redBg, textColor: COLORS.red };
 
 const useIsDesktop = () => {
   const [isDesktop, setIsDesktop] = useState(() => typeof window !== "undefined" && window.innerWidth >= 900);
@@ -98,6 +209,53 @@ const RatingDial = ({ score, displaySize = 62 }) => {
   );
 };
 
+// ─── Tiny rating dial — matches rating--tiny (19px, score displayed to the right) ─
+const TinyRatingDial = ({ score }) => {
+  const displaySize = 19;
+  const svgStrokeWidth = 16;
+  const halfSize = 50;
+  const halfWidth = Math.round((100 - svgStrokeWidth) / 2); // 42
+  const circumference = Math.round((2 * Math.PI * halfWidth - svgStrokeWidth) * 1000) / 1000;
+  const position = 1 - ((score - 1) / 9.0 * 0.9 + 0.1);
+  const strokeOffset = Math.round(circumference * position * 1000) / 1000;
+  const color = score >= 7.0 ? COLORS.green : score >= 5.5 ? COLORS.amber : COLORS.red;
+  return (
+    <svg viewBox="0 0 100 100" width={displaySize} height={displaySize} style={{ flexShrink: 0, display: "block" }}>
+      <circle cx={halfSize} cy={halfSize} r={halfWidth} fill="none" stroke="rgba(50,50,50,0.1)" strokeWidth={svgStrokeWidth} />
+      <circle cx={halfSize} cy={halfSize} r={halfWidth} fill="none" stroke={color} strokeWidth={svgStrokeWidth}
+        strokeDasharray={`${circumference} ${circumference}`} strokeDashoffset={strokeOffset}
+        strokeLinecap="round" transform={`rotate(-82,${halfSize},${halfSize})`} />
+    </svg>
+  );
+};
+
+// ─── Breakroom UI icons (inline SVG, semibold weight) ──────────────────────────
+const IconAlertCircle = ({ color = COLORS.text }) => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "block", flexShrink: 0 }}>
+    <path d="M7.99997 11H8.00664M7.99997 4.75449V8.25449M14.2538 8.00378C14.2538 11.4556 11.4556 14.2538 8.00378 14.2538C4.552 14.2538 1.75378 11.4556 1.75378 8.00378C1.75378 4.552 4.552 1.75378 8.00378 1.75378C11.4556 1.75378 14.2538 4.552 14.2538 8.00378Z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const IconRanking = ({ color = COLORS.text }) => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "block", flexShrink: 0 }}>
+    <path d="M1.75 12.25L6.5 7L9 9.5L14.25 3.75M14.25 3.75H11.0001M14.25 3.75V6.96198" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const IconMessageCircle = ({ color = COLORS.text }) => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "block", flexShrink: 0 }}>
+    <path d="M14.25 7.18057C14.2522 8.02381 14.0552 8.85566 13.675 9.60834C13.2242 10.5103 12.5312 11.2689 11.6736 11.7993C10.8161 12.3296 9.82775 12.6107 8.81943 12.6111C7.97619 12.6133 7.14434 12.4163 6.39166 12.0361L2.75 13.25L3.96389 9.60834C3.5837 8.85566 3.38669 8.02381 3.38889 7.18057C3.38928 6.17225 3.67039 5.18395 4.20073 4.32637C4.73108 3.46879 5.48971 2.7758 6.39166 2.32502C7.14434 1.94484 7.97619 1.74782 8.81943 1.75002H9.13888C10.4705 1.82349 11.7283 2.38556 12.6714 3.32862C13.6144 4.27168 14.1765 5.52946 14.25 6.86112V7.18057Z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const IconApply = ({ color = COLORS.text }) => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "block", flexShrink: 0 }}>
+    <path d="M8.31887 9.43707L9.76855 10.8863M8.31887 9.43707L7.57812 11.6271L9.76855 10.8863M8.31887 9.43707L12.4949 5.26054C12.8952 4.86035 13.5442 4.86035 13.9446 5.26054C14.3449 5.66074 14.3449 6.3096 13.9446 6.7098L9.76855 10.8863" stroke={color} strokeWidth="1.5" strokeLinejoin="round"/>
+    <path d="M11.2673 6.61119V3.7514C11.2673 2.64683 10.3719 1.7514 9.26733 1.7514H3.75061C2.64604 1.7514 1.75061 2.64683 1.75061 3.7514V12.248C1.75061 13.3526 2.64604 14.248 3.75061 14.248H9.26733C10.3719 14.248 11.2673 13.3526 11.2673 12.248V9.3882" stroke={color} strokeWidth="1.5"/>
+    <path d="M4 4.5784H6.66667M4 7.24507H8M4 9.91173H6" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+  </svg>
+);
+
 // ─── Vacancy highlight pill — matches .vacancy-highlights__highlight ───────────
 const VacancyHighlight = ({ label }) => (
   <span style={{ ...T.body2Bold, borderRadius: 20, border: `2px solid ${COLORS.green}`, color: COLORS.green, display: "inline-block", padding: "2px 10px", whiteSpace: "nowrap", fontFamily: FONT }}>
@@ -146,7 +304,7 @@ const Section = ({ title, icon, children, defaultOpen = false, badge }) => {
   return (
     <div style={{ borderBottom: `1px solid ${COLORS.border}` }}>
       <button onClick={() => setOpen(!open)} style={{ width: "100%", padding: `${S.m}px 0`, background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: S.s, fontFamily: FONT }}>
-        <span style={{ fontSize: 16 }}>{icon}</span>
+        {icon}
         <span style={{ ...T.body1Bold, color: COLORS.text, flex: 1, textAlign: "left", fontFamily: FONT }}>{title}</span>
         {badge && <span style={{ ...T.smallcaps, padding: `${S.xs}px ${S.s}px`, borderRadius: 100, background: badge.bg, color: badge.textColor }}>{badge.text}</span>}
         <span style={{ ...T.body2, color: COLORS.muted, transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "rotate(0deg)", display: "inline-block" }}>▾</span>
@@ -171,26 +329,30 @@ const ReviewSnippet = ({ quote, score, role, date, best }) => (
 );
 
 // ─── Alternative job card ──────────────────────────────────────────────────────
-const AltJob = ({ title, company, pay, rating, location, badge, highlight }) => (
-  <div
-    style={{ padding: `${S.s2}px ${S.m}px`, border: `1px solid ${COLORS.border}`, borderRadius: 5, cursor: "pointer", transition: "border-color 0.15s", background: COLORS.card, position: "relative", boxShadow: SHADOW }}
-    onMouseEnter={(e) => { e.currentTarget.style.borderColor = COLORS.accent; }}
-    onMouseLeave={(e) => { e.currentTarget.style.borderColor = COLORS.border; }}
-  >
-    {badge && <div style={{ position: "absolute", top: -8, right: S.s2, ...T.smallcaps, padding: `${S.xs}px ${S.s}px`, borderRadius: 100, background: badge.bg, color: badge.color, border: `1px solid ${badge.border}` }}>{badge.text}</div>}
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: S.s2, paddingTop: badge ? S.s : 0 }}>
-      <div style={{ flex: 1 }}>
-        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{title}</div>
-        <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontFamily: FONT }}>{company} · {location}</div>
+const AltJob = ({ job, onClick }) => {
+  const { title, company, pay, rating, location, altBadge: badge, altHighlight: highlight } = job;
+  return (
+    <div
+      onClick={onClick}
+      style={{ padding: `${S.s2}px ${S.m}px`, border: `1px solid ${COLORS.border}`, borderRadius: 5, cursor: "pointer", transition: "border-color 0.15s", background: COLORS.card, position: "relative" }}
+      onMouseEnter={(e) => { e.currentTarget.style.borderColor = COLORS.accent; }}
+      onMouseLeave={(e) => { e.currentTarget.style.borderColor = COLORS.border; }}
+    >
+      {badge && <div style={{ position: "absolute", top: -8, right: S.s2, ...T.smallcaps, padding: `${S.xs}px ${S.s}px`, borderRadius: 100, background: badge.bg, color: badge.color, border: `1px solid ${badge.border}` }}>{badge.text}</div>}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: S.s2, paddingTop: badge ? S.s : 0 }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{title}</div>
+          <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontFamily: FONT }}>{company} · {location}</div>
+        </div>
+        <div style={{ textAlign: "right", flexShrink: 0 }}>
+          <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{pay}</div>
+          <div style={{ ...T.body2Bold, color: rating >= 7 ? COLORS.green : rating >= 5.5 ? COLORS.amberText : COLORS.red, fontFamily: FONT }}>{rating}/10</div>
+        </div>
       </div>
-      <div style={{ textAlign: "right", flexShrink: 0 }}>
-        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{pay}</div>
-        <div style={{ ...T.body2Bold, color: rating >= 7 ? COLORS.green : rating >= 5.5 ? COLORS.amberText : COLORS.muted, fontFamily: FONT }}>{rating}/10</div>
-      </div>
+      {highlight && <div style={{ ...T.body2Bold, color: COLORS.muted, marginTop: S.s, fontFamily: FONT }}>{highlight}</div>}
     </div>
-    {highlight && <div style={{ ...T.body2Bold, color: COLORS.muted, marginTop: S.s, fontFamily: FONT }}>{highlight}</div>}
-  </div>
-);
+  );
+};
 
 // ─── Onboarding drawer ─────────────────────────────────────────────────────────
 const OnboardingDrawer = ({ open, onClose, onSubmit }) => {
@@ -250,7 +412,7 @@ const OnboardingDrawer = ({ open, onClose, onSubmit }) => {
 
 // ─── Shared sub-components ─────────────────────────────────────────────────────
 
-const AlternativesList = ({ personalised, onOpenDrawer }) => (
+const AlternativesList = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect }) => (
   <div>
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: S.xs }}>
       <h2 style={{ ...T.lead1, margin: 0, fontFamily: FONT, color: COLORS.text }}>Similar jobs nearby</h2>
@@ -262,19 +424,9 @@ const AlternativesList = ({ personalised, onOpenDrawer }) => (
       {personalised ? "Sorted by your preferences" : "Based on this job's location and pay range. Tell us more to get better matches."}
     </p>
     <div style={{ display: "flex", flexDirection: "column", gap: S.s2 }}>
-      <AltJob title="Warehouse Operative" company="Gap Personnel" pay="£13.25–17.25/hr" rating={7.4} location="London"
-        badge={{ text: "BETTER RATED", bg: COLORS.greenBg, color: COLORS.green, border: COLORS.greenBorder }}
-        highlight="Rated 'Good Employer' · +£0.67–4.67/hr more · Proper breaks & respectful managers" />
-      <AltJob title="Logistics Operator" company="Shorterm Group" pay="£14.24–18.37/hr" rating={6.3} location="London SE25"
-        badge={{ text: "+£1.66/HR", bg: COLORS.accentBg, color: COLORS.accent, border: COLORS.accentBorder }}
-        highlight="Significantly higher pay · Better employer rating (6.3 vs 5.2)" />
-      <AltJob title="Warehouse Operative" company="Gi Group" pay="£14.69/hr" rating={6.0} location="London"
-        highlight="£2.11/hr more · Part time available · Proper breaks & respectful managers" />
-      <AltJob title="Warehouse Operator (Nights)" company="DSV" pay="TBC" rating={7.7} location="Hounslow"
-        badge={{ text: "TOP RATED", bg: COLORS.greenBg, color: COLORS.green, border: COLORS.greenBorder }}
-        highlight="7.7/10 score · Same area · People enjoy this job & learn new skills" />
-      <AltJob title="FLT Driver" company="Manpower" pay="£13/hr" rating={6.2} location="Hounslow"
-        highlight="Same location · Higher employer score · £0.42/hr more" />
+      {JOBS.filter((j) => j.id !== currentJobIdx).map((j) => (
+        <AltJob key={j.id} job={j} onClick={() => onJobSelect(j.id)} />
+      ))}
     </div>
   </div>
 );
@@ -297,10 +449,10 @@ const PersonaliseNudge = ({ personalised, onOpenDrawer }) =>
 
 // ─── Desktop sidebar ───────────────────────────────────────────────────────────
 
-const DesktopSidebar = ({ personalised, onOpenDrawer }) => (
-  <div style={{ position: "sticky", top: 48, alignSelf: "start", display: "flex", flexDirection: "column", gap: S.m }}>
-    {/* CTA card */}
-    <div style={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 5, padding: `${S.m}px ${S.m2}px ${S.m}px`, boxShadow: SHADOW }}>
+const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect }) => (
+  <div style={{ display: "flex", flexDirection: "column", gap: S.m }}>
+    {/* CTA card — sticky so apply buttons stay visible while scrolling */}
+    <div style={{ position: "sticky", top: 48, background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 5, padding: `${S.m}px ${S.m2}px` }}>
       <div style={{ padding: `${S.s2}px ${S.s2}px`, background: COLORS.amberBg, border: `1px solid ${COLORS.amberBorder}`, borderRadius: 4, ...T.body2, color: COLORS.amberText, marginBottom: S.m, fontFamily: FONT }}>
         ⚠ <strong>Rated below average by workers.</strong> Pay and working conditions have mixed reviews — read the full picture before applying.
       </div>
@@ -319,9 +471,9 @@ const DesktopSidebar = ({ personalised, onOpenDrawer }) => (
       </div>
     </div>
 
-    {/* Alternatives card */}
-    <div style={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 5, padding: S.m2, boxShadow: SHADOW }}>
-      <AlternativesList personalised={personalised} onOpenDrawer={onOpenDrawer} />
+    {/* Alternatives card — not sticky, scrolls with page */}
+    <div style={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 5, padding: S.m2 }}>
+      <AlternativesList currentJobIdx={currentJobIdx} personalised={personalised} onOpenDrawer={onOpenDrawer} onJobSelect={onJobSelect} />
       <PersonaliseNudge personalised={personalised} onOpenDrawer={onOpenDrawer} />
     </div>
   </div>
@@ -332,33 +484,32 @@ const DesktopSidebar = ({ personalised, onOpenDrawer }) => (
 export default function JobTriagePage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [personalised, setPersonalised] = useState(false);
+  const [selectedJobIdx, setSelectedJobIdx] = useState(0);
   const isDesktop = useIsDesktop();
+
+  const job = JOBS[selectedJobIdx];
+  const { rating } = job;
+  const ratingColors = ratingBadge(rating);
+
+  const handleJobSelect = (idx) => {
+    setSelectedJobIdx(idx);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const heroBlock = (
     <div style={{ paddingTop: S.m2, paddingBottom: S.m }}>
-      <div style={{ display: "flex", alignItems: "flex-start", gap: S.s2, marginBottom: S.m }}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: S.xs, flexShrink: 0 }}>
-          <RatingDial score={5.2} displaySize={isDesktop ? 52 : 44} />
-          <div style={{ ...T.smallcaps, color: COLORS.muted, fontFamily: FONT, textAlign: "center" }}>Breakroom<br/>Rating</div>
-        </div>
-        <div>
-          <div style={{ ...T.body2, color: COLORS.text, fontFamily: FONT }}>
-            The Best Connection <span style={{ color: COLORS.muted }}>· Agency</span>
-          </div>
-          <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginTop: S.xs }}>
-            Rated 5.2 out of 10, based on 53 employees who took the Breakroom Quiz
-          </div>
-        </div>
+      <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>
+        {job.company} <span style={{ fontWeight: 400, color: COLORS.muted }}>· {job.companyType}</span>
       </div>
 
-      <h1 style={{ ...( isDesktop ? T.heading2Lg : T.heading2), margin: `0 0 ${S.s2}px`, fontFamily: FONT, color: COLORS.text }}>Warehouse Operative</h1>
+      <h1 style={{ ...(isDesktop ? T.heading2Lg : T.heading2), margin: `0 0 ${S.s2}px`, fontFamily: FONT, color: COLORS.text }}>{job.title}</h1>
 
       <div style={{ display: "flex", gap: S.m, flexWrap: "wrap", marginBottom: S.m }}>
         {[
-          { icon: "💷", text: "£12.58/hr" },
-          { icon: "📍", text: "Hounslow" },
-          { icon: "🕐", text: "Full time", sub: "4 on / 4 off" },
-          { icon: "📋", text: "12hr shifts" },
+          { icon: "💷", text: job.pay },
+          { icon: "📍", text: job.location },
+          { icon: "🕐", text: job.hours, sub: job.hoursSub },
+          { icon: "📋", text: job.shifts },
         ].map((f, i) => (
           <div key={i} style={{ display: "flex", alignItems: "center", gap: S.xs }}>
             <span>{f.icon}</span>
@@ -368,19 +519,30 @@ export default function JobTriagePage() {
         ))}
       </div>
 
+      {/* Breakroom Rating — matches rating--tiny pattern from employer pages */}
+      <div style={{ marginBottom: S.s2 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: S.s, marginBottom: S.xs }}>
+          <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>Breakroom Rating</span>
+          <TinyRatingDial score={rating} />
+          <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{rating.toFixed(1)}</span>
+        </div>
+        <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>
+          Rating based on {job.quizCount} employees who took the Breakroom Quiz
+        </div>
+      </div>
+
       {/* Vacancy highlights — matches .vacancy-highlights */}
       <div style={{ display: "flex", gap: S.s, flexWrap: "wrap" }}>
-        <VacancyHighlight label="Respectful managers" />
-        <VacancyHighlight label="Proper breaks" />
+        {job.highlights.map((h) => <VacancyHighlight key={h} label={h} />)}
       </div>
     </div>
   );
 
   const sectionsBlock = (
     <>
-      <Section title="Can you do this job?" icon="⚡" defaultOpen={true} badge={{ text: "CHECK FIRST", bg: COLORS.amberBg, textColor: COLORS.amberText }}>
+      <Section title="Can you do this job?" icon={<IconAlertCircle />} defaultOpen={true} badge={{ text: "CHECK FIRST", bg: COLORS.amberBg, textColor: COLORS.amberText }}>
         <Signal status="warning" label="Pay: below London Living Wage"
-          detail="£12.58/hr — the London Living Wage is £14.80/hr. 38% of workers here say they're paid below Living Wage."
+          detail={`${job.pay} — the London Living Wage is £14.80/hr. 38% of workers here say they're paid below Living Wage.`}
           subtext="That's ~£26,165/yr before tax on these shifts" />
         <Signal status="warning" label="Commute: Hounslow (Twickenham area)"
           detail="Near Heathrow. Shift times are 6am, 8am, or 10am starts — check early-morning transport from your area."
@@ -392,7 +554,7 @@ export default function JobTriagePage() {
           detail="The listing doesn't require previous warehouse experience — just that you're reliable and comfortable with physical work." />
       </Section>
 
-      <Section title="What's it really like here?" icon="🔍" badge={{ text: "5.2/10", bg: COLORS.amberBg, textColor: COLORS.amberText }}>
+      <Section title="What's it really like here?" icon={<IconRanking />} badge={{ text: `${rating.toFixed(1)}/10`, ...ratingColors }}>
         {/* Red flags group */}
         <div style={{ ...T.smallcaps, color: COLORS.red, marginBottom: S.xs, fontFamily: FONT }}>Red flags</div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: S.xs }}>
@@ -436,14 +598,18 @@ export default function JobTriagePage() {
         </div>
       </Section>
 
-      <Section title="What workers actually said" icon="💬">
+      <Section title="What workers actually said" icon={<IconMessageCircle />}>
         <ReviewSnippet best={true} quote="Flexible when needed" score={8.2} role="Agency worker" date="Sep 2024" />
         <ReviewSnippet best={true} quote="Good team and good training" score={8.0} role="Branch manager" date="Jun 2024" />
         <ReviewSnippet best={false} quote="The managers, the stress levels" score={1.8} role="Administrator" date="Jul 2023" />
-        <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "center", padding: `${S.xs}px 0`, fontFamily: FONT }}>See all 53 reviews →</div>
+        <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "center", padding: `${S.xs}px 0`, fontFamily: FONT }}>See all {job.quizCount} reviews →</div>
       </Section>
 
-      <Section title="Full job details" icon="📄">
+      <Section title="Full job details" icon={<IconApply />}>
+        <a href={job.listingUrl} target="_blank" rel="noopener noreferrer"
+          style={{ ...T.body2Bold, color: COLORS.accent, fontFamily: FONT, display: "inline-flex", alignItems: "center", gap: S.xs, textDecoration: "none" }}>
+          View full listing on employer site ↗
+        </a>
         <div style={{ ...T.body1, color: COLORS.muted, lineHeight: 1.7, fontFamily: FONT }}>
           <p style={{ margin: `0 0 ${S.s}px` }}><strong style={{ color: COLORS.text }}>What you'll do:</strong> Sorting, scanning, and processing mail bags for international dispatch. Heavy lifting up to 30kg.</p>
           <p style={{ margin: `0 0 ${S.s}px` }}><strong style={{ color: COLORS.text }}>Shifts:</strong> 4 on / 4 off rotation. Starts 6am–6pm, 8am–8pm, or 10am–10pm (12-hour shifts).</p>
@@ -458,7 +624,7 @@ export default function JobTriagePage() {
     <div style={{ minHeight: "100vh", background: COLORS.bg, fontFamily: FONT, color: COLORS.text }}>
       {/* Top nav */}
       <div style={{ position: "sticky", top: 0, zIndex: 50, background: COLORS.bg, borderBottom: `1px solid ${COLORS.border}`, padding: `${S.s2}px ${S.m}px`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>← Back to results</span>
+        <span onClick={() => handleJobSelect(0)} style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT, cursor: "pointer" }}>← Back to results</span>
         <span style={{ ...T.body1Bold, color: COLORS.accent, fontFamily: FONT }}>Breakroom</span>
       </div>
 
@@ -468,14 +634,14 @@ export default function JobTriagePage() {
             {heroBlock}
             {sectionsBlock}
           </div>
-          <DesktopSidebar personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} />
+          <DesktopSidebar currentJobIdx={selectedJobIdx} personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} />
         </div>
       ) : (
         <div style={{ maxWidth: 480, margin: "0 auto", padding: `0 ${S.m}px ${S.xxl}px` }}>
           {heroBlock}
           {sectionsBlock}
           <div style={{ marginTop: S.m2, marginBottom: S.s }}>
-            <AlternativesList personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} />
+            <AlternativesList currentJobIdx={selectedJobIdx} personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} />
             <PersonaliseNudge personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} />
           </div>
         </div>
