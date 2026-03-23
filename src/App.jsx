@@ -2,30 +2,43 @@ import { useState, useEffect } from "react";
 
 const FONT = "'CeraPro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
-// Breakroom design tokens
+// Breakroom design tokens — /assets/css/shared/helpers/_colors.scss
 const COLORS = {
   bg: "#faf8f4",
   card: "#ffffff",
   text: "#323232",
   muted: "#646362",
   border: "#e1e1e1",
-  // good
   green: "#6dba84",
   greenBg: "#eaf6e8",
   greenBorder: "#6dba84",
-  // okay/warning
   amber: "#ffcf4d",
   amberText: "#8a6400",
   amberBg: "#fff4d7",
   amberBorder: "#ffcf4d",
-  // bad/danger
   red: "#cf4044",
   redBg: "#faecec",
   redBorder: "#cf4044",
-  // primary brand (coral/peach)
   accent: "#f1666a",
   accentBg: "#ffecea",
   accentBorder: "#f9d5d3",
+};
+
+// Breakroom spacing tokens — /assets/css/shared/helpers/_spacing.scss
+const S = { xs: 4, s: 8, s2: 12, m: 16, m2: 24, l: 32, l2: 40, xl: 64, xxl: 96 };
+
+// Breakroom type scale — /assets/css/shared/helpers/_typography.scss
+// Using mobile sizes throughout; desktop variants applied via isDesktop check
+const T = {
+  heading2:  { fontSize: 24, lineHeight: "32px", fontWeight: 700 },
+  heading2Lg:{ fontSize: 34, lineHeight: "42px", fontWeight: 700 },
+  lead1:     { fontSize: 20, lineHeight: "24px", fontWeight: 700 },
+  lead2:     { fontSize: 18, lineHeight: "24px", fontWeight: 700 },
+  body1:     { fontSize: 16, lineHeight: "22px", fontWeight: 400 },
+  body1Bold: { fontSize: 16, lineHeight: "22px", fontWeight: 700 },
+  body2:     { fontSize: 14, lineHeight: "20px", fontWeight: 400 },
+  body2Bold: { fontSize: 14, lineHeight: "20px", fontWeight: 700 },
+  smallcaps: { fontSize: 11, lineHeight: "16px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" },
 };
 
 const SHADOW = "0px 4px 4px rgba(0, 0, 0, 0.05)";
@@ -40,98 +53,146 @@ const useIsDesktop = () => {
   return isDesktop;
 };
 
-const Signal = ({ status, label, detail, subtext }) => {
-  const c =
-    status === "good"
-      ? { bg: COLORS.greenBg, border: COLORS.greenBorder, dot: COLORS.green, textColor: COLORS.green, icon: "✓" }
-      : status === "warning"
-      ? { bg: COLORS.amberBg, border: COLORS.amberBorder, dot: COLORS.amber, textColor: COLORS.amberText, icon: "~" }
-      : { bg: COLORS.redBg, border: COLORS.redBorder, dot: COLORS.red, textColor: COLORS.red, icon: "✕" };
+// ─── Rating dial — ported from lib/poplar_web/helpers/formatting_helpers.ex ───
+// build_radial_svg/3 with @rating_thresholds [okay: 5.5, good: 7.0]
+const RatingDial = ({ score, displaySize = 62 }) => {
+  // All SVG maths in 100×100 coordinate space, then scaled via CSS width/height
+  const svgStrokeWidth = 14;
+  const halfSize = 50;
+  const halfWidth = Math.round((100 - svgStrokeWidth) / 2); // 43
+  const circumference = Math.round((2 * Math.PI * halfWidth - svgStrokeWidth) * 1000) / 1000; // ≈256.177
+
+  // radial_rating_position/1
+  const position = 1 - ((score - 1) / 9.0 * 0.9 + 0.1);
+  const strokeOffset = Math.round(circumference * position * 1000) / 1000;
+
+  const color = score >= 7.0 ? COLORS.green : score >= 5.5 ? COLORS.amber : COLORS.red;
+
+  const [intPart, decPart] = score.toFixed(1).split(".");
+  const fontSize = displaySize >= 90 ? 24 : displaySize >= 62 ? 18 : 14;
+  const decSize = fontSize * 0.78;
+
   return (
-    <div style={{ padding: "12px 14px", background: c.bg, border: `1px solid ${c.border}`, borderRadius: 5, display: "flex", gap: 10, alignItems: "flex-start" }}>
-      <div style={{ width: 22, height: 22, borderRadius: "50%", background: c.dot, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, flexShrink: 0, marginTop: 1 }}>{c.icon}</div>
-      <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.text }}>{label}</div>
-        <div style={{ fontSize: 13, color: COLORS.muted, marginTop: 2, lineHeight: 1.45 }}>{detail}</div>
-        {subtext && <div style={{ fontSize: 12, color: c.textColor, marginTop: 4, fontWeight: 500 }}>{subtext}</div>}
+    <div style={{ position: "relative", width: displaySize, height: displaySize, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+      <svg viewBox="0 0 100 100" width={displaySize} height={displaySize} style={{ position: "absolute", top: 0, left: 0 }}>
+        {/* Background disc — matches .background-disc { stroke: rgba(50,50,50,0.1) } */}
+        <circle cx={halfSize} cy={halfSize} r={halfWidth} fill="none" stroke="rgba(50,50,50,0.1)" strokeWidth={svgStrokeWidth} />
+        {/* Rating arc */}
+        <circle
+          cx={halfSize} cy={halfSize} r={halfWidth}
+          fill="none"
+          stroke={color}
+          strokeWidth={svgStrokeWidth}
+          strokeDasharray={`${circumference} ${circumference}`}
+          strokeDashoffset={strokeOffset}
+          strokeLinecap="round"
+          transform={`rotate(-82,${halfSize},${halfSize})`}
+        />
+      </svg>
+      {/* .rating__score overlay */}
+      <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "baseline", fontWeight: 700, color: COLORS.text, fontFamily: FONT }}>
+        <span style={{ fontSize }}>{intPart}</span>
+        <span style={{ fontSize: decSize }}>.{decPart}</span>
       </div>
     </div>
   );
 };
 
+// ─── Vacancy highlight pill — matches .vacancy-highlights__highlight ───────────
+const VacancyHighlight = ({ label }) => (
+  <span style={{ ...T.body2Bold, borderRadius: 20, border: `2px solid ${COLORS.green}`, color: COLORS.green, display: "inline-block", padding: "2px 10px", whiteSpace: "nowrap", fontFamily: FONT }}>
+    👍 {label}
+  </span>
+);
+
+// ─── Finding row — matches .finding-statement with GOOD/OKAY/NEEDS IMPROVING ──
+const FindingRow = ({ status, statement }) => {
+  const dot   = status === "good" ? COLORS.green : status === "okay" ? COLORS.amber : COLORS.red;
+  const label = status === "good" ? "GOOD" : status === "okay" ? "OKAY" : "NEEDS IMPROVING";
+  return (
+    <div style={{ borderBottom: `1px solid ${COLORS.border}`, padding: `${S.s}px 0` }}>
+      <div style={{ ...T.smallcaps, color: COLORS.muted, marginBottom: S.xs }}>{label}</div>
+      <div style={{ display: "flex", alignItems: "center", gap: S.s }}>
+        {/* .finding-statement::before — 15px colored dot with 2px white border */}
+        <span style={{ width: 12, height: 12, borderRadius: "50%", background: dot, border: "2px solid white", outline: `1px solid ${dot}`, flexShrink: 0, display: "inline-block" }} />
+        <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT }}>{statement}</span>
+      </div>
+    </div>
+  );
+};
+
+// ─── Signal card (prototype-specific) ─────────────────────────────────────────
+const Signal = ({ status, label, detail, subtext }) => {
+  const c = status === "good"
+    ? { bg: COLORS.greenBg, border: COLORS.greenBorder, dot: COLORS.green, textColor: COLORS.green, icon: "✓" }
+    : status === "warning"
+    ? { bg: COLORS.amberBg, border: COLORS.amberBorder, dot: COLORS.amber, textColor: COLORS.amberText, icon: "~" }
+    : { bg: COLORS.redBg, border: COLORS.redBorder, dot: COLORS.red, textColor: COLORS.red, icon: "✕" };
+  return (
+    <div style={{ padding: `${S.s2}px ${S.m}px`, background: c.bg, border: `1px solid ${c.border}`, borderRadius: 5, display: "flex", gap: S.s2, alignItems: "flex-start" }}>
+      <div style={{ width: 22, height: 22, borderRadius: "50%", background: c.dot, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, flexShrink: 0, marginTop: 1 }}>{c.icon}</div>
+      <div style={{ flex: 1 }}>
+        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{label}</div>
+        <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontFamily: FONT }}>{detail}</div>
+        {subtext && <div style={{ ...T.body2, color: c.textColor, marginTop: S.xs, fontWeight: 500, fontFamily: FONT }}>{subtext}</div>}
+      </div>
+    </div>
+  );
+};
+
+// ─── Collapsible section ───────────────────────────────────────────────────────
 const Section = ({ title, icon, children, defaultOpen = false, badge }) => {
   const [open, setOpen] = useState(defaultOpen);
   return (
     <div style={{ borderBottom: `1px solid ${COLORS.border}` }}>
-      <button
-        onClick={() => setOpen(!open)}
-        style={{ width: "100%", padding: "14px 0", background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontFamily: FONT }}
-      >
+      <button onClick={() => setOpen(!open)} style={{ width: "100%", padding: `${S.m}px 0`, background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: S.s, fontFamily: FONT }}>
         <span style={{ fontSize: 16 }}>{icon}</span>
-        <span style={{ fontSize: 14, fontWeight: 700, color: COLORS.text, flex: 1, textAlign: "left" }}>{title}</span>
-        {badge && (
-          <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 100, background: badge.bg, color: badge.textColor || badge.color }}>
-            {badge.text}
-          </span>
-        )}
-        <span style={{ fontSize: 12, color: COLORS.muted, transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "rotate(0deg)", display: "inline-block" }}>▾</span>
+        <span style={{ ...T.body1Bold, color: COLORS.text, flex: 1, textAlign: "left", fontFamily: FONT }}>{title}</span>
+        {badge && <span style={{ ...T.smallcaps, padding: `${S.xs}px ${S.s}px`, borderRadius: 100, background: badge.bg, color: badge.textColor }}>{badge.text}</span>}
+        <span style={{ ...T.body2, color: COLORS.muted, transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "rotate(0deg)", display: "inline-block" }}>▾</span>
       </button>
-      <div style={{ maxHeight: open ? 1200 : 0, overflow: "hidden", transition: "max-height 0.35s ease" }}>
-        <div style={{ paddingBottom: 16, display: "flex", flexDirection: "column", gap: 8 }}>{children}</div>
+      <div style={{ maxHeight: open ? 2000 : 0, overflow: "hidden", transition: "max-height 0.35s ease" }}>
+        <div style={{ paddingBottom: S.m, display: "flex", flexDirection: "column", gap: S.s }}>{children}</div>
       </div>
     </div>
   );
 };
 
+// ─── Review snippet ────────────────────────────────────────────────────────────
 const ReviewSnippet = ({ quote, score, role, date, best }) => (
-  <div style={{ padding: "10px 12px", background: COLORS.bg, borderRadius: 5, border: `1px solid ${COLORS.border}`, fontSize: 13, lineHeight: 1.5 }}>
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-      <span style={{ fontWeight: 700, color: COLORS.text }}>{best ? "👍 Best:" : "👎 Worst:"}</span>
-      <span style={{ fontSize: 12, fontWeight: 700, color: score >= 6 ? COLORS.green : score >= 4 ? COLORS.amberText : COLORS.red }}>{score}/10</span>
+  <div style={{ padding: `${S.s2}px ${S.m}px`, background: COLORS.bg, borderRadius: 5, border: `1px solid ${COLORS.border}` }}>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: S.s }}>
+      <span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{best ? "👍 Best:" : "👎 Worst:"}</span>
+      <span style={{ ...T.body2Bold, color: score >= 6 ? COLORS.green : score >= 4 ? COLORS.amberText : COLORS.red, fontFamily: FONT }}>{score}/10</span>
     </div>
-    <div style={{ color: COLORS.muted, fontStyle: "italic" }}>"{quote}"</div>
-    <div style={{ fontSize: 11, color: COLORS.muted, marginTop: 4 }}>{role} · {date}</div>
+    <div style={{ ...T.body2, color: COLORS.muted, fontStyle: "italic", fontFamily: FONT }}>"{quote}"</div>
+    <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontFamily: FONT }}>{role} · {date}</div>
   </div>
 );
 
-const RatingBadge = ({ score, size = "small" }) => {
-  const color = score >= 7 ? COLORS.green : score >= 5.5 ? COLORS.amber : COLORS.red;
-  const bgColor = score >= 7 ? COLORS.greenBg : score >= 5.5 ? COLORS.amberBg : COLORS.redBg;
-  const dim = size === "large" ? 52 : 36;
-  const fontSize = size === "large" ? 18 : 14;
-  return (
-    <div style={{ width: dim, height: dim, borderRadius: "50%", background: bgColor, border: `2px solid ${color}`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-      <span style={{ fontSize, fontWeight: 700, color: score >= 5.5 ? COLORS.amberText : color, lineHeight: 1 }}>{score}</span>
-      <span style={{ fontSize: 8, fontWeight: 500, color: COLORS.muted, lineHeight: 1 }}>/10</span>
-    </div>
-  );
-};
-
+// ─── Alternative job card ──────────────────────────────────────────────────────
 const AltJob = ({ title, company, pay, rating, location, badge, highlight }) => (
   <div
-    style={{ padding: "12px 14px", border: `1px solid ${COLORS.border}`, borderRadius: 5, cursor: "pointer", transition: "all 0.15s", background: COLORS.card, position: "relative", boxShadow: SHADOW }}
+    style={{ padding: `${S.s2}px ${S.m}px`, border: `1px solid ${COLORS.border}`, borderRadius: 5, cursor: "pointer", transition: "border-color 0.15s", background: COLORS.card, position: "relative", boxShadow: SHADOW }}
     onMouseEnter={(e) => { e.currentTarget.style.borderColor = COLORS.accent; }}
     onMouseLeave={(e) => { e.currentTarget.style.borderColor = COLORS.border; }}
   >
-    {badge && (
-      <div style={{ position: "absolute", top: -8, right: 12, fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 100, background: badge.bg, color: badge.color, border: `1px solid ${badge.border}` }}>
-        {badge.text}
-      </div>
-    )}
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
+    {badge && <div style={{ position: "absolute", top: -8, right: S.s2, ...T.smallcaps, padding: `${S.xs}px ${S.s}px`, borderRadius: 100, background: badge.bg, color: badge.color, border: `1px solid ${badge.border}` }}>{badge.text}</div>}
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: S.s2 }}>
       <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.text }}>{title}</div>
-        <div style={{ fontSize: 13, color: COLORS.muted, marginTop: 2 }}>{company} · {location}</div>
+        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{title}</div>
+        <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontFamily: FONT }}>{company} · {location}</div>
       </div>
       <div style={{ textAlign: "right", flexShrink: 0 }}>
-        <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.text }}>{pay}</div>
-        <div style={{ fontSize: 12, fontWeight: 700, color: rating >= 7 ? COLORS.green : rating >= 5.5 ? COLORS.amberText : COLORS.muted }}>{rating}/10</div>
+        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{pay}</div>
+        <div style={{ ...T.body2Bold, color: rating >= 7 ? COLORS.green : rating >= 5.5 ? COLORS.amberText : COLORS.muted, fontFamily: FONT }}>{rating}/10</div>
       </div>
     </div>
-    {highlight && <div style={{ fontSize: 12, color: COLORS.green, fontWeight: 500, marginTop: 6 }}>{highlight}</div>}
+    {highlight && <div style={{ ...T.body2, color: COLORS.green, fontWeight: 500, marginTop: S.s, fontFamily: FONT }}>{highlight}</div>}
   </div>
 );
 
+// ─── Onboarding drawer ─────────────────────────────────────────────────────────
 const OnboardingDrawer = ({ open, onClose, onSubmit }) => {
   const [postcode, setPostcode] = useState("");
   const [currentPay, setCurrentPay] = useState("");
@@ -139,49 +200,47 @@ const OnboardingDrawer = ({ open, onClose, onSubmit }) => {
   const [priorities, setPriorities] = useState(new Set());
   const togglePriority = (p) => setPriorities((s) => { const n = new Set(s); n.has(p) ? n.delete(p) : n.add(p); return n; });
 
-  const inputStyle = { width: "100%", padding: "10px 12px", borderRadius: 4, border: `1px solid ${COLORS.border}`, fontSize: 14, fontFamily: FONT, marginBottom: 16, background: COLORS.card, color: COLORS.text, outline: "none" };
-  const labelStyle = { fontSize: 13, fontWeight: 700, color: COLORS.text, display: "block", marginBottom: 6 };
+  const inputStyle = { width: "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1px solid ${COLORS.border}`, ...T.body1, fontFamily: FONT, marginBottom: S.m, background: COLORS.card, color: COLORS.text, outline: "none", boxSizing: "border-box" };
 
   return (
     <>
       <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity 0.3s", zIndex: 100 }} />
-      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, maxHeight: "85vh", background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: "20px 20px 32px", transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, overflowY: "auto", boxShadow: "0 -8px 40px rgba(0,0,0,0.15)" }}>
-        <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: "0 auto 16px" }} />
-        <h3 style={{ fontSize: 20, fontWeight: 700, margin: 0, color: COLORS.text, fontFamily: FONT }}>Help us find you better jobs</h3>
-        <p style={{ fontSize: 14, color: COLORS.muted, margin: "6px 0 20px", lineHeight: 1.5 }}>Answer a few quick ones and we'll show you jobs that actually fit your life. Takes 30 seconds.</p>
+      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, maxHeight: "85vh", background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, overflowY: "auto", boxShadow: "0 -8px 40px rgba(0,0,0,0.15)" }}>
+        <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px` }} />
+        <h3 style={{ ...T.lead1, margin: 0, color: COLORS.text, fontFamily: FONT, marginBottom: S.s }}>Help us find you better jobs</h3>
+        <p style={{ ...T.body2, color: COLORS.muted, margin: `0 0 ${S.m2}px`, fontFamily: FONT }}>Answer a few quick ones and we'll show you jobs that actually fit your life. Takes 30 seconds.</p>
 
-        <label style={labelStyle}>Your postcode (for commute times)</label>
+        <label style={{ ...T.body2Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>Your postcode (for commute times)</label>
         <input value={postcode} onChange={(e) => setPostcode(e.target.value)} placeholder="e.g. TW1 3QS" style={inputStyle} />
 
-        <label style={labelStyle}>What do you currently earn? (per hour)</label>
-        <input value={currentPay} onChange={(e) => setCurrentPay(e.target.value)} placeholder="e.g. £12.00" type="text" style={inputStyle} />
+        <label style={{ ...T.body2Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>What do you currently earn? (per hour)</label>
+        <input value={currentPay} onChange={(e) => setCurrentPay(e.target.value)} placeholder="e.g. £12.00" style={inputStyle} />
 
-        <label style={labelStyle}>How do you get to work?</label>
-        <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
+        <label style={{ ...T.body2Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>How do you get to work?</label>
+        <div style={{ display: "flex", gap: S.s, marginBottom: S.m, flexWrap: "wrap" }}>
           {["🚗 Drive", "🚌 Bus", "🚂 Train", "🚲 Cycle", "🚶 Walk"].map((t) => (
             <button key={t} onClick={() => setTravel(t)}
-              style={{ padding: "8px 14px", borderRadius: 100, border: `1px solid ${travel === t ? COLORS.accent : COLORS.border}`, background: travel === t ? COLORS.accentBg : COLORS.card, fontSize: 13, cursor: "pointer", fontFamily: FONT, color: travel === t ? COLORS.accent : COLORS.text, fontWeight: travel === t ? 700 : 400, transition: "all 0.15s" }}>
+              style={{ padding: `${S.s}px ${S.m}px`, borderRadius: 100, border: `1px solid ${travel === t ? COLORS.accent : COLORS.border}`, background: travel === t ? COLORS.accentBg : COLORS.card, ...T.body2, cursor: "pointer", fontFamily: FONT, color: travel === t ? COLORS.accent : COLORS.text, fontWeight: travel === t ? 700 : 400 }}>
               {t}
             </button>
           ))}
         </div>
 
-        <label style={labelStyle}>What matters most to you? (pick up to 3)</label>
-        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 20 }}>
+        <label style={{ ...T.body2Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>What matters most to you? (pick up to 3)</label>
+        <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginBottom: S.m2 }}>
           {["Better pay", "Short commute", "No heavy lifting", "Daytime only", "Paid breaks", "Sick pay", "Friendly team", "Career progression"].map((p) => (
             <button key={p} onClick={() => { if (priorities.has(p) || priorities.size < 3) togglePriority(p); }}
-              style={{ padding: "6px 12px", borderRadius: 100, border: `1px solid ${priorities.has(p) ? COLORS.green : COLORS.border}`, background: priorities.has(p) ? COLORS.greenBg : COLORS.card, fontSize: 12, cursor: "pointer", fontFamily: FONT, color: priorities.has(p) ? COLORS.green : COLORS.muted, fontWeight: priorities.has(p) ? 700 : 400, transition: "all 0.15s" }}>
+              style={{ padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${priorities.has(p) ? COLORS.green : COLORS.border}`, background: priorities.has(p) ? COLORS.greenBg : COLORS.card, ...T.body2, cursor: "pointer", fontFamily: FONT, color: priorities.has(p) ? COLORS.green : COLORS.muted, fontWeight: priorities.has(p) ? 700 : 400 }}>
               {p}
             </button>
           ))}
         </div>
 
         <button onClick={() => onSubmit({ postcode, currentPay, travel, priorities: [...priorities] })}
-          style={{ width: "100%", padding: "14px", borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: FONT, transition: "opacity 0.15s" }}
-          onMouseEnter={(e) => e.target.style.opacity = "0.85"} onMouseLeave={(e) => e.target.style.opacity = "1"}>
+          style={{ width: "100%", padding: S.m, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
           Show me better matches →
         </button>
-        <button onClick={onClose} style={{ width: "100%", padding: "10px", background: "none", border: "none", fontSize: 13, color: COLORS.muted, cursor: "pointer", marginTop: 8, fontFamily: FONT }}>
+        <button onClick={onClose} style={{ width: "100%", padding: `${S.s2}px`, background: "none", border: "none", ...T.body2, color: COLORS.muted, cursor: "pointer", marginTop: S.s, fontFamily: FONT }}>
           Not now, I'll keep browsing
         </button>
       </div>
@@ -193,16 +252,16 @@ const OnboardingDrawer = ({ open, onClose, onSubmit }) => {
 
 const AlternativesList = ({ personalised, onOpenDrawer }) => (
   <div>
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
-      <h2 style={{ fontSize: 20, fontWeight: 700, margin: 0, fontFamily: FONT }}>Similar jobs nearby</h2>
-      <button onClick={onOpenDrawer} style={{ fontSize: 12, color: COLORS.accent, fontWeight: 700, background: "none", border: "none", cursor: "pointer", fontFamily: FONT, textDecoration: "underline" }}>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: S.xs }}>
+      <h2 style={{ ...T.lead1, margin: 0, fontFamily: FONT, color: COLORS.text }}>Similar jobs nearby</h2>
+      <button onClick={onOpenDrawer} style={{ ...T.body2Bold, color: COLORS.accent, background: "none", border: "none", cursor: "pointer", fontFamily: FONT, textDecoration: "underline" }}>
         Match me ✎
       </button>
     </div>
-    <p style={{ fontSize: 13, color: COLORS.muted, margin: "0 0 14px" }}>
+    <p style={{ ...T.body2, color: COLORS.muted, margin: `0 0 ${S.m}px`, fontFamily: FONT }}>
       {personalised ? "Sorted by your preferences" : "Based on this job's location and pay range. Tell us more to get better matches."}
     </p>
-    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: S.s2 }}>
       <AltJob title="Warehouse Operative" company="Gap Personnel" pay="£13.25–17.25/hr" rating={7.4} location="London"
         badge={{ text: "BETTER RATED", bg: COLORS.greenBg, color: COLORS.green, border: COLORS.greenBorder }}
         highlight="Rated 'Good Employer' · +£0.67–4.67/hr more · Proper breaks & respectful managers" />
@@ -222,69 +281,69 @@ const AlternativesList = ({ personalised, onOpenDrawer }) => (
 
 const PersonaliseNudge = ({ personalised, onOpenDrawer }) =>
   personalised ? (
-    <div style={{ marginTop: 16, padding: "12px 16px", background: COLORS.greenBg, borderRadius: 5, border: `1px solid ${COLORS.greenBorder}`, textAlign: "center" }}>
-      <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.green }}>✓ Showing personalised matches</div>
-      <div style={{ fontSize: 12, color: COLORS.muted, marginTop: 2 }}>
+    <div style={{ marginTop: S.m, padding: `${S.s2}px ${S.m}px`, background: COLORS.greenBg, borderRadius: 5, border: `1px solid ${COLORS.greenBorder}`, textAlign: "center" }}>
+      <div style={{ ...T.body2Bold, color: COLORS.green, fontFamily: FONT }}>✓ Showing personalised matches</div>
+      <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontFamily: FONT }}>
         Based on your commute, pay, and preferences ·{" "}
         <span onClick={onOpenDrawer} style={{ textDecoration: "underline", cursor: "pointer", color: COLORS.accent }}>Edit</span>
       </div>
     </div>
   ) : (
-    <button onClick={onOpenDrawer} style={{ width: "100%", marginTop: 20, padding: "16px", borderRadius: 5, border: `1.5px dashed ${COLORS.accent}`, background: COLORS.accentBg, cursor: "pointer", fontFamily: FONT, textAlign: "center" }}>
-      <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.accent }}>🎯 Get jobs that match your life</div>
-      <div style={{ fontSize: 13, color: COLORS.muted, marginTop: 4 }}>Tell us your postcode, current pay, and what matters — we'll filter out the noise</div>
+    <button onClick={onOpenDrawer} style={{ width: "100%", marginTop: S.m2, padding: S.m, borderRadius: 5, border: `1.5px dashed ${COLORS.accent}`, background: COLORS.accentBg, cursor: "pointer", fontFamily: FONT, textAlign: "center" }}>
+      <div style={{ ...T.body1Bold, color: COLORS.accent, fontFamily: FONT }}>🎯 Get jobs that match your life</div>
+      <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontFamily: FONT }}>Tell us your postcode, current pay, and what matters — we'll filter out the noise</div>
     </button>
   );
 
 // ─── Desktop sidebar ───────────────────────────────────────────────────────────
 
 const DesktopSidebar = ({ personalised, onOpenDrawer }) => (
-  <div style={{ position: "sticky", top: 60, alignSelf: "start", display: "flex", flexDirection: "column", gap: 16 }}>
+  <div style={{ position: "sticky", top: 48, alignSelf: "start", display: "flex", flexDirection: "column", gap: S.m }}>
     {/* Job summary card */}
-    <div style={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 5, padding: "20px 20px 16px", boxShadow: SHADOW }}>
-      <div style={{ display: "flex", gap: 12, alignItems: "flex-start", marginBottom: 16 }}>
-        <RatingBadge score={5.2} size="large" />
+    <div style={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 5, padding: `${S.m2}px ${S.m2}px ${S.m}px`, boxShadow: SHADOW }}>
+      <div style={{ display: "flex", gap: S.s2, alignItems: "flex-start", marginBottom: S.m }}>
+        <RatingDial score={5.2} displaySize={52} />
         <div>
-          <div style={{ fontSize: 20, fontWeight: 700, fontFamily: FONT, color: COLORS.text, lineHeight: 1.2 }}>Warehouse Operative</div>
-          <div style={{ fontSize: 13, color: COLORS.muted, marginTop: 3 }}>The Best Connection · Agency</div>
-          <div style={{ fontSize: 12, color: COLORS.amberText, fontWeight: 500, marginTop: 2 }}>Mixed reviews from 53 workers</div>
+          <div style={{ ...T.lead2, fontFamily: FONT, color: COLORS.text, lineHeight: "1.2" }}>Warehouse Operative</div>
+          <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontFamily: FONT }}>The Best Connection · Agency</div>
+          <div style={{ ...T.body2, color: COLORS.amberText, fontWeight: 500, marginTop: 2, fontFamily: FONT }}>Mixed reviews from 53 workers</div>
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: S.s, marginBottom: S.m }}>
         {[
           { icon: "💷", label: "Pay", value: "£12.58/hr" },
           { icon: "📍", label: "Location", value: "Hounslow" },
           { icon: "🕐", label: "Type", value: "Full time" },
           { icon: "📋", label: "Shifts", value: "4 on / 4 off" },
         ].map((f) => (
-          <div key={f.label} style={{ padding: "8px 10px", background: COLORS.bg, borderRadius: 4 }}>
-            <div style={{ fontSize: 11, color: COLORS.muted, marginBottom: 2 }}>{f.icon} {f.label}</div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.text }}>{f.value}</div>
+          <div key={f.label} style={{ padding: `${S.s}px ${S.s2}px`, background: COLORS.bg, borderRadius: 4 }}>
+            <div style={{ ...T.smallcaps, color: COLORS.muted, marginBottom: 2, fontFamily: FONT }}>{f.icon} {f.label}</div>
+            <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{f.value}</div>
           </div>
         ))}
       </div>
 
-      <div style={{ padding: "8px 12px", background: COLORS.amberBg, border: `1px solid ${COLORS.amberBorder}`, borderRadius: 4, fontSize: 13, color: COLORS.amberText, fontWeight: 500, textAlign: "center", marginBottom: 16 }}>
+      <div style={{ padding: `${S.s}px ${S.s2}px`, background: COLORS.amberBg, border: `1px solid ${COLORS.amberBorder}`, borderRadius: 4, ...T.body2, color: COLORS.amberText, textAlign: "center", marginBottom: S.m, fontFamily: FONT }}>
         ⚠ Mixed employer — check pay & hours before applying
       </div>
 
-      <button style={{ width: "100%", padding: "13px", borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: FONT, transition: "opacity 0.15s", marginBottom: 8 }}
+      <button style={{ width: "100%", padding: S.s2, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT, marginBottom: S.s }}
         onMouseEnter={(e) => e.target.style.opacity = "0.85"} onMouseLeave={(e) => e.target.style.opacity = "1"}>
-        Apply →
+        Apply on external site →
       </button>
-      <div style={{ display: "flex", gap: 8 }}>
-        <button style={{ flex: 1, padding: "10px", borderRadius: 4, border: `1.5px solid ${COLORS.border}`, background: COLORS.card, fontSize: 14, cursor: "pointer", fontFamily: FONT, color: COLORS.text, fontWeight: 500 }}>
-          ☆ Save
+      <div style={{ display: "flex", gap: S.s }}>
+        <button style={{ flex: 1, padding: S.s2, borderRadius: 4, border: `1.5px solid ${COLORS.border}`, background: COLORS.card, ...T.body2Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
+          ☆ Save for later
         </button>
-        <button onClick={onOpenDrawer} style={{ flex: 1, padding: "10px", borderRadius: 4, border: `1.5px solid ${COLORS.accent}`, background: COLORS.accentBg, fontSize: 14, cursor: "pointer", fontFamily: FONT, color: COLORS.accent, fontWeight: 700 }}>
+        <button onClick={onOpenDrawer} style={{ flex: 1, padding: S.s2, borderRadius: 4, border: `1.5px solid ${COLORS.accent}`, background: COLORS.accentBg, ...T.body2Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.accent }}>
           Match me ✎
         </button>
       </div>
     </div>
 
-    {/* Alternatives */}
-    <div style={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 5, padding: "20px", boxShadow: SHADOW }}>
+    {/* Alternatives card */}
+    <div style={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 5, padding: S.m2, boxShadow: SHADOW }}>
       <AlternativesList personalised={personalised} onOpenDrawer={onOpenDrawer} />
       <PersonaliseNudge personalised={personalised} onOpenDrawer={onOpenDrawer} />
     </div>
@@ -299,28 +358,38 @@ export default function JobTriagePage() {
   const isDesktop = useIsDesktop();
 
   const heroBlock = (
-    <div style={{ padding: "20px 0 16px" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-        <RatingBadge score={5.2} size="small" />
+    <div style={{ paddingTop: S.m2, paddingBottom: S.m }}>
+      <div style={{ display: "flex", alignItems: "flex-start", gap: S.s2, marginBottom: S.m }}>
+        <RatingDial score={5.2} displaySize={isDesktop ? 52 : 44} />
         <div>
-          <div style={{ fontSize: 13, color: COLORS.text }}>The Best Connection <span style={{ color: COLORS.muted }}>· Agency</span></div>
-          <div style={{ fontSize: 12, color: COLORS.amberText, fontWeight: 500 }}>Mixed reviews from 53 workers</div>
+          <div style={{ ...T.body2, color: COLORS.text, fontFamily: FONT }}>
+            The Best Connection <span style={{ color: COLORS.muted }}>· Agency</span>
+          </div>
+          <div style={{ ...T.body2, color: COLORS.amberText, fontWeight: 500, fontFamily: FONT }}>Mixed reviews from 53 workers</div>
         </div>
       </div>
-      <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0, lineHeight: 1.2, fontFamily: FONT, color: COLORS.text }}>Warehouse Operative</h1>
-      <div style={{ display: "flex", gap: 16, marginTop: 12, flexWrap: "wrap" }}>
+
+      <h1 style={{ ...( isDesktop ? T.heading2Lg : T.heading2), margin: `0 0 ${S.s2}px`, fontFamily: FONT, color: COLORS.text }}>Warehouse Operative</h1>
+
+      <div style={{ display: "flex", gap: S.m, flexWrap: "wrap", marginBottom: S.m }}>
         {[
           { icon: "💷", text: "£12.58/hr" },
           { icon: "📍", text: "Hounslow" },
           { icon: "🕐", text: "Full time", sub: "4 on / 4 off" },
           { icon: "📋", text: "12hr shifts" },
         ].map((f, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "center", gap: 5 }}>
-            <span style={{ fontSize: 14 }}>{f.icon}</span>
-            <span style={{ fontSize: 14, fontWeight: 700, color: COLORS.text }}>{f.text}</span>
-            {f.sub && <span style={{ fontSize: 12, color: COLORS.muted }}>({f.sub})</span>}
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: S.xs }}>
+            <span>{f.icon}</span>
+            <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{f.text}</span>
+            {f.sub && <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>({f.sub})</span>}
           </div>
         ))}
+      </div>
+
+      {/* Vacancy highlights — matches .vacancy-highlights */}
+      <div style={{ display: "flex", gap: S.s, flexWrap: "wrap" }}>
+        <VacancyHighlight label="Respectful managers" />
+        <VacancyHighlight label="Proper breaks" />
       </div>
     </div>
   );
@@ -341,38 +410,22 @@ export default function JobTriagePage() {
           detail="The listing doesn't require previous warehouse experience — just that you're reliable and comfortable with physical work." />
       </Section>
 
+      {/* Finding-statement rows — matches site's Workplace section */}
       <Section title="What's it really like here?" icon="🔍" badge={{ text: "5.2/10", bg: COLORS.amberBg, textColor: COLORS.amberText }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
-          {[
-            { label: "Respectful managers", pct: 72, status: "good" },
-            { label: "Proper breaks", pct: 82, status: "good" },
-            { label: "Stressed at work", pct: 71, status: "bad" },
-            { label: "No sick pay", pct: 86, status: "bad" },
-            { label: "Unpaid breaks", pct: 70, status: "bad" },
-            { label: "Easy to book holiday", pct: 83, status: "good" },
-          ].map((v) => (
-            <div key={v.label} style={{ padding: "8px 10px", borderRadius: 4, background: v.status === "good" ? COLORS.greenBg : COLORS.redBg, fontSize: 12 }}>
-              <div style={{ fontWeight: 700, color: v.status === "good" ? COLORS.green : COLORS.red, marginBottom: 3 }}>{v.status === "good" ? "✓" : "✕"} {v.pct}%</div>
-              <div style={{ color: COLORS.muted, lineHeight: 1.3 }}>{v.label}</div>
-            </div>
-          ))}
-        </div>
-        <div style={{ marginTop: 4, padding: "10px 12px", background: COLORS.redBg, border: `1px solid ${COLORS.redBorder}`, borderRadius: 4 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.red, marginBottom: 4 }}>⚠ Red flags from workers</div>
-          <ul style={{ margin: 0, paddingLeft: 16, fontSize: 13, color: COLORS.muted, lineHeight: 1.6 }}>
+        <FindingRow status="good" statement="Most people feel treated with respect" />
+        <FindingRow status="good" statement="Most people get proper breaks" />
+        <FindingRow status="good" statement="Most people find it easy to book holiday" />
+        <FindingRow status="bad" statement="Most people are stressed at work" />
+        <FindingRow status="bad" statement="Most people don't get proper sick pay" />
+        <FindingRow status="bad" statement="Most people work unpaid breaks" />
+        <FindingRow status="okay" statement="Only some people enjoy their job" />
+        <FindingRow status="bad" statement="Short shift notice — 1 week or less" />
+        <div style={{ padding: `${S.s}px ${S.m}px`, background: COLORS.redBg, border: `1px solid ${COLORS.redBorder}`, borderRadius: 4, marginTop: S.xs }}>
+          <div style={{ ...T.body2Bold, color: COLORS.red, marginBottom: S.xs, fontFamily: FONT }}>⚠ Red flags from workers</div>
+          <ul style={{ margin: 0, paddingLeft: S.m, ...T.body2, color: COLORS.muted, lineHeight: 1.6, fontFamily: FONT }}>
             <li>86% say no proper sick pay</li>
             <li>71% say the job is stressful</li>
             <li>80% say head office is disconnected</li>
-            <li>Shift notice: 1 week or less (100% report this)</li>
-          </ul>
-        </div>
-        <div style={{ padding: "10px 12px", background: COLORS.greenBg, border: `1px solid ${COLORS.greenBorder}`, borderRadius: 4 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.green, marginBottom: 4 }}>✓ Good things workers mention</div>
-          <ul style={{ margin: 0, paddingLeft: 16, fontSize: 13, color: COLORS.muted, lineHeight: 1.6 }}>
-            <li>Managers are mostly respectful (72%)</li>
-            <li>Proper breaks taken (82%)</li>
-            <li>Easy to book holiday (83%)</li>
-            <li>No shift changes at short notice (69%)</li>
           </ul>
         </div>
       </Section>
@@ -381,14 +434,14 @@ export default function JobTriagePage() {
         <ReviewSnippet best={true} quote="Flexible when needed" score={8.2} role="Agency worker" date="Sep 2024" />
         <ReviewSnippet best={true} quote="Good team and good training" score={8.0} role="Branch manager" date="Jun 2024" />
         <ReviewSnippet best={false} quote="The managers, the stress levels" score={1.8} role="Administrator" date="Jul 2023" />
-        <div style={{ fontSize: 13, color: COLORS.accent, fontWeight: 700, cursor: "pointer", textAlign: "center", padding: "4px 0" }}>See all 53 reviews →</div>
+        <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "center", padding: `${S.xs}px 0`, fontFamily: FONT }}>See all 53 reviews →</div>
       </Section>
 
       <Section title="Full job details" icon="📄">
-        <div style={{ fontSize: 14, lineHeight: 1.7, color: COLORS.muted }}>
-          <p style={{ margin: "0 0 8px" }}><strong style={{ color: COLORS.text }}>What you'll do:</strong> Sorting, scanning, and processing mail bags for international dispatch. Heavy lifting up to 30kg. Working with a leading international mail and parcel courier.</p>
-          <p style={{ margin: "0 0 8px" }}><strong style={{ color: COLORS.text }}>Shifts:</strong> 4 on / 4 off rotation. Three possible start times: 6am–6pm, 8am–8pm, or 10am–10pm (12-hour shifts).</p>
-          <p style={{ margin: "0 0 8px" }}><strong style={{ color: COLORS.text }}>You'll need:</strong> Valid photo ID, 5-year address history, willingness to get DBS check and attend Aviation Security Course (both paid by employer).</p>
+        <div style={{ ...T.body1, color: COLORS.muted, lineHeight: 1.7, fontFamily: FONT }}>
+          <p style={{ margin: `0 0 ${S.s}px` }}><strong style={{ color: COLORS.text }}>What you'll do:</strong> Sorting, scanning, and processing mail bags for international dispatch. Heavy lifting up to 30kg.</p>
+          <p style={{ margin: `0 0 ${S.s}px` }}><strong style={{ color: COLORS.text }}>Shifts:</strong> 4 on / 4 off rotation. Starts 6am–6pm, 8am–8pm, or 10am–10pm (12-hour shifts).</p>
+          <p style={{ margin: `0 0 ${S.s}px` }}><strong style={{ color: COLORS.text }}>You'll need:</strong> Valid photo ID, 5-year address history, DBS check and Aviation Security Course (both paid by employer).</p>
           <p style={{ margin: 0 }}><strong style={{ color: COLORS.text }}>Regulated by:</strong> Civil Aviation Authority (CAA) — that's why the background checks are strict.</p>
         </div>
       </Section>
@@ -397,15 +450,14 @@ export default function JobTriagePage() {
 
   return (
     <div style={{ minHeight: "100vh", background: COLORS.bg, fontFamily: FONT, color: COLORS.text }}>
-      {/* Sticky top bar */}
-      <div style={{ position: "sticky", top: 0, zIndex: 50, background: COLORS.bg, borderBottom: `1px solid ${COLORS.border}`, padding: "10px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ fontSize: 14, fontWeight: 700, color: COLORS.text }}>← Back to results</span>
-        <span style={{ fontSize: 14, fontWeight: 700, color: COLORS.accent }}>Breakroom</span>
+      {/* Top nav */}
+      <div style={{ position: "sticky", top: 0, zIndex: 50, background: COLORS.bg, borderBottom: `1px solid ${COLORS.border}`, padding: `${S.s2}px ${S.m}px`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>← Back to results</span>
+        <span style={{ ...T.body1Bold, color: COLORS.accent, fontFamily: FONT }}>Breakroom</span>
       </div>
 
       {isDesktop ? (
-        /* ── Desktop two-column layout ── */
-        <div style={{ maxWidth: 1160, margin: "0 auto", padding: "0 32px 60px", display: "grid", gridTemplateColumns: "1fr 400px", gap: 48, alignItems: "start" }}>
+        <div style={{ maxWidth: 1160, margin: "0 auto", padding: `0 ${S.l}px ${S.xl}px`, display: "grid", gridTemplateColumns: "1fr 400px", gap: S.xl, alignItems: "start" }}>
           <div>
             {heroBlock}
             {sectionsBlock}
@@ -413,30 +465,28 @@ export default function JobTriagePage() {
           <DesktopSidebar personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} />
         </div>
       ) : (
-        /* ── Mobile single-column layout ── */
-        <div style={{ maxWidth: 480, margin: "0 auto", padding: "0 16px 120px" }}>
+        <div style={{ maxWidth: 480, margin: "0 auto", padding: `0 ${S.m}px ${S.xxl}px` }}>
           {heroBlock}
           {sectionsBlock}
-
-          <div style={{ marginTop: 24, marginBottom: 8 }}>
+          <div style={{ marginTop: S.m2, marginBottom: S.s }}>
             <AlternativesList personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} />
             <PersonaliseNudge personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} />
           </div>
         </div>
       )}
 
-      {/* Mobile-only sticky bottom bar */}
+      {/* Mobile sticky bottom bar */}
       {!isDesktop && (
-        <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 40, background: "rgba(250,248,244,0.95)", backdropFilter: "blur(12px)", borderTop: `1px solid ${COLORS.border}`, padding: "12px 16px" }}>
-          <div style={{ maxWidth: 480, margin: "0 auto", display: "flex", gap: 10 }}>
-            <button style={{ flex: 1, padding: "12px", borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: FONT, transition: "opacity 0.15s" }}
+        <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 40, background: "rgba(250,248,244,0.95)", backdropFilter: "blur(12px)", borderTop: `1px solid ${COLORS.border}`, padding: `${S.s2}px ${S.m}px` }}>
+          <div style={{ maxWidth: 480, margin: "0 auto", display: "flex", gap: S.s2 }}>
+            <button style={{ flex: 1, padding: S.s2, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}
               onMouseEnter={(e) => e.target.style.opacity = "0.85"} onMouseLeave={(e) => e.target.style.opacity = "1"}>
               Apply →
             </button>
-            <button style={{ padding: "12px 16px", borderRadius: 4, border: `1.5px solid ${COLORS.border}`, background: COLORS.card, fontSize: 14, cursor: "pointer", fontFamily: FONT, color: COLORS.text, fontWeight: 500 }}>
+            <button style={{ padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1.5px solid ${COLORS.border}`, background: COLORS.card, ...T.body2Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
               ☆ Save
             </button>
-            <button onClick={() => setDrawerOpen(true)} style={{ padding: "12px 16px", borderRadius: 4, border: `1.5px solid ${COLORS.accent}`, background: COLORS.accentBg, fontSize: 13, cursor: "pointer", fontFamily: FONT, color: COLORS.accent, fontWeight: 700, whiteSpace: "nowrap" }}>
+            <button onClick={() => setDrawerOpen(true)} style={{ padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1.5px solid ${COLORS.accent}`, background: COLORS.accentBg, ...T.body2Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.accent, whiteSpace: "nowrap" }}>
               Match me
             </button>
           </div>
