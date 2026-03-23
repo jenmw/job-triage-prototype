@@ -384,9 +384,10 @@ export default function JobTriagePage() {
           </button>
           <button onClick={() => setDrawerOpen(true)} style={{
             padding: "12px 16px", borderRadius: 10, border: `1.5px solid ${COLORS.accent}`,
-            background: COLORS.accentBg, fontSize: 14, cursor: "pointer", fontFamily: "inherit", color: COLORS.accent, fontWeight: 600,
+            background: COLORS.accentBg, fontSize: 13, cursor: "pointer", fontFamily: "inherit", 
+            color: COLORS.accent, fontWeight: 600, whiteSpace: "nowrap",
           }}>
-            🎯
+            Match me
           </button>
         </div>
       </div>
