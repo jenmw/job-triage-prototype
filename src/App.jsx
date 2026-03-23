@@ -21,7 +21,7 @@ const COLORS = {
 };
 
 const useIsDesktop = () => {
-  const [isDesktop, setIsDesktop] = useState(() => typeof window \!== "undefined" && window.innerWidth >= 900);
+  const [isDesktop, setIsDesktop] = useState(() => typeof window !== "undefined" && window.innerWidth >= 900);
   useEffect(() => {
     const handler = () => setIsDesktop(window.innerWidth >= 900);
     window.addEventListener("resize", handler);
