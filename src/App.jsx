@@ -410,23 +410,47 @@ export default function JobTriagePage() {
           detail="The listing doesn't require previous warehouse experience — just that you're reliable and comfortable with physical work." />
       </Section>
 
-      {/* Finding-statement rows — matches site's Workplace section */}
       <Section title="What's it really like here?" icon="🔍" badge={{ text: "5.2/10", bg: COLORS.amberBg, textColor: COLORS.amberText }}>
-        <FindingRow status="good" statement="Most people feel treated with respect" />
-        <FindingRow status="good" statement="Most people get proper breaks" />
-        <FindingRow status="good" statement="Most people find it easy to book holiday" />
-        <FindingRow status="bad" statement="Most people are stressed at work" />
-        <FindingRow status="bad" statement="Most people don't get proper sick pay" />
-        <FindingRow status="bad" statement="Most people work unpaid breaks" />
-        <FindingRow status="okay" statement="Only some people enjoy their job" />
-        <FindingRow status="bad" statement="Short shift notice — 1 week or less" />
-        <div style={{ padding: `${S.s}px ${S.m}px`, background: COLORS.redBg, border: `1px solid ${COLORS.redBorder}`, borderRadius: 4, marginTop: S.xs }}>
-          <div style={{ ...T.body2Bold, color: COLORS.red, marginBottom: S.xs, fontFamily: FONT }}>⚠ Red flags from workers</div>
-          <ul style={{ margin: 0, paddingLeft: S.m, ...T.body2, color: COLORS.muted, lineHeight: 1.6, fontFamily: FONT }}>
-            <li>86% say no proper sick pay</li>
-            <li>71% say the job is stressful</li>
-            <li>80% say head office is disconnected</li>
-          </ul>
+        {/* Red flags group */}
+        <div style={{ ...T.smallcaps, color: COLORS.red, marginBottom: S.xs, fontFamily: FONT }}>Red flags</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: S.xs }}>
+          {[
+            { pct: 86, label: "No sick pay" },
+            { pct: 71, label: "Stressful work" },
+            { pct: 70, label: "Unpaid breaks" },
+            { pct: 80, label: "Disconnected management" },
+          ].map((v) => (
+            <div key={v.label} style={{ padding: `${S.s}px ${S.s2}px`, borderRadius: 4, background: COLORS.redBg, border: `1px solid ${COLORS.redBorder}` }}>
+              <div style={{ display: "flex", alignItems: "center", gap: S.xs, marginBottom: 2 }}>
+                <span style={{ width: 8, height: 8, borderRadius: "50%", background: COLORS.red, flexShrink: 0, display: "inline-block" }} />
+                <span style={{ ...T.body2Bold, color: COLORS.red, fontFamily: FONT }}>{v.pct}%</span>
+              </div>
+              <div style={{ ...T.body2, color: COLORS.muted, lineHeight: 1.3, fontFamily: FONT }}>{v.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Good things group */}
+        <div style={{ ...T.smallcaps, color: COLORS.green, marginTop: S.s2, marginBottom: S.xs, fontFamily: FONT }}>Good things</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: S.xs }}>
+          {[
+            { pct: 72, label: "Respectful managers" },
+            { pct: 82, label: "Proper breaks" },
+            { pct: 83, label: "Easy to book holiday" },
+            { pct: 69, label: "Stable shift patterns" },
+          ].map((v) => (
+            <div key={v.label} style={{ padding: `${S.s}px ${S.s2}px`, borderRadius: 4, background: COLORS.greenBg, border: `1px solid ${COLORS.greenBorder}` }}>
+              <div style={{ display: "flex", alignItems: "center", gap: S.xs, marginBottom: 2 }}>
+                <span style={{ width: 8, height: 8, borderRadius: "50%", background: COLORS.green, flexShrink: 0, display: "inline-block" }} />
+                <span style={{ ...T.body2Bold, color: COLORS.green, fontFamily: FONT }}>{v.pct}%</span>
+              </div>
+              <div style={{ ...T.body2, color: COLORS.muted, lineHeight: 1.3, fontFamily: FONT }}>{v.label}</div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "center", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.xs }}>
+          See all findings from workers →
         </div>
       </Section>
 
