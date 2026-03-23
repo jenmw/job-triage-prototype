@@ -54,7 +54,7 @@ const Section = ({ title, icon, children, defaultOpen = false, badge }) => {
   return (
     <div style={{ borderBottom: `1px solid ${COLORS.border}` }}>
       <button
-        onClick={() => setOpen(\!open)}
+        onClick={() => setOpen(!open)}
         style={{ width: "100%", padding: "14px 0", background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontFamily: "inherit" }}
       >
         <span style={{ fontSize: 16 }}>{icon}</span>
@@ -405,7 +405,7 @@ export default function JobTriagePage() {
       )}
 
       {/* Mobile-only sticky bottom bar */}
-      {\!isDesktop && (
+      {!isDesktop && (
         <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 40, background: "rgba(250,247,242,0.92)", backdropFilter: "blur(12px)", borderTop: `1px solid ${COLORS.border}`, padding: "12px 16px" }}>
           <div style={{ maxWidth: 480, margin: "0 auto", display: "flex", gap: 10 }}>
             <button style={{ flex: 1, padding: "12px", borderRadius: 10, border: "none", background: COLORS.text, color: "#fff", fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "inherit", transition: "opacity 0.15s" }}
