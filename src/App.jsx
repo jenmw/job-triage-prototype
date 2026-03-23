@@ -178,7 +178,7 @@ const AltJob = ({ title, company, pay, rating, location, badge, highlight }) => 
     onMouseLeave={(e) => { e.currentTarget.style.borderColor = COLORS.border; }}
   >
     {badge && <div style={{ position: "absolute", top: -8, right: S.s2, ...T.smallcaps, padding: `${S.xs}px ${S.s}px`, borderRadius: 100, background: badge.bg, color: badge.color, border: `1px solid ${badge.border}` }}>{badge.text}</div>}
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: S.s2 }}>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: S.s2, paddingTop: badge ? S.s : 0 }}>
       <div style={{ flex: 1 }}>
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{title}</div>
         <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontFamily: FONT }}>{company} · {location}</div>
@@ -188,7 +188,7 @@ const AltJob = ({ title, company, pay, rating, location, badge, highlight }) => 
         <div style={{ ...T.body2Bold, color: rating >= 7 ? COLORS.green : rating >= 5.5 ? COLORS.amberText : COLORS.muted, fontFamily: FONT }}>{rating}/10</div>
       </div>
     </div>
-    {highlight && <div style={{ ...T.body2, color: COLORS.green, fontWeight: 500, marginTop: S.s, fontFamily: FONT }}>{highlight}</div>}
+    {highlight && <div style={{ ...T.body2Bold, color: COLORS.muted, marginTop: S.s, fontFamily: FONT }}>{highlight}</div>}
   </div>
 );
 
@@ -299,33 +299,10 @@ const PersonaliseNudge = ({ personalised, onOpenDrawer }) =>
 
 const DesktopSidebar = ({ personalised, onOpenDrawer }) => (
   <div style={{ position: "sticky", top: 48, alignSelf: "start", display: "flex", flexDirection: "column", gap: S.m }}>
-    {/* Job summary card */}
-    <div style={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 5, padding: `${S.m2}px ${S.m2}px ${S.m}px`, boxShadow: SHADOW }}>
-      <div style={{ display: "flex", gap: S.s2, alignItems: "flex-start", marginBottom: S.m }}>
-        <RatingDial score={5.2} displaySize={52} />
-        <div>
-          <div style={{ ...T.lead2, fontFamily: FONT, color: COLORS.text, lineHeight: "1.2" }}>Warehouse Operative</div>
-          <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontFamily: FONT }}>The Best Connection · Agency</div>
-          <div style={{ ...T.body2, color: COLORS.amberText, fontWeight: 500, marginTop: 2, fontFamily: FONT }}>Mixed reviews from 53 workers</div>
-        </div>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: S.s, marginBottom: S.m }}>
-        {[
-          { icon: "💷", label: "Pay", value: "£12.58/hr" },
-          { icon: "📍", label: "Location", value: "Hounslow" },
-          { icon: "🕐", label: "Type", value: "Full time" },
-          { icon: "📋", label: "Shifts", value: "4 on / 4 off" },
-        ].map((f) => (
-          <div key={f.label} style={{ padding: `${S.s}px ${S.s2}px`, background: COLORS.bg, borderRadius: 4 }}>
-            <div style={{ ...T.smallcaps, color: COLORS.muted, marginBottom: 2, fontFamily: FONT }}>{f.icon} {f.label}</div>
-            <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{f.value}</div>
-          </div>
-        ))}
-      </div>
-
-      <div style={{ padding: `${S.s}px ${S.s2}px`, background: COLORS.amberBg, border: `1px solid ${COLORS.amberBorder}`, borderRadius: 4, ...T.body2, color: COLORS.amberText, textAlign: "center", marginBottom: S.m, fontFamily: FONT }}>
-        ⚠ Mixed employer — check pay & hours before applying
+    {/* CTA card */}
+    <div style={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 5, padding: `${S.m}px ${S.m2}px ${S.m}px`, boxShadow: SHADOW }}>
+      <div style={{ padding: `${S.s2}px ${S.s2}px`, background: COLORS.amberBg, border: `1px solid ${COLORS.amberBorder}`, borderRadius: 4, ...T.body2, color: COLORS.amberText, marginBottom: S.m, fontFamily: FONT }}>
+        ⚠ <strong>Rated below average by workers.</strong> Pay and working conditions have mixed reviews — read the full picture before applying.
       </div>
 
       <button style={{ width: "100%", padding: S.s2, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT, marginBottom: S.s }}
@@ -360,12 +337,17 @@ export default function JobTriagePage() {
   const heroBlock = (
     <div style={{ paddingTop: S.m2, paddingBottom: S.m }}>
       <div style={{ display: "flex", alignItems: "flex-start", gap: S.s2, marginBottom: S.m }}>
-        <RatingDial score={5.2} displaySize={isDesktop ? 52 : 44} />
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: S.xs, flexShrink: 0 }}>
+          <RatingDial score={5.2} displaySize={isDesktop ? 52 : 44} />
+          <div style={{ ...T.smallcaps, color: COLORS.muted, fontFamily: FONT, textAlign: "center" }}>Breakroom<br/>Rating</div>
+        </div>
         <div>
           <div style={{ ...T.body2, color: COLORS.text, fontFamily: FONT }}>
             The Best Connection <span style={{ color: COLORS.muted }}>· Agency</span>
           </div>
-          <div style={{ ...T.body2, color: COLORS.amberText, fontWeight: 500, fontFamily: FONT }}>Mixed reviews from 53 workers</div>
+          <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginTop: S.xs }}>
+            Rated 5.2 out of 10, based on 53 employees who took the Breakroom Quiz
+          </div>
         </div>
       </div>
 
