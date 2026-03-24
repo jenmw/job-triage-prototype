@@ -256,20 +256,27 @@ const IconApply = ({ color = COLORS.text }) => (
   </svg>
 );
 
+// ─── Thumbs-up SVG icon (matches thumbs-up--16px-bold--green from site) ─────────
+const IconThumbsUp = () => (
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "inline-block", verticalAlign: "middle", flexShrink: 0 }}>
+    <path d="M4.99686 8.00441L4.99687 14M4.99686 8.00441C4.99686 8.00441 5.61405 6.85734 6.05137 5.25823C6.4887 3.65913 6.55033 2.00281 6.55033 2.00281L7.24997 2.0028C7.24997 2.0028 8.36905 2.10084 8.85183 3.24997C9.33461 4.39912 9.00407 6.9988 9.00407 6.9988H13.0369C13.0369 6.9988 13.2863 6.98395 13.5358 7.08526C13.7853 7.18658 14.0015 7.58215 14.0015 7.83082C14.0015 8.07949 13.9682 8.41456 13.9682 8.41456L13.5217 12.9367C13.4718 13.2351 13.436 13.4081 13.2364 13.607C13.0368 13.8059 12.6826 14 12.35 14H4.99687M4.99686 8.00441L3.40049 8.00442C3.07112 8.00442 2.73261 8.00441 2.39997 8.33597C2.06733 8.66753 1.99997 9.01082 1.99997 9.34238L2.00719 12.6015C2.00719 12.9331 2.05967 13.2986 2.39231 13.6301C2.72495 13.9617 3.11387 14 3.44651 14H4.99687" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
+  </svg>
+);
+
 // ─── Vacancy highlight pill — matches .vacancy-highlights__highlight ───────────
 const VacancyHighlight = ({ label, onClick }) => (
   <span
     onClick={onClick}
     style={{
       ...T.body2Bold, borderRadius: 20, border: `2px solid ${COLORS.green}`,
-      color: COLORS.green, display: "inline-block", padding: "2px 10px",
-      whiteSpace: "nowrap", fontFamily: FONT,
+      color: COLORS.green, display: "inline-flex", alignItems: "center", gap: 5,
+      padding: "2px 10px", whiteSpace: "nowrap", fontFamily: FONT,
       cursor: onClick ? "pointer" : "default",
       textDecoration: onClick ? "underline" : "none",
       textDecorationColor: COLORS.greenBorder,
     }}
   >
-    👍 {label}
+    <IconThumbsUp /> {label}
   </span>
 );
 
@@ -381,7 +388,7 @@ const ReviewSnippet = ({ quote, score, role, date, best }) => (
 
 // ─── Alternative job card ──────────────────────────────────────────────────────
 const AltJob = ({ job, onClick }) => {
-  const { title, company, pay, rating, location, altBadge: badge, altHighlight: highlight } = job;
+  const { title, company, pay, rating, location, altBadge: badge, highlights } = job;
   return (
     <div
       onClick={onClick}
@@ -397,10 +404,17 @@ const AltJob = ({ job, onClick }) => {
         </div>
         <div style={{ textAlign: "right", flexShrink: 0 }}>
           <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{pay}</div>
-          <div style={{ ...T.body2Bold, color: rating >= 7 ? COLORS.green : rating >= 5.5 ? COLORS.amberText : COLORS.red, fontFamily: FONT }}>{rating}/10</div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: S.xs, marginTop: 2 }}>
+            <TinyRatingDial score={rating} />
+            <span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{rating.toFixed(1)}</span>
+          </div>
         </div>
       </div>
-      {highlight && <div style={{ ...T.body2Bold, color: COLORS.muted, marginTop: S.s, fontFamily: FONT }}>{highlight}</div>}
+      {highlights && highlights.length > 0 && (
+        <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginTop: S.s }}>
+          {highlights.map((h) => <VacancyHighlight key={h} label={h} />)}
+        </div>
+      )}
     </div>
   );
 };
