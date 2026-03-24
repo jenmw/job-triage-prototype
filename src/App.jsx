@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const FONT = "'CeraPro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
@@ -257,8 +257,18 @@ const IconApply = ({ color = COLORS.text }) => (
 );
 
 // ─── Vacancy highlight pill — matches .vacancy-highlights__highlight ───────────
-const VacancyHighlight = ({ label }) => (
-  <span style={{ ...T.body2Bold, borderRadius: 20, border: `2px solid ${COLORS.green}`, color: COLORS.green, display: "inline-block", padding: "2px 10px", whiteSpace: "nowrap", fontFamily: FONT }}>
+const VacancyHighlight = ({ label, onClick }) => (
+  <span
+    onClick={onClick}
+    style={{
+      ...T.body2Bold, borderRadius: 20, border: `2px solid ${COLORS.green}`,
+      color: COLORS.green, display: "inline-block", padding: "2px 10px",
+      whiteSpace: "nowrap", fontFamily: FONT,
+      cursor: onClick ? "pointer" : "default",
+      textDecoration: onClick ? "underline" : "none",
+      textDecorationColor: COLORS.greenBorder,
+    }}
+  >
     👍 {label}
   </span>
 );
@@ -299,10 +309,11 @@ const Signal = ({ status, label, detail, subtext }) => {
 };
 
 // ─── Collapsible section ───────────────────────────────────────────────────────
-const Section = ({ title, icon, children, defaultOpen = false, badge }) => {
+const Section = ({ title, icon, children, defaultOpen = false, badge, forceOpen, sectionRef }) => {
   const [open, setOpen] = useState(defaultOpen);
+  useEffect(() => { if (forceOpen) setOpen(true); }, [forceOpen]);
   return (
-    <div style={{ borderBottom: `1px solid ${COLORS.border}` }}>
+    <div ref={sectionRef} style={{ borderBottom: `1px solid ${COLORS.border}` }}>
       <button onClick={() => setOpen(!open)} style={{ width: "100%", padding: `${S.m}px 0`, background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: S.s, fontFamily: FONT }}>
         {icon}
         <span style={{ ...T.body1Bold, color: COLORS.text, flex: 1, textAlign: "left", fontFamily: FONT }}>{title}</span>
@@ -485,6 +496,9 @@ export default function JobTriagePage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [personalised, setPersonalised] = useState(false);
   const [selectedJobIdx, setSelectedJobIdx] = useState(0);
+  const [findingsForceOpen, setFindingsForceOpen] = useState(false);
+  const [highlightFinding, setHighlightFinding] = useState(null);
+  const findingsSectionRef = useRef(null);
   const isDesktop = useIsDesktop();
 
   const job = JOBS[selectedJobIdx];
@@ -493,7 +507,23 @@ export default function JobTriagePage() {
 
   const handleJobSelect = (idx) => {
     setSelectedJobIdx(idx);
+    setFindingsForceOpen(false);
+    setHighlightFinding(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handlePillClick = (label) => {
+    setFindingsForceOpen(true);
+    setHighlightFinding(label);
+    // Wait for accordion to open (350ms transition) before scrolling
+    setTimeout(() => {
+      if (findingsSectionRef.current) {
+        const y = findingsSectionRef.current.getBoundingClientRect().top + window.scrollY - 60;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      }
+    }, 380);
+    // Clear highlight after 2s
+    setTimeout(() => setHighlightFinding(null), 2400);
   };
 
   const heroBlock = (
@@ -533,7 +563,7 @@ export default function JobTriagePage() {
 
       {/* Vacancy highlights — matches .vacancy-highlights */}
       <div style={{ display: "flex", gap: S.s, flexWrap: "wrap" }}>
-        {job.highlights.map((h) => <VacancyHighlight key={h} label={h} />)}
+        {job.highlights.map((h) => <VacancyHighlight key={h} label={h} onClick={() => handlePillClick(h)} />)}
       </div>
     </div>
   );
@@ -554,7 +584,7 @@ export default function JobTriagePage() {
           detail="The listing doesn't require previous warehouse experience — just that you're reliable and comfortable with physical work." />
       </Section>
 
-      <Section title="What's it really like here?" icon={<IconRanking />} badge={{ text: `${rating.toFixed(1)}/10`, ...ratingColors }}>
+      <Section title="What's it really like here?" icon={<IconRanking />} badge={{ text: `${rating.toFixed(1)}/10`, ...ratingColors }} forceOpen={findingsForceOpen} sectionRef={findingsSectionRef}>
         {/* Red flags group */}
         <div style={{ ...T.smallcaps, color: COLORS.red, marginBottom: S.xs, fontFamily: FONT }}>Red flags</div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: S.xs }}>
@@ -582,15 +612,24 @@ export default function JobTriagePage() {
             { pct: 82, label: "Proper breaks" },
             { pct: 83, label: "Easy to book holiday" },
             { pct: 69, label: "Stable shift patterns" },
-          ].map((v) => (
-            <div key={v.label} style={{ padding: `${S.s}px ${S.s2}px`, borderRadius: 4, background: COLORS.greenBg, border: `1px solid ${COLORS.greenBorder}` }}>
-              <div style={{ display: "flex", alignItems: "center", gap: S.xs, marginBottom: 2 }}>
-                <span style={{ width: 8, height: 8, borderRadius: "50%", background: COLORS.green, flexShrink: 0, display: "inline-block" }} />
-                <span style={{ ...T.body2Bold, color: COLORS.green, fontFamily: FONT }}>{v.pct}%</span>
+          ].map((v) => {
+            const lit = highlightFinding === v.label;
+            return (
+              <div key={v.label} style={{
+                padding: `${S.s}px ${S.s2}px`, borderRadius: 4,
+                background: lit ? COLORS.green + "30" : COLORS.greenBg,
+                border: `1px solid ${lit ? COLORS.green : COLORS.greenBorder}`,
+                boxShadow: lit ? `0 0 0 2px ${COLORS.green}` : "none",
+                transition: "background 0.3s, border-color 0.3s, box-shadow 0.3s",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: S.xs, marginBottom: 2 }}>
+                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: COLORS.green, flexShrink: 0, display: "inline-block" }} />
+                  <span style={{ ...T.body2Bold, color: COLORS.green, fontFamily: FONT }}>{v.pct}%</span>
+                </div>
+                <div style={{ ...T.body2, color: COLORS.muted, lineHeight: 1.3, fontFamily: FONT }}>{v.label}</div>
               </div>
-              <div style={{ ...T.body2, color: COLORS.muted, lineHeight: 1.3, fontFamily: FONT }}>{v.label}</div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "center", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.xs }}>
