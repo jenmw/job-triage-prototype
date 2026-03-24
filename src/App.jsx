@@ -417,7 +417,7 @@ const AlternativesList = ({ currentJobIdx, personalised, onOpenDrawer, onJobSele
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: S.xs }}>
       <h2 style={{ ...T.lead1, margin: 0, fontFamily: FONT, color: COLORS.text }}>Similar jobs nearby</h2>
       <button onClick={onOpenDrawer} style={{ ...T.body2Bold, color: COLORS.accent, background: "none", border: "none", cursor: "pointer", fontFamily: FONT, textDecoration: "underline" }}>
-        Match me ✎
+        Match me
       </button>
     </div>
     <p style={{ ...T.body2, color: COLORS.muted, margin: `0 0 ${S.m}px`, fontFamily: FONT }}>
@@ -466,7 +466,7 @@ const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect
           ☆ Save for later
         </button>
         <button onClick={onOpenDrawer} style={{ flex: 1, padding: S.s2, borderRadius: 4, border: `1.5px solid ${COLORS.accent}`, background: COLORS.accentBg, ...T.body2Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.accent }}>
-          Match me ✎
+          Match me
         </button>
       </div>
     </div>
