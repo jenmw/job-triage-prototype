@@ -290,8 +290,9 @@ const FindingRow = ({ status, statement }) => {
 };
 
 // ─── Finding tile (expandable compact card for the findings grid) ──────────────
-const FindingTile = ({ pct, label, primary, secondary, why, variant, lit }) => {
+const FindingTile = ({ pct, label, primary, secondary, why, variant, lit, forceOpen }) => {
   const [open, setOpen] = useState(false);
+  useEffect(() => { if (forceOpen) setOpen(true); }, [forceOpen]);
   const isRed = variant === "red";
   const dotColor   = isRed ? COLORS.red   : COLORS.green;
   const pctColor   = isRed ? COLORS.red   : COLORS.green;
@@ -685,7 +686,7 @@ export default function JobTriagePage() {
               why: "At a good job, you get plenty of notice about when you're working. This makes it easy for you to plan the rest of your life, as well as your finances, because you know how much you'll be working and when.",
             },
           ].map((v) => (
-            <FindingTile key={v.label} {...v} variant="green" lit={highlightFinding === v.label} />
+            <FindingTile key={v.label} {...v} variant="green" lit={highlightFinding === v.label} forceOpen={highlightFinding === v.label} />
           ))}
         </div>
 
