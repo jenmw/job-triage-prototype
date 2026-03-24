@@ -59,6 +59,17 @@ const JOBS = [
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/56629861",
     altBadge: null,
     altHighlight: null,
+    jd: [
+      { label: "Job title", text: "Warehouse Operative" },
+      { label: "Employer", text: "The Best Connection (Employment Agency)" },
+      { label: "Pay", text: "£12.58 per hour" },
+      { label: "Location", text: "Hounslow, TW6 (near Heathrow Airport)" },
+      { label: "Hours", text: "Full time — 4 on / 4 off rotation, 12-hour shifts (6am–6pm, 8am–8pm, or 10am–10pm)" },
+      { label: "Role description", text: "We are recruiting Warehouse Operatives on behalf of a major international logistics facility based near Heathrow Airport. You will be responsible for sorting, scanning, and processing mail bags and parcels for international dispatch. Working in a fast-paced, physically demanding environment, you'll be part of a team that keeps global supply chains moving." },
+      { label: "Responsibilities", text: "Sort and scan incoming and outgoing mail bags; Process items for international dispatch using handheld scanners; Maintain a safe and organised work area; Meet daily throughput targets; Report any discrepancies or damaged items." },
+      { label: "Requirements", text: "Valid photo ID; 5-year address history (for security vetting); Must be able to pass a DBS check and CAA Aviation Security Course (funded by employer); Comfortable with heavy lifting up to 30kg; Ability to work rotating 12-hour shifts." },
+      { label: "Please note", text: "Due to the location's proximity to Heathrow Airport, this role is regulated by the Civil Aviation Authority (CAA). All candidates must successfully complete an Aviation Security background check before starting." },
+    ],
   },
   {
     id: 1,
@@ -76,6 +87,17 @@ const JOBS = [
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/67890",
     altBadge: "↑ £0.67/hr",
     altReason: { text: "Better rated (7.4 vs 5.2) · More pay" },
+    jd: [
+      { label: "Job title", text: "Warehouse Operative" },
+      { label: "Employer", text: "Gap Personnel (Employment Agency)" },
+      { label: "Pay", text: "£13.25–£17.25 per hour (including shift premiums)" },
+      { label: "Location", text: "London (various sites)" },
+      { label: "Hours", text: "Full time, 8-hour shifts — days and nights available" },
+      { label: "Role description", text: "Gap Personnel are recruiting Warehouse Operatives for immediate start positions across multiple sites in London. Whether you're experienced in a warehouse environment or looking for your first role, we want to hear from you. We offer weekly pay and ongoing placements." },
+      { label: "Responsibilities", text: "Picking and packing orders to meet accuracy and speed targets; Loading and unloading vehicles; Using RF scanners; Stock replenishment and rotation; Keeping work areas clean and tidy." },
+      { label: "Requirements", text: "Previous warehouse experience preferred but not essential; Able to work in a team environment; Comfortable standing for long periods; Reliable and punctual; Must have the right to work in the UK." },
+      { label: "Benefits", text: "Competitive hourly rate with shift premiums; Weekly pay; Holiday pay accrual; Opportunity for temp-to-perm positions." },
+    ],
   },
   {
     id: 2,
@@ -93,6 +115,17 @@ const JOBS = [
     listingUrl: "https://www.reed.co.uk/jobs/logistics-operator/11111",
     altBadge: "↑ £1.66/hr",
     altReason: null,
+    jd: [
+      { label: "Job title", text: "Logistics Operator" },
+      { label: "Employer", text: "Shorterm Group (Employment Agency)" },
+      { label: "Pay", text: "£14.24–£18.37 per hour" },
+      { label: "Location", text: "London SE25" },
+      { label: "Hours", text: "Full time, day shifts" },
+      { label: "Role description", text: "Shorterm Group are looking for experienced Logistics Operators to join a busy distribution centre in south-east London. This is a fast-paced role requiring attention to detail and the ability to work to tight deadlines. Immediate start available for the right candidates." },
+      { label: "Responsibilities", text: "Receiving, processing, and dispatching stock; Operating warehouse management systems (WMS); Coordinating with drivers and third-party logistics partners; Ensuring accurate inventory records; Participating in stock takes." },
+      { label: "Requirements", text: "Previous logistics or warehouse experience essential; Familiarity with WMS software desirable; Strong numeracy and communication skills; Ability to work independently and as part of a team; Forklift licence advantageous but not required." },
+      { label: "Benefits", text: "Enhanced hourly rate; Daytime hours only; 28 days holiday (pro rata); Consistent shifts." },
+    ],
   },
   {
     id: 3,
@@ -110,6 +143,17 @@ const JOBS = [
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/22222",
     altBadge: "↑ £2.11/hr",
     altReason: { text: "Part time available · £2.11/hr more" },
+    jd: [
+      { label: "Job title", text: "Warehouse Operative (Part Time)" },
+      { label: "Employer", text: "Gi Group (Employment Agency)" },
+      { label: "Pay", text: "£14.69 per hour" },
+      { label: "Location", text: "London" },
+      { label: "Hours", text: "Part time, day shifts — flexible hours to suit" },
+      { label: "Role description", text: "Gi Group are recruiting part-time Warehouse Operatives for a well-established client based in London. This is an ideal opportunity for those who need flexible working arrangements. Positions are available immediately with the potential to increase hours." },
+      { label: "Responsibilities", text: "Manual handling of goods and materials; Picking orders to specification; Maintaining stock accuracy; Assisting with deliveries and collections; General warehouse housekeeping." },
+      { label: "Requirements", text: "Previous warehouse experience an advantage; Must be physically fit — role involves lifting; Flexible and adaptable approach to work; Good communication skills; Right to work in the UK required." },
+      { label: "Benefits", text: "Competitive part-time pay rate; Flexible shift patterns; Weekly pay; Holiday pay; Ongoing work with potential for increased hours." },
+    ],
   },
   {
     id: 4,
@@ -127,6 +171,18 @@ const JOBS = [
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operator/33333",
     altBadge: "Better rated",
     altReason: { text: "Top rated employer in this area (7.7/10)" },
+    jd: [
+      { label: "Job title", text: "Warehouse Operator (Night Shift)" },
+      { label: "Employer", text: "DSV UK Ltd (Direct Employer)" },
+      { label: "Pay", text: "Competitive — discussed at interview" },
+      { label: "Location", text: "Hounslow, TW4" },
+      { label: "Hours", text: "Full time, night shifts (10pm–6am or similar rotation)" },
+      { label: "Role description", text: "DSV is a leading global transport and logistics company and we're looking for Warehouse Operators to join our night shift team at our Hounslow facility. As part of our warehouse team, you'll play a key role in ensuring goods are processed accurately and on time, ready for next-day delivery." },
+      { label: "Responsibilities", text: "Processing inbound and outbound freight; Loading and unloading HGVs; Sorting and scanning parcels; Operating warehouse equipment; Ensuring health and safety compliance at all times." },
+      { label: "Requirements", text: "Previous warehouse or logistics experience preferred; Ability to work unsupervised on night shifts; Good attention to detail; Physically fit and able to lift up to 25kg; Counter-balance forklift licence desirable." },
+      { label: "About DSV", text: "DSV operates a global network of more than 75,000 employees across over 90 countries. We are committed to creating a positive working environment with strong career development opportunities." },
+      { label: "Benefits", text: "Competitive salary; Night shift allowance; 25 days holiday; Company pension; Career development and training." },
+    ],
   },
   {
     id: 5,
@@ -144,6 +200,17 @@ const JOBS = [
     listingUrl: "https://www.reed.co.uk/jobs/flt-driver/44444",
     altBadge: "↑ £0.42/hr",
     altReason: { text: "Same location · £0.42/hr more (£13.00 vs £12.58)" },
+    jd: [
+      { label: "Job title", text: "FLT Driver (Counterbalance / Reach)" },
+      { label: "Employer", text: "Manpower (Employment Agency)" },
+      { label: "Pay", text: "£13.00 per hour" },
+      { label: "Location", text: "Hounslow, Middlesex" },
+      { label: "Hours", text: "Full time, day shifts (Monday–Friday)" },
+      { label: "Role description", text: "Manpower are looking for an experienced FLT Driver to join a busy warehouse operation in Hounslow. You will be operating counterbalance and reach trucks in a fast-paced distribution environment. This is a temp-to-perm opportunity for the right candidate." },
+      { label: "Responsibilities", text: "Operating counterbalance and reach forklift trucks safely; Loading and unloading vehicles; Moving stock around the warehouse; Checking goods in and out; Maintaining accurate records." },
+      { label: "Requirements", text: "Valid RTITB or ITSSAR forklift licence (counterbalance essential, reach desirable); Minimum 1 year's FLT experience; Ability to work in a team; Good attention to detail; Physically fit; No criminal convictions." },
+      { label: "Benefits", text: "Competitive pay rate; Monday–Friday days — no weekend work; Weekly pay; Holiday pay; Temp-to-perm opportunity." },
+    ],
   },
 ];
 
@@ -381,7 +448,7 @@ const FindingTile = ({ pct, label, heading, primary, secondary, why, variant, li
 
 // ─── Signal row — matches .finding-group__finding linear style ─────────────────
 // White card container wraps all signals in a section; each row has a coloured dot
-const Signal = ({ status, label, detail, subtext, isLast }) => {
+const Signal = ({ status, label, detail, subtext, subtextClick, isLast }) => {
   const dot = status === "good" ? COLORS.green : status === "warning" ? COLORS.amber : COLORS.red;
   return (
     <div style={{ fontSize: 16, lineHeight: "22px", fontWeight: 500, color: COLORS.text, padding: `${S.m}px 0`, borderBottom: isLast ? "none" : "1px solid rgba(50,50,50,0.1)", position: "relative" }}>
@@ -390,7 +457,11 @@ const Signal = ({ status, label, detail, subtext, isLast }) => {
         <div style={{ flex: 1, fontFamily: FONT }}>
           <div>{label}</div>
           {detail && <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontWeight: 400 }}>{detail}</div>}
-          {subtext && <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontWeight: 400 }}>{subtext}</div>}
+          {subtext && (
+            <div onClick={subtextClick} style={{ ...T.body2, color: subtextClick ? COLORS.accent : COLORS.muted, marginTop: S.xs, fontWeight: 400, cursor: subtextClick ? "pointer" : "default" }}>
+              {subtext}
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -698,7 +769,7 @@ const ALL_FINDINGS = [
     ],
   },
   {
-    section: "Wellbeing",
+    section: "Workplace",
     findings: [
       {
         heading: "Most people are stressed",
@@ -715,25 +786,6 @@ const ALL_FINDINGS = [
         why: "A good job should have paid breaks. You should be paid for all your time at work, whether you're on a break or not.",
       },
       {
-        heading: "Most people get proper breaks",
-        opinion: "good",
-        primary: "Most people get proper breaks",
-        secondary: "82% of people report that they get to take proper breaks.",
-        why: "When you take a break it should be a proper rest. It should last the full duration and you shouldn't get pulled off it.",
-      },
-      {
-        heading: "Work can be physically demanding",
-        opinion: "okay",
-        primary: "Some people find the physical demands tough",
-        secondary: "48% of people say the physical demands of the job are harder than expected.",
-        why: "Warehouse work is physically demanding. A good employer provides the right equipment, training, and breaks to protect your health.",
-      },
-    ],
-  },
-  {
-    section: "Management",
-    findings: [
-      {
         heading: "Head office doesn't understand what's happening",
         opinion: "bad",
         primary: "Most people think head office doesn't understand what's happening where they work",
@@ -741,11 +793,25 @@ const ALL_FINDINGS = [
         why: "At a good job, the role of head office should be to support the people on the frontline serving customers. To do that properly, the company's owners or head office need to have a good understanding of what's really happening on the frontline.",
       },
       {
+        heading: "Most people get proper breaks",
+        opinion: "good",
+        primary: "Most people get proper breaks",
+        secondary: "82% of people report that they get to take proper breaks.",
+        why: "When you take a break it should be a proper rest. It should last the full duration and you shouldn't get pulled off it.",
+      },
+      {
         heading: "Most people feel treated with respect",
         opinion: "good",
         primary: "Most people feel treated with respect by their managers",
         secondary: "72% of people say they're treated with respect by their managers.",
         why: "Everyone should get treated with respect by their managers. You shouldn't feel discriminated against or bullied, and if you have a problem you should be able to speak to someone about it.",
+      },
+      {
+        heading: "Work can be physically demanding",
+        opinion: "okay",
+        primary: "Some people find the physical demands tough",
+        secondary: "48% of people say the physical demands of the job are harder than expected.",
+        why: "Warehouse work is physically demanding. A good employer provides the right equipment, training, and breaks to protect your health.",
       },
       {
         heading: "Some people experience bullying or harassment",
@@ -811,8 +877,8 @@ export default function JobTriagePage() {
 
       <h1 style={{ ...(isDesktop ? T.heading2Lg : T.heading2), margin: `0 0 ${S.s2}px`, fontFamily: FONT, color: COLORS.text }}>{job.title}</h1>
 
-      {/* .vacancy__details — max-width: 500px at tablet */}
-      <div style={{ maxWidth: 500, marginBottom: S.m }}>
+      {/* .vacancy-card__divider + .vacancy__details */}
+      <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", borderBottom: "1px solid rgba(50,50,50,0.1)", marginTop: S.m, marginBottom: S.m, paddingTop: S.m, paddingBottom: S.s, maxWidth: 500 }}>
         {[
           { icon: <IconPay />, text: job.pay },
           { icon: <IconLocation />, text: job.location },
@@ -851,12 +917,13 @@ export default function JobTriagePage() {
       <div style={{ borderBottom: `1px solid ${COLORS.border}`, paddingBottom: S.m }}>
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, padding: `${S.m}px 0` }}>Can you do this job?</div>
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `0 ${S.m}px` }}>
-          <Signal status="warning" label="Pay: below London Living Wage"
-            detail={`${job.pay} — the London Living Wage is £14.80/hr. 38% of workers here say they're paid below Living Wage.`}
-            subtext="That's ~£26,165/yr before tax on these shifts" />
-          <Signal status="warning" label="Commute: Hounslow (Twickenham area)"
-            detail="Near Heathrow. Shift times are 6am, 8am, or 10am starts — check early-morning transport from your area."
-            subtext="Tap to check commute from your postcode →" />
+          <Signal status="warning" label="Pay: below average for warehouse work in London"
+            detail={`${job.pay} — warehouse operatives in London typically earn £13.50–£16.00/hr. This role pays below the median and below the London Living Wage of £14.80/hr.`}
+            subtext="Based on ONS earnings data and Breakroom member reports" />
+          <Signal status="warning" label="Commute: Hounslow (near Heathrow)"
+            detail="Shift times are 6am, 8am, or 10am starts — check early-morning transport from your area."
+            subtext="Tap to check commute from your postcode →"
+            subtextClick={() => setDrawerOpen(true)} />
           <Signal status="warning" label="Requirements: 5-year background check + DBS"
             detail="You'll need 5 years of address history and references. CAA security clearance required (they pay for it). Must have valid photo ID."
             subtext="Heavy lifting up to 30kg required" />
@@ -1077,14 +1144,11 @@ export default function JobTriagePage() {
               </button>
               <h2 style={{ ...T.heading2, margin: `0 0 ${S.m2}px`, fontFamily: FONT, color: COLORS.text }}>Full job description</h2>
               <div style={{ ...T.body1, color: COLORS.muted, lineHeight: 1.7, fontFamily: FONT }}>
-                <p style={{ margin: `0 0 ${S.m}px` }}><strong style={{ color: COLORS.text }}>Job title:</strong> Warehouse Operative</p>
-                <p style={{ margin: `0 0 ${S.m}px` }}><strong style={{ color: COLORS.text }}>Employer:</strong> The Best Connection (Agency)</p>
-                <p style={{ margin: `0 0 ${S.m}px` }}><strong style={{ color: COLORS.text }}>Pay:</strong> £12.58/hr</p>
-                <p style={{ margin: `0 0 ${S.m}px` }}><strong style={{ color: COLORS.text }}>What you'll do:</strong> Sorting, scanning, and processing mail bags for international dispatch. You will be working in a fast-paced warehouse environment. Heavy lifting up to 30kg is required.</p>
-                <p style={{ margin: `0 0 ${S.m}px` }}><strong style={{ color: COLORS.text }}>Shifts:</strong> 4 on / 4 off rotation. Start times of 6am–6pm, 8am–8pm, or 10am–10pm (12-hour shifts).</p>
-                <p style={{ margin: `0 0 ${S.m}px` }}><strong style={{ color: COLORS.text }}>You'll need:</strong> Valid photo ID, 5-year address history, DBS check and Aviation Security Course (both funded by employer). Must be comfortable with physical work and able to stand for long periods.</p>
-                <p style={{ margin: `0 0 ${S.m}px` }}><strong style={{ color: COLORS.text }}>Regulated by:</strong> Civil Aviation Authority (CAA) — strict background checks apply due to proximity to Heathrow.</p>
-                <p style={{ margin: 0 }}><strong style={{ color: COLORS.text }}>Location:</strong> Hounslow, near Heathrow Airport. Good transport links from central London.</p>
+                {job.jd.map(({ label, text }, i) => (
+                  <p key={i} style={{ margin: `0 0 ${S.m}px` }}>
+                    <strong style={{ color: COLORS.text }}>{label}:</strong> {text}
+                  </p>
+                ))}
               </div>
             </div>
           </div>
