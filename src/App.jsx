@@ -92,7 +92,7 @@ const JOBS = [
     highlights: ["Paid breaks", "Regular hours"],
     listingUrl: "https://www.reed.co.uk/jobs/logistics-operator/11111",
     altBadge: "↑ £1.66/hr",
-    altReason: { text: "£1.66/hr more (£14.24 vs £12.58)" },
+    altReason: null,
   },
   {
     id: 3,
@@ -468,7 +468,7 @@ const AltJob = ({ job, onClick }) => {
     >
       {/* Title row with badge top-right */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: S.s, marginBottom: S.xs }}>
-        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{title}</div>
+        <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{title}</div>
         {altBadge && (
           <span style={{ ...T.body2Bold, border: `2px solid ${COLORS.green}`, color: COLORS.greenText, background: COLORS.card, borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT, flexShrink: 0 }}>
             {altBadge}
@@ -487,7 +487,7 @@ const AltJob = ({ job, onClick }) => {
       </div>
       {reason && (
         <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", paddingTop: S.s, marginTop: S.s }}>
-          <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{reason.text}</span>
+          <span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{reason.text}</span>
         </div>
       )}
     </div>
@@ -811,7 +811,8 @@ export default function JobTriagePage() {
 
       <h1 style={{ ...(isDesktop ? T.heading2Lg : T.heading2), margin: `0 0 ${S.s2}px`, fontFamily: FONT, color: COLORS.text }}>{job.title}</h1>
 
-      <div style={{ marginBottom: S.m }}>
+      {/* .vacancy__details — max-width: 500px at tablet */}
+      <div style={{ maxWidth: 500, marginBottom: S.m }}>
         {[
           { icon: <IconPay />, text: job.pay },
           { icon: <IconLocation />, text: job.location },
@@ -846,7 +847,9 @@ export default function JobTriagePage() {
 
   const sectionsBlock = (
     <>
-      <Section title="Can you do this job?" defaultOpen={true} badge={{ text: "CHECK FIRST", bg: COLORS.amberBg, textColor: COLORS.amberText }}>
+      {/* "Can you do this job?" — always visible, no accordion */}
+      <div style={{ borderBottom: `1px solid ${COLORS.border}`, paddingBottom: S.m }}>
+        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, padding: `${S.m}px 0` }}>Can you do this job?</div>
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `0 ${S.m}px` }}>
           <Signal status="warning" label="Pay: below London Living Wage"
             detail={`${job.pay} — the London Living Wage is £14.80/hr. 38% of workers here say they're paid below Living Wage.`}
@@ -861,7 +864,7 @@ export default function JobTriagePage() {
             detail="The listing doesn't require previous warehouse experience — just that you're reliable and comfortable with physical work."
             isLast={true} />
         </div>
-      </Section>
+      </div>
 
       <Section title="What's it really like here?" badgeEl={<span style={{ display: "inline-flex", alignItems: "center", gap: S.xs }}><TinyRatingDial score={rating} /><span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{rating.toFixed(1)}/10</span></span>} forceOpen={findingsForceOpen} sectionRef={findingsSectionRef}>
         {/* Red flags group — .finding-group */}
