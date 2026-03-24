@@ -271,6 +271,14 @@ const IconClock = ({ color = COLORS.text }) => (
   </svg>
 );
 
+// ─── Chevron SVG (matches chevron-down--16px-bold from site) ────────────────────
+const IconChevronDown = ({ color = COLORS.muted, rotated = false }) => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"
+    style={{ display: "block", flexShrink: 0, transition: "transform 0.2s", transform: rotated ? "rotate(180deg)" : "rotate(0deg)" }}>
+    <path d="M4 6L8 10L12 6" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 // ─── Thumbs-up SVG icon (matches thumbs-up--16px-bold--green from site) ─────────
 const IconThumbsUp = () => (
   <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "inline-block", verticalAlign: "middle", flexShrink: 0 }}>
@@ -338,7 +346,7 @@ const FindingTile = ({ pct, label, heading, primary, secondary, why, variant, li
         {/* .finding-statement::before — 15px coloured circle */}
         <span style={{ width: 15, height: 15, borderRadius: "50%", background: dotColor, border: "2px solid #fff", outline: `1px solid ${dotColor}`, flexShrink: 0, marginRight: S.s }} />
         <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, flex: 1 }}>{heading ?? label}</span>
-        <span style={{ ...T.body2, color: COLORS.muted, marginLeft: S.s, transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "rotate(0deg)", display: "inline-block" }}>▾</span>
+        <IconChevronDown rotated={open} />
       </div>
       {/* .finding-group__finding-data — expandable content */}
       <div style={{ maxHeight: open ? 400 : 0, overflow: "hidden", transition: "max-height 0.3s ease" }}>
@@ -354,20 +362,19 @@ const FindingTile = ({ pct, label, heading, primary, secondary, why, variant, li
   );
 };
 
-// ─── Signal card (prototype-specific) ─────────────────────────────────────────
+// ─── Signal row — matches .finding-group__finding linear style ─────────────────
+// White card container wraps all signals in a section; each row has a coloured dot
 const Signal = ({ status, label, detail, subtext }) => {
-  const c = status === "good"
-    ? { bg: COLORS.greenBg, border: COLORS.greenBorder, dot: COLORS.green, textColor: COLORS.green, icon: "✓" }
-    : status === "warning"
-    ? { bg: COLORS.amberBg, border: COLORS.amberBorder, dot: COLORS.amber, textColor: COLORS.amberText, icon: "~" }
-    : { bg: COLORS.redBg, border: COLORS.redBorder, dot: COLORS.red, textColor: COLORS.red, icon: "✕" };
+  const dot = status === "good" ? COLORS.green : status === "warning" ? COLORS.amber : COLORS.red;
   return (
-    <div style={{ padding: `${S.s2}px ${S.m}px`, background: c.bg, border: `1px solid ${c.border}`, borderRadius: 5, display: "flex", gap: S.s2, alignItems: "flex-start" }}>
-      <div style={{ width: 22, height: 22, borderRadius: "50%", background: c.dot, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, flexShrink: 0, marginTop: 1 }}>{c.icon}</div>
-      <div style={{ flex: 1 }}>
-        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{label}</div>
-        <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontFamily: FONT }}>{detail}</div>
-        {subtext && <div style={{ ...T.body2, color: c.textColor, marginTop: S.xs, fontWeight: 500, fontFamily: FONT }}>{subtext}</div>}
+    <div style={{ padding: `${S.m}px 0`, borderBottom: "1px solid rgba(50,50,50,0.1)" }}>
+      <div style={{ display: "flex", alignItems: "flex-start", gap: S.s }}>
+        <span style={{ width: 15, height: 15, borderRadius: "50%", background: dot, border: "2px solid #fff", outline: `1px solid ${dot}`, flexShrink: 0, marginTop: 3 }} />
+        <div style={{ flex: 1 }}>
+          <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{label}</div>
+          {detail && <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontFamily: FONT }}>{detail}</div>}
+          {subtext && <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontFamily: FONT }}>{subtext}</div>}
+        </div>
       </div>
     </div>
   );
@@ -382,7 +389,7 @@ const Section = ({ title, children, defaultOpen = false, badge, badgeEl, forceOp
       <button onClick={() => setOpen(!open)} style={{ width: "100%", padding: `${S.m}px 0`, background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: S.s, fontFamily: FONT }}>
         <span style={{ ...T.body1Bold, color: COLORS.text, flex: 1, textAlign: "left", fontFamily: FONT }}>{title}</span>
         {badgeEl ?? (badge && <span style={{ ...T.smallcaps, padding: `${S.xs}px ${S.s}px`, borderRadius: 100, background: badge.bg, color: badge.textColor }}>{badge.text}</span>)}
-        <span style={{ ...T.body2, color: COLORS.muted, transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "rotate(0deg)", display: "inline-block" }}>▾</span>
+        <IconChevronDown rotated={open} />
       </button>
       <div style={{ maxHeight: open ? 2000 : 0, overflow: "hidden", transition: "max-height 0.35s ease" }}>
         <div style={{ paddingBottom: S.m, display: "flex", flexDirection: "column", gap: S.s }}>{children}</div>
@@ -392,20 +399,28 @@ const Section = ({ title, children, defaultOpen = false, badge, badgeEl, forceOp
 };
 
 // ─── Review card — matches .what-people-say__list__person .card ────────────────
-// White card, box-shadow, RatingDial floating top-right (position absolute, top -28, right 14)
-// "Best thing" / "Worst thing" in smallcaps, quote in body-1 italic
-// Job info pill: inline-block, rgba(50,50,50,0.05) bg, borderRadius 20, padding 10px 16px 8px
-const ReviewSnippet = ({ quote, score, role, date, best }) => (
+// Paired best+worst in a single card, side-by-side divided by a hairline.
+// RatingDial floats top-right (absolute, top -28, right 14, white bg + shadow).
+// "Best thing" / "Worst thing" in body-1-bold, quote in body-1, job-info pill below.
+const ReviewCard = ({ best, worst, score, role, date }) => (
   <div style={{ position: "relative", marginTop: S.l2 }}>
     {/* Rating dial floats above card top-right */}
     <div style={{ position: "absolute", top: -28, right: 14, background: COLORS.card, borderRadius: 56, padding: S.s, boxShadow: "0px 2px 6px rgba(0,0,0,0.1)", zIndex: 1 }}>
       <RatingDial score={score} displaySize={44} />
     </div>
     {/* .card */}
-    <div style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", overflow: "hidden" }}>
-      <div style={{ padding: `${S.m}px ${S.m}px ${S.s2}px` }}>
-        <div style={{ ...T.smallcaps, color: COLORS.muted, fontFamily: FONT, marginBottom: S.s }}>{best ? "Best thing" : "Worst thing"}</div>
-        <div style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, fontStyle: "italic", lineHeight: 1.5 }}>"{quote}"</div>
+    <div style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)" }}>
+      <div style={{ display: "flex" }}>
+        {/* Best thing */}
+        <div style={{ flex: 1, padding: S.m, borderRight: "1px solid rgba(50,50,50,0.08)" }}>
+          <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.s }}>Best thing</div>
+          <div style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, lineHeight: 1.5 }}>{best}</div>
+        </div>
+        {/* Worst thing */}
+        <div style={{ flex: 1, padding: S.m }}>
+          <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.s }}>Worst thing</div>
+          <div style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, lineHeight: 1.5 }}>{worst}</div>
+        </div>
       </div>
       {/* .job-info pill */}
       <div style={{ padding: `0 ${S.m}px ${S.m}px` }}>
@@ -583,6 +598,7 @@ const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect
 
 export default function JobTriagePage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [jdModalOpen, setJdModalOpen] = useState(false);
   const [personalised, setPersonalised] = useState(false);
   const [selectedJobIdx, setSelectedJobIdx] = useState(0);
   const [findingsForceOpen, setFindingsForceOpen] = useState(false);
@@ -660,23 +676,25 @@ export default function JobTriagePage() {
   const sectionsBlock = (
     <>
       <Section title="Can you do this job?" defaultOpen={true} badge={{ text: "CHECK FIRST", bg: COLORS.amberBg, textColor: COLORS.amberText }}>
-        <Signal status="warning" label="Pay: below London Living Wage"
-          detail={`${job.pay} — the London Living Wage is £14.80/hr. 38% of workers here say they're paid below Living Wage.`}
-          subtext="That's ~£26,165/yr before tax on these shifts" />
-        <Signal status="warning" label="Commute: Hounslow (Twickenham area)"
-          detail="Near Heathrow. Shift times are 6am, 8am, or 10am starts — check early-morning transport from your area."
-          subtext="Tap to check commute from your postcode →" />
-        <Signal status="warning" label="Requirements: 5-year background check + DBS"
-          detail="You'll need 5 years of address history and references. CAA security clearance required (they pay for it). Must have valid photo ID."
-          subtext="Heavy lifting up to 30kg required" />
-        <Signal status="good" label="No prior warehouse experience mentioned"
-          detail="The listing doesn't require previous warehouse experience — just that you're reliable and comfortable with physical work." />
+        <div style={{ background: COLORS.card, borderRadius: 5, padding: `0 ${S.m}px` }}>
+          <Signal status="warning" label="Pay: below London Living Wage"
+            detail={`${job.pay} — the London Living Wage is £14.80/hr. 38% of workers here say they're paid below Living Wage.`}
+            subtext="That's ~£26,165/yr before tax on these shifts" />
+          <Signal status="warning" label="Commute: Hounslow (Twickenham area)"
+            detail="Near Heathrow. Shift times are 6am, 8am, or 10am starts — check early-morning transport from your area."
+            subtext="Tap to check commute from your postcode →" />
+          <Signal status="warning" label="Requirements: 5-year background check + DBS"
+            detail="You'll need 5 years of address history and references. CAA security clearance required (they pay for it). Must have valid photo ID."
+            subtext="Heavy lifting up to 30kg required" />
+          <Signal status="good" label="No prior warehouse experience mentioned"
+            detail="The listing doesn't require previous warehouse experience — just that you're reliable and comfortable with physical work." />
+        </div>
       </Section>
 
       <Section title="What's it really like here?" badgeEl={<span style={{ display: "inline-flex", alignItems: "center", gap: S.xs }}><TinyRatingDial score={rating} /><span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{rating.toFixed(1)}/10</span></span>} forceOpen={findingsForceOpen} sectionRef={findingsSectionRef}>
         {/* Red flags group — .finding-group */}
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0`, marginBottom: S.m }}>
-        <div style={{ ...T.smallcaps, color: COLORS.red, padding: `${S.s}px 0`, fontFamily: FONT }}>Red flags</div>
+        <div style={{ ...T.smallcaps, color: COLORS.muted, padding: `${S.s}px 0`, fontFamily: FONT }}>Needs improving</div>
         <div>
           {[
             {
@@ -715,7 +733,7 @@ export default function JobTriagePage() {
 
         {/* Good things group — .finding-group */}
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0` }}>
-        <div style={{ ...T.smallcaps, color: COLORS.green, padding: `${S.s}px 0`, fontFamily: FONT }}>Good things</div>
+        <div style={{ ...T.smallcaps, color: COLORS.muted, padding: `${S.s}px 0`, fontFamily: FONT }}>Good</div>
         <div>
           {[
             {
@@ -758,22 +776,27 @@ export default function JobTriagePage() {
       </Section>
 
       <Section title="What workers actually said">
-        <ReviewSnippet best={true} quote="Flexible when needed" score={8.2} role="Agency worker" date="Sep 2024" />
-        <ReviewSnippet best={true} quote="Good team and good training" score={8.0} role="Branch manager" date="Jun 2024" />
-        <ReviewSnippet best={false} quote="The managers, the stress levels" score={1.8} role="Administrator" date="Jul 2023" />
-        <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "center", padding: `${S.xs}px 0`, fontFamily: FONT }}>See all {job.quizCount} reviews →</div>
+        <ReviewCard
+          best="Flexible when needed, good team atmosphere"
+          worst="The managers, the stress levels — it gets to you"
+          score={5.8} role="Agency worker" date="Sep 2024" />
+        <ReviewCard
+          best="Good training when you start, friendly team"
+          worst="Long shifts and no overtime pay after 12 hours"
+          score={6.5} role="Branch manager" date="Jun 2024" />
+        <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "center", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.s }}>See all {job.quizCount} reviews →</div>
       </Section>
 
       <Section title="Full job details">
-        <a href={job.listingUrl} target="_blank" rel="noopener noreferrer"
-          style={{ ...T.body2Bold, color: COLORS.accent, fontFamily: FONT, display: "inline-flex", alignItems: "center", gap: S.xs, textDecoration: "none" }}>
-          View full listing on employer site ↗
-        </a>
         <div style={{ ...T.body1, color: COLORS.muted, lineHeight: 1.7, fontFamily: FONT }}>
           <p style={{ margin: `0 0 ${S.s}px` }}><strong style={{ color: COLORS.text }}>What you'll do:</strong> Sorting, scanning, and processing mail bags for international dispatch. Heavy lifting up to 30kg.</p>
           <p style={{ margin: `0 0 ${S.s}px` }}><strong style={{ color: COLORS.text }}>Shifts:</strong> 4 on / 4 off rotation. Starts 6am–6pm, 8am–8pm, or 10am–10pm (12-hour shifts).</p>
           <p style={{ margin: `0 0 ${S.s}px` }}><strong style={{ color: COLORS.text }}>You'll need:</strong> Valid photo ID, 5-year address history, DBS check and Aviation Security Course (both paid by employer).</p>
           <p style={{ margin: 0 }}><strong style={{ color: COLORS.text }}>Regulated by:</strong> Civil Aviation Authority (CAA) — that's why the background checks are strict.</p>
+        </div>
+        <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "center", padding: `${S.xs}px 0`, fontFamily: FONT }}
+          onClick={() => setJdModalOpen(true)}>
+          See full job description →
         </div>
       </Section>
     </>
@@ -826,6 +849,32 @@ export default function JobTriagePage() {
 
       <OnboardingDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)}
         onSubmit={() => { setPersonalised(true); setDrawerOpen(false); }} />
+
+      {/* Job description modal */}
+      {jdModalOpen && (
+        <>
+          <div onClick={() => setJdModalOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 100 }} />
+          <div style={{ position: "fixed", inset: 0, zIndex: 101, overflow: "auto", padding: `${S.l}px ${S.m}px` }}>
+            <div style={{ background: COLORS.card, borderRadius: 5, maxWidth: 600, margin: "0 auto", padding: S.l, position: "relative" }}>
+              <button onClick={() => setJdModalOpen(false)}
+                style={{ position: "absolute", top: S.m, right: S.m, background: "none", border: "none", cursor: "pointer", ...T.body2Bold, color: COLORS.muted, fontFamily: FONT }}>
+                ✕ Close
+              </button>
+              <h2 style={{ ...T.heading2, margin: `0 0 ${S.m2}px`, fontFamily: FONT, color: COLORS.text }}>Full job description</h2>
+              <div style={{ ...T.body1, color: COLORS.muted, lineHeight: 1.7, fontFamily: FONT }}>
+                <p style={{ margin: `0 0 ${S.m}px` }}><strong style={{ color: COLORS.text }}>Job title:</strong> Warehouse Operative</p>
+                <p style={{ margin: `0 0 ${S.m}px` }}><strong style={{ color: COLORS.text }}>Employer:</strong> The Best Connection (Agency)</p>
+                <p style={{ margin: `0 0 ${S.m}px` }}><strong style={{ color: COLORS.text }}>Pay:</strong> £12.58/hr</p>
+                <p style={{ margin: `0 0 ${S.m}px` }}><strong style={{ color: COLORS.text }}>What you'll do:</strong> Sorting, scanning, and processing mail bags for international dispatch. You will be working in a fast-paced warehouse environment. Heavy lifting up to 30kg is required.</p>
+                <p style={{ margin: `0 0 ${S.m}px` }}><strong style={{ color: COLORS.text }}>Shifts:</strong> 4 on / 4 off rotation. Start times of 6am–6pm, 8am–8pm, or 10am–10pm (12-hour shifts).</p>
+                <p style={{ margin: `0 0 ${S.m}px` }}><strong style={{ color: COLORS.text }}>You'll need:</strong> Valid photo ID, 5-year address history, DBS check and Aviation Security Course (both funded by employer). Must be comfortable with physical work and able to stand for long periods.</p>
+                <p style={{ margin: `0 0 ${S.m}px` }}><strong style={{ color: COLORS.text }}>Regulated by:</strong> Civil Aviation Authority (CAA) — strict background checks apply due to proximity to Heathrow.</p>
+                <p style={{ margin: 0 }}><strong style={{ color: COLORS.text }}>Location:</strong> Hounslow, near Heathrow Airport. Good transport links from central London.</p>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
