@@ -323,34 +323,39 @@ const FindingRow = ({ status, statement }) => {
 // White card group container: bg white, borderRadius 5, padding "8px 16px 0", mb 16px
 // Each row: padding 16px 0, borderBottom 1px solid rgba(50,50,50,0.1)
 // Coloured circle (15px, 2px white border) + short_text, expands to primary/secondary/why
-const FindingTile = ({ pct, label, heading, primary, secondary, why, variant, lit, forceOpen }) => {
+const FindingTile = ({ pct, label, heading, primary, secondary, why, variant, lit, forceOpen, isLast }) => {
   const [open, setOpen] = useState(false);
   useEffect(() => { if (forceOpen) setOpen(true); }, [forceOpen]);
   const isRed   = variant === "red";
   const dotColor = isRed ? COLORS.red : COLORS.green;
   const expandBg = isRed ? COLORS.redBg : COLORS.greenBg;
+  // typography(16, 500) — matches .finding-group__finding
+  const findingType = { fontSize: 16, lineHeight: "22px", fontWeight: 500 };
   return (
     <div
       onClick={() => setOpen(!open)}
       style={{
+        ...findingType,
+        color: COLORS.text,
         padding: `${S.m}px 0`,
-        borderBottom: "1px solid rgba(50,50,50,0.1)",
+        // .finding-group__finding:last-child { border-bottom: none }
+        borderBottom: isLast ? "none" : "1px solid rgba(50,50,50,0.1)",
         cursor: "pointer",
+        position: "relative",
         outline: lit ? `2px solid ${dotColor}` : "none",
         outlineOffset: -2,
         transition: "outline 0.3s",
       }}
     >
-      {/* .finding-group__finding-description — statement row with chevron */}
+      {/* .finding-group__finding-description */}
       <div style={{ display: "flex", alignItems: "center", paddingRight: S.m }}>
-        {/* .finding-statement::before — 15px coloured circle */}
         <span style={{ width: 15, height: 15, borderRadius: "50%", background: dotColor, border: "2px solid #fff", flexShrink: 0, marginRight: S.s }} />
-        <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, flex: 1 }}>{heading ?? label}</span>
+        <span style={{ fontFamily: FONT, flex: 1 }}>{heading ?? label}</span>
         <IconChevronDown rotated={open} />
       </div>
-      {/* .finding-group__finding-data — expandable content */}
+      {/* .finding-group__finding-data */}
       <div style={{ maxHeight: open ? 400 : 0, overflow: "hidden", transition: "max-height 0.3s ease" }}>
-        <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", marginTop: S.m, padding: S.m, background: expandBg, borderRadius: 4 }}>
+        <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", margin: `${S.m}px 0 ${S.m2}px`, padding: S.m, background: expandBg }}>
           <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>{primary}</div>
           <div style={{ ...T.smallcaps, color: COLORS.muted, fontFamily: FONT, margin: `${S.s}px 0 ${S.xs}px` }}>How we know this</div>
           <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginBottom: S.s }}>{secondary}</div>
@@ -364,16 +369,16 @@ const FindingTile = ({ pct, label, heading, primary, secondary, why, variant, li
 
 // ─── Signal row — matches .finding-group__finding linear style ─────────────────
 // White card container wraps all signals in a section; each row has a coloured dot
-const Signal = ({ status, label, detail, subtext }) => {
+const Signal = ({ status, label, detail, subtext, isLast }) => {
   const dot = status === "good" ? COLORS.green : status === "warning" ? COLORS.amber : COLORS.red;
   return (
-    <div style={{ padding: `${S.m}px 0`, borderBottom: "1px solid rgba(50,50,50,0.1)" }}>
+    <div style={{ fontSize: 16, lineHeight: "22px", fontWeight: 500, color: COLORS.text, padding: `${S.m}px 0`, borderBottom: isLast ? "none" : "1px solid rgba(50,50,50,0.1)", position: "relative" }}>
       <div style={{ display: "flex", alignItems: "flex-start", gap: S.s }}>
         <span style={{ width: 15, height: 15, borderRadius: "50%", background: dot, border: "2px solid #fff", flexShrink: 0, marginTop: 3 }} />
-        <div style={{ flex: 1 }}>
-          <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{label}</div>
-          {detail && <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontFamily: FONT }}>{detail}</div>}
-          {subtext && <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontFamily: FONT }}>{subtext}</div>}
+        <div style={{ flex: 1, fontFamily: FONT }}>
+          <div>{label}</div>
+          {detail && <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontWeight: 400 }}>{detail}</div>}
+          {subtext && <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontWeight: 400 }}>{subtext}</div>}
         </div>
       </div>
     </div>
@@ -403,31 +408,34 @@ const Section = ({ title, children, defaultOpen = false, badge, badgeEl, forceOp
 // RatingDial floats top-right (absolute, top -28, right 14, white bg + shadow).
 // "Best thing" / "Worst thing" in body-1-bold, quote in body-1, job-info pill below.
 const ReviewCard = ({ best, worst, score, role, date }) => (
+  // .what-people-say__list__person — margin-top: l2 (40px), overflow unset
   <div style={{ position: "relative", marginTop: S.l2 }}>
-    {/* Rating dial floats above card top-right */}
-    <div style={{ position: "absolute", top: -28, right: 14, background: COLORS.card, borderRadius: 56, padding: S.s, boxShadow: "0px 2px 6px rgba(0,0,0,0.1)", zIndex: 1 }}>
+    {/* .rating — position absolute, top -28, right 14, white bg, border-radius 56px, padding s */}
+    <div style={{ position: "absolute", top: -28, right: 14, background: COLORS.card, borderRadius: 56, padding: S.s, zIndex: 1 }}>
       <RatingDial score={score} displaySize={44} />
     </div>
-    {/* .card */}
-    <div style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)" }}>
+    {/* .card — box-shadow none (overridden by .what-people-say), overflow unset for speech bubble */}
+    <div style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", position: "relative", overflow: "unset" }}>
       <div style={{ display: "flex" }}>
-        {/* Best thing */}
-        <div style={{ flex: 1, padding: S.m, borderRight: "1px solid rgba(50,50,50,0.08)" }}>
+        {/* .best-worst — padding 24px, 50% width */}
+        <div style={{ flex: 1, padding: S.m2 }}>
           <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.s }}>Best thing</div>
           <div style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, lineHeight: 1.5 }}>{best}</div>
         </div>
-        {/* Worst thing */}
-        <div style={{ flex: 1, padding: S.m }}>
+        {/* .best-worst + .best-worst — border-left rgba(black, 0.04) on desktop */}
+        <div style={{ flex: 1, padding: S.m2, borderLeft: "1px solid rgba(50,50,50,0.04)" }}>
           <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.s }}>Worst thing</div>
           <div style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, lineHeight: 1.5 }}>{worst}</div>
         </div>
       </div>
-      {/* .job-info pill */}
-      <div style={{ padding: `0 ${S.m}px ${S.m}px` }}>
-        <span style={{ ...T.body2, display: "inline-block", background: "rgba(50,50,50,0.05)", borderRadius: 20, padding: "10px 16px 8px", color: COLORS.muted, fontFamily: FONT }}>
-          {role} · {date}
-        </span>
-      </div>
+      {/* Speech bubble tail — ::after: white 23x23 diamond, bottom -12, left 30 */}
+      <div style={{ position: "absolute", bottom: -12, left: 30, width: 23, height: 23, background: COLORS.card, transform: "rotate(45deg)", borderRadius: "0 0 5px 0" }} />
+    </div>
+    {/* .job-info — outside the card, inline-block, rgba(black,0.05) bg, border-radius 20, padding 10 16 8 */}
+    <div style={{ marginTop: S.m }}>
+      <span style={{ ...T.body2, display: "inline-block", background: "rgba(50,50,50,0.05)", borderRadius: 20, padding: "10px 16px 8px", color: COLORS.muted, fontFamily: FONT }}>
+        {role} · {date}
+      </span>
     </div>
   </div>
 );
@@ -687,14 +695,15 @@ export default function JobTriagePage() {
             detail="You'll need 5 years of address history and references. CAA security clearance required (they pay for it). Must have valid photo ID."
             subtext="Heavy lifting up to 30kg required" />
           <Signal status="good" label="No prior warehouse experience mentioned"
-            detail="The listing doesn't require previous warehouse experience — just that you're reliable and comfortable with physical work." />
+            detail="The listing doesn't require previous warehouse experience — just that you're reliable and comfortable with physical work."
+            isLast={true} />
         </div>
       </Section>
 
       <Section title="What's it really like here?" badgeEl={<span style={{ display: "inline-flex", alignItems: "center", gap: S.xs }}><TinyRatingDial score={rating} /><span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{rating.toFixed(1)}/10</span></span>} forceOpen={findingsForceOpen} sectionRef={findingsSectionRef}>
         {/* Red flags group — .finding-group */}
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0`, marginBottom: S.m }}>
-        <div style={{ ...T.smallcaps, color: COLORS.muted, padding: `${S.s}px 0`, fontFamily: FONT }}>Needs improving</div>
+        <div style={{ ...T.smallcaps, color: COLORS.text, display: "inline-block", textTransform: "uppercase", marginBottom: S.xs, fontFamily: FONT }}>Needs improving</div>
         <div>
           {[
             {
@@ -725,15 +734,15 @@ export default function JobTriagePage() {
               secondary: "80% of people think that this employer's head office or owners don't have a good understanding of what's really happening where they work.",
               why: "At a good job, the role of head office should be to support the people on the frontline serving customers. To do that properly, the company's owners or head office need to have a good understanding of what's really happening on the frontline.",
             },
-          ].map((v) => (
-            <FindingTile key={v.label} {...v} variant="red" />
+          ].map((v, i, arr) => (
+            <FindingTile key={v.label} {...v} variant="red" isLast={i === arr.length - 1} />
           ))}
         </div>
         </div>
 
         {/* Good things group — .finding-group */}
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0` }}>
-        <div style={{ ...T.smallcaps, color: COLORS.muted, padding: `${S.s}px 0`, fontFamily: FONT }}>Good</div>
+        <div style={{ ...T.smallcaps, color: COLORS.text, display: "inline-block", textTransform: "uppercase", marginTop: S.m, marginBottom: S.xs, fontFamily: FONT }}>Good</div>
         <div>
           {[
             {
@@ -764,8 +773,8 @@ export default function JobTriagePage() {
               secondary: "69% of people with changing schedules report getting four weeks notice or more.",
               why: "At a good job, you get plenty of notice about when you're working. This makes it easy for you to plan the rest of your life, as well as your finances, because you know how much you'll be working and when.",
             },
-          ].map((v) => (
-            <FindingTile key={v.label} {...v} variant="green" lit={highlightFinding === v.label} forceOpen={highlightFinding === v.label} />
+          ].map((v, i, arr) => (
+            <FindingTile key={v.label} {...v} variant="green" lit={highlightFinding === v.label} forceOpen={highlightFinding === v.label} isLast={i === arr.length - 1} />
           ))}
         </div>
         </div>
