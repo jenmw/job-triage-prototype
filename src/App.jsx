@@ -73,7 +73,7 @@ const JOBS = [
     quizCount: 121,
     highlights: ["Proper breaks", "Respectful managers"],
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/67890",
-    altReason: { text: "Better rated by workers (7.4 vs 5.2)", variant: "green" },
+    altReason: { text: "Better rated by workers (7.4 vs 5.2) · £0.67–4.67/hr more", variant: "green" },
   },
   {
     id: 2,
@@ -89,7 +89,7 @@ const JOBS = [
     quizCount: 44,
     highlights: ["Paid breaks", "Regular hours"],
     listingUrl: "https://www.reed.co.uk/jobs/logistics-operator/11111",
-    altReason: { text: "Significantly higher pay than this job", variant: "amber" },
+    altReason: { text: "£1.66/hr more than this job (£14.24 vs £12.58)", variant: "amber" },
   },
   {
     id: 3,
@@ -105,7 +105,7 @@ const JOBS = [
     quizCount: 67,
     highlights: ["Proper breaks", "Respectful managers"],
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/22222",
-    altReason: { text: "Part time available · £2.11/hr more than this job", variant: "muted" },
+    altReason: { text: "Part time available · £2.11/hr more (£14.69 vs £12.58)", variant: "muted" },
   },
   {
     id: 4,
@@ -137,7 +137,7 @@ const JOBS = [
     quizCount: 38,
     highlights: ["Same location", "Higher employer score"],
     listingUrl: "https://www.reed.co.uk/jobs/flt-driver/44444",
-    altReason: { text: "Same location · Higher employer score · £0.42/hr more", variant: "muted" },
+    altReason: { text: "Same location · £0.42/hr more (£13.00 vs £12.58) · Higher employer score (6.2 vs 5.2)", variant: "muted" },
   },
 ];
 
@@ -251,6 +251,26 @@ const IconApply = ({ color = COLORS.text }) => (
   </svg>
 );
 
+// ─── Hero detail field icons ────────────────────────────────────────────────────
+const IconPay = ({ color = COLORS.text }) => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "block", flexShrink: 0 }}>
+    <path d="M13.5 13.1234H2.5M1.875 2.88135H14.125V10.1313H1.875V2.88135Z" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="8" cy="6.4917" r="1.5" fill={color}/>
+    <path d="M3.65002 3C3.65002 4.10457 2.85532 5 1.875 5M1.875 8C2.85532 8 3.65002 8.8954 3.65002 10M14.125 5C13.1447 5 12.35 4.10457 12.35 3M12.35 10C12.35 8.8954 13.1447 8 14.125 8" stroke={color} strokeWidth="2"/>
+  </svg>
+);
+const IconLocation = ({ color = COLORS.text }) => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "block", flexShrink: 0 }}>
+    <path d="M12.9979 6.90747C12.9979 10.7244 7.99692 13.996 7.99692 13.996C7.99692 13.996 2.99597 10.7244 2.99597 6.90747C2.99597 5.60593 3.52286 4.35769 4.46071 3.43736C5.39857 2.51704 6.67058 2 7.99692 2C9.32325 2 10.5953 2.51704 11.5331 3.43736C12.471 4.35769 12.9979 5.60593 12.9979 6.90747Z" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M7.99957 7.5C8.55186 7.5 8.99957 7.05228 8.99957 6.5C8.99957 5.94772 8.55186 5.5 7.99957 5.5C7.44729 5.5 6.99957 5.94772 6.99957 6.5C6.99957 7.05228 7.44729 7.5 7.99957 7.5Z" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+const IconClock = ({ color = COLORS.text }) => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "block", flexShrink: 0 }}>
+    <path d="M8 5L8 8L10 10M2 8C2 4.68629 4.68629 2 8 2C11.3137 2 14 4.68629 14 8C14 11.3137 11.3137 14 8 14C4.68629 14 2 11.3137 2 8Z" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 // ─── Thumbs-up SVG icon (matches thumbs-up--16px-bold--green from site) ─────────
 const IconThumbsUp = () => (
   <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "inline-block", verticalAlign: "middle", flexShrink: 0 }}>
@@ -316,7 +336,7 @@ const FindingTile = ({ pct, label, heading, primary, secondary, why, variant, li
       <div style={{ display: "flex", alignItems: "center", gap: S.xs, marginBottom: 2 }}>
         <span style={{ width: 8, height: 8, borderRadius: "50%", background: dotColor, flexShrink: 0, display: "inline-block" }} />
         <span style={{ ...T.body2Bold, color: pctColor, fontFamily: FONT, flex: 1 }}>{pct}%</span>
-        <span style={{ ...T.body2, color: COLORS.muted, fontSize: 10, transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "rotate(0deg)", display: "inline-block" }}>▾</span>
+        <span style={{ ...T.body2, color: COLORS.muted, transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "rotate(0deg)", display: "inline-block" }}>▾</span>
       </div>
       <div style={{ ...T.body2, color: COLORS.muted, lineHeight: 1.3, fontFamily: FONT }}>{heading ?? label}</div>
       <div style={{ maxHeight: open ? 300 : 0, overflow: "hidden", transition: "max-height 0.3s ease" }}>
@@ -351,15 +371,18 @@ const Signal = ({ status, label, detail, subtext }) => {
 };
 
 // ─── Collapsible section ───────────────────────────────────────────────────────
-const Section = ({ title, icon, children, defaultOpen = false, badge, forceOpen, sectionRef }) => {
+const Section = ({ title, icon, children, defaultOpen = false, badge, badgeEl, number, forceOpen, sectionRef }) => {
   const [open, setOpen] = useState(defaultOpen);
   useEffect(() => { if (forceOpen) setOpen(true); }, [forceOpen]);
   return (
     <div ref={sectionRef} style={{ borderBottom: `1px solid ${COLORS.border}` }}>
       <button onClick={() => setOpen(!open)} style={{ width: "100%", padding: `${S.m}px 0`, background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: S.s, fontFamily: FONT }}>
+        {number != null && (
+          <span style={{ ...T.smallcaps, width: 20, height: 20, borderRadius: "50%", background: COLORS.border, color: COLORS.muted, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{number}</span>
+        )}
         {icon}
         <span style={{ ...T.body1Bold, color: COLORS.text, flex: 1, textAlign: "left", fontFamily: FONT }}>{title}</span>
-        {badge && <span style={{ ...T.smallcaps, padding: `${S.xs}px ${S.s}px`, borderRadius: 100, background: badge.bg, color: badge.textColor }}>{badge.text}</span>}
+        {badgeEl ?? (badge && <span style={{ ...T.smallcaps, padding: `${S.xs}px ${S.s}px`, borderRadius: 100, background: badge.bg, color: badge.textColor }}>{badge.text}</span>)}
         <span style={{ ...T.body2, color: COLORS.muted, transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "rotate(0deg)", display: "inline-block" }}>▾</span>
       </button>
       <div style={{ maxHeight: open ? 2000 : 0, overflow: "hidden", transition: "max-height 0.35s ease" }}>
@@ -411,9 +434,8 @@ const AltJob = ({ job, onClick }) => {
         </div>
       )}
       {reason && (
-        <div style={{ display: "flex", alignItems: "center", gap: S.xs, marginTop: S.s, paddingTop: S.s, borderTop: `1px solid ${COLORS.border}` }}>
-          <span style={{ width: 8, height: 8, borderRadius: "50%", background: reasonDot, flexShrink: 0, display: "inline-block" }} />
-          <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{reason.text}</span>
+        <div style={{ marginTop: S.s, paddingTop: S.s, borderTop: `1px solid ${COLORS.border}` }}>
+          <span style={{ ...T.body2, color: reasonDot === COLORS.muted ? COLORS.muted : reasonDot, fontFamily: FONT }}>{reason.text}</span>
         </div>
       )}
     </div>
@@ -591,13 +613,13 @@ export default function JobTriagePage() {
 
       <div style={{ display: "flex", gap: S.m, flexWrap: "wrap", marginBottom: S.m }}>
         {[
-          { icon: "💷", text: job.pay },
-          { icon: "📍", text: job.location },
-          { icon: "🕐", text: job.hours, sub: job.hoursSub },
-          { icon: "📋", text: job.shifts },
+          { icon: <IconPay />, text: job.pay },
+          { icon: <IconLocation />, text: job.location },
+          { icon: <IconClock />, text: job.hours, sub: job.hoursSub },
+          { icon: <IconClock />, text: job.shifts },
         ].map((f, i) => (
           <div key={i} style={{ display: "flex", alignItems: "center", gap: S.xs }}>
-            <span>{f.icon}</span>
+            {f.icon}
             <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{f.text}</span>
             {f.sub && <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>({f.sub})</span>}
           </div>
@@ -625,7 +647,7 @@ export default function JobTriagePage() {
 
   const sectionsBlock = (
     <>
-      <Section title="Can you do this job?" icon={<IconAlertCircle />} defaultOpen={true} badge={{ text: "CHECK FIRST", bg: COLORS.amberBg, textColor: COLORS.amberText }}>
+      <Section number={1} title="Can you do this job?" icon={<IconAlertCircle />} defaultOpen={true} badge={{ text: "CHECK FIRST", bg: COLORS.amberBg, textColor: COLORS.amberText }}>
         <Signal status="warning" label="Pay: below London Living Wage"
           detail={`${job.pay} — the London Living Wage is £14.80/hr. 38% of workers here say they're paid below Living Wage.`}
           subtext="That's ~£26,165/yr before tax on these shifts" />
@@ -639,7 +661,7 @@ export default function JobTriagePage() {
           detail="The listing doesn't require previous warehouse experience — just that you're reliable and comfortable with physical work." />
       </Section>
 
-      <Section title="What's it really like here?" icon={<IconRanking />} badge={{ text: `${rating.toFixed(1)}/10`, ...ratingColors }} forceOpen={findingsForceOpen} sectionRef={findingsSectionRef}>
+      <Section number={2} title="What's it really like here?" icon={<IconRanking />} badgeEl={<span style={{ display: "inline-flex", alignItems: "center", gap: S.xs }}><TinyRatingDial score={rating} /><span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{rating.toFixed(1)}/10</span></span>} forceOpen={findingsForceOpen} sectionRef={findingsSectionRef}>
         {/* Red flags group */}
         <div style={{ ...T.smallcaps, color: COLORS.red, marginBottom: S.xs, fontFamily: FONT }}>Red flags</div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: S.xs }}>
@@ -719,14 +741,14 @@ export default function JobTriagePage() {
         </div>
       </Section>
 
-      <Section title="What workers actually said" icon={<IconMessageCircle />}>
+      <Section number={3} title="What workers actually said" icon={<IconMessageCircle />}>
         <ReviewSnippet best={true} quote="Flexible when needed" score={8.2} role="Agency worker" date="Sep 2024" />
         <ReviewSnippet best={true} quote="Good team and good training" score={8.0} role="Branch manager" date="Jun 2024" />
         <ReviewSnippet best={false} quote="The managers, the stress levels" score={1.8} role="Administrator" date="Jul 2023" />
         <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "center", padding: `${S.xs}px 0`, fontFamily: FONT }}>See all {job.quizCount} reviews →</div>
       </Section>
 
-      <Section title="Full job details" icon={<IconApply />}>
+      <Section number={4} title="Full job details" icon={<IconApply />}>
         <a href={job.listingUrl} target="_blank" rel="noopener noreferrer"
           style={{ ...T.body2Bold, color: COLORS.accent, fontFamily: FONT, display: "inline-flex", alignItems: "center", gap: S.xs, textDecoration: "none" }}>
           View full listing on employer site ↗
