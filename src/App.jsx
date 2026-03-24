@@ -73,8 +73,7 @@ const JOBS = [
     quizCount: 121,
     highlights: ["Proper breaks", "Respectful managers"],
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/67890",
-    altBadge: { text: "BETTER RATED", bg: COLORS.greenBg, color: COLORS.green, border: COLORS.greenBorder },
-    altHighlight: "Rated 'Good Employer' · +£0.67–4.67/hr more · Proper breaks & respectful managers",
+    altReason: { text: "Better rated by workers (7.4 vs 5.2)", variant: "green" },
   },
   {
     id: 2,
@@ -90,8 +89,7 @@ const JOBS = [
     quizCount: 44,
     highlights: ["Paid breaks", "Regular hours"],
     listingUrl: "https://www.reed.co.uk/jobs/logistics-operator/11111",
-    altBadge: { text: "+£1.66/HR", bg: COLORS.accentBg, color: COLORS.accent, border: COLORS.accentBorder },
-    altHighlight: "Significantly higher pay · Better employer rating (6.3 vs 5.2)",
+    altReason: { text: "Significantly higher pay than this job", variant: "amber" },
   },
   {
     id: 3,
@@ -107,8 +105,7 @@ const JOBS = [
     quizCount: 67,
     highlights: ["Proper breaks", "Respectful managers"],
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/22222",
-    altBadge: null,
-    altHighlight: "£2.11/hr more · Part time available · Proper breaks & respectful managers",
+    altReason: { text: "Part time available · £2.11/hr more than this job", variant: "muted" },
   },
   {
     id: 4,
@@ -124,8 +121,7 @@ const JOBS = [
     quizCount: 89,
     highlights: ["People enjoy this job", "Learn new skills"],
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operator/33333",
-    altBadge: { text: "TOP RATED", bg: COLORS.greenBg, color: COLORS.green, border: COLORS.greenBorder },
-    altHighlight: "7.7/10 score · Same area · People enjoy this job & learn new skills",
+    altReason: { text: "Top rated employer in this area (7.7/10)", variant: "green" },
   },
   {
     id: 5,
@@ -141,8 +137,7 @@ const JOBS = [
     quizCount: 38,
     highlights: ["Same location", "Higher employer score"],
     listingUrl: "https://www.reed.co.uk/jobs/flt-driver/44444",
-    altBadge: null,
-    altHighlight: "Same location · Higher employer score · £0.42/hr more",
+    altReason: { text: "Same location · Higher employer score · £0.42/hr more", variant: "muted" },
   },
 ];
 
@@ -388,7 +383,8 @@ const ReviewSnippet = ({ quote, score, role, date, best }) => (
 
 // ─── Alternative job card ──────────────────────────────────────────────────────
 const AltJob = ({ job, onClick }) => {
-  const { title, company, pay, rating, location, altBadge: badge, highlights } = job;
+  const { title, company, pay, rating, location, highlights, altReason: reason } = job;
+  const reasonDot = reason?.variant === "green" ? COLORS.green : reason?.variant === "amber" ? COLORS.amber : COLORS.muted;
   return (
     <div
       onClick={onClick}
@@ -396,11 +392,6 @@ const AltJob = ({ job, onClick }) => {
       onMouseEnter={(e) => { e.currentTarget.style.borderColor = COLORS.accent; }}
       onMouseLeave={(e) => { e.currentTarget.style.borderColor = COLORS.border; }}
     >
-      {badge && (
-        <div style={{ marginBottom: S.s }}>
-          <span style={{ ...T.body2Bold, padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, background: badge.bg, color: badge.color, border: `1px solid ${badge.border}`, fontFamily: FONT, display: "inline-block" }}>{badge.text}</span>
-        </div>
-      )}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: S.s2 }}>
         <div style={{ flex: 1 }}>
           <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{title}</div>
@@ -417,6 +408,12 @@ const AltJob = ({ job, onClick }) => {
       {highlights && highlights.length > 0 && (
         <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginTop: S.s }}>
           {highlights.map((h) => <VacancyHighlight key={h} label={h} />)}
+        </div>
+      )}
+      {reason && (
+        <div style={{ display: "flex", alignItems: "center", gap: S.xs, marginTop: S.s, paddingTop: S.s, borderTop: `1px solid ${COLORS.border}` }}>
+          <span style={{ width: 8, height: 8, borderRadius: "50%", background: reasonDot, flexShrink: 0, display: "inline-block" }} />
+          <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{reason.text}</span>
         </div>
       )}
     </div>
