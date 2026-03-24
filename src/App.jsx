@@ -312,7 +312,7 @@ const FindingRow = ({ status, statement }) => {
       <div style={{ ...T.smallcaps, color: COLORS.muted, marginBottom: S.xs }}>{label}</div>
       <div style={{ display: "flex", alignItems: "center", gap: S.s }}>
         {/* .finding-statement::before — 15px colored dot with 2px white border */}
-        <span style={{ width: 12, height: 12, borderRadius: "50%", background: dot, border: "2px solid white", outline: `1px solid ${dot}`, flexShrink: 0, display: "inline-block" }} />
+        <span style={{ width: 15, height: 15, borderRadius: "50%", background: dot, border: "2px solid white", flexShrink: 0, display: "inline-block" }} />
         <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT }}>{statement}</span>
       </div>
     </div>
@@ -344,7 +344,7 @@ const FindingTile = ({ pct, label, heading, primary, secondary, why, variant, li
       {/* .finding-group__finding-description — statement row with chevron */}
       <div style={{ display: "flex", alignItems: "center", paddingRight: S.m }}>
         {/* .finding-statement::before — 15px coloured circle */}
-        <span style={{ width: 15, height: 15, borderRadius: "50%", background: dotColor, border: "2px solid #fff", outline: `1px solid ${dotColor}`, flexShrink: 0, marginRight: S.s }} />
+        <span style={{ width: 15, height: 15, borderRadius: "50%", background: dotColor, border: "2px solid #fff", flexShrink: 0, marginRight: S.s }} />
         <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, flex: 1 }}>{heading ?? label}</span>
         <IconChevronDown rotated={open} />
       </div>
@@ -369,7 +369,7 @@ const Signal = ({ status, label, detail, subtext }) => {
   return (
     <div style={{ padding: `${S.m}px 0`, borderBottom: "1px solid rgba(50,50,50,0.1)" }}>
       <div style={{ display: "flex", alignItems: "flex-start", gap: S.s }}>
-        <span style={{ width: 15, height: 15, borderRadius: "50%", background: dot, border: "2px solid #fff", outline: `1px solid ${dot}`, flexShrink: 0, marginTop: 3 }} />
+        <span style={{ width: 15, height: 15, borderRadius: "50%", background: dot, border: "2px solid #fff", flexShrink: 0, marginTop: 3 }} />
         <div style={{ flex: 1 }}>
           <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{label}</div>
           {detail && <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontFamily: FONT }}>{detail}</div>}
