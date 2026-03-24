@@ -74,7 +74,8 @@ const JOBS = [
     quizCount: 121,
     highlights: ["Proper breaks", "Respectful managers"],
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/67890",
-    altReason: { text: "Better rated by workers (7.4 vs 5.2) · £0.67–4.67/hr more", variant: "green" },
+    altBadge: "↑ £0.67/hr",
+    altReason: { text: "Better rated (7.4 vs 5.2) · More pay" },
   },
   {
     id: 2,
@@ -90,7 +91,8 @@ const JOBS = [
     quizCount: 44,
     highlights: ["Paid breaks", "Regular hours"],
     listingUrl: "https://www.reed.co.uk/jobs/logistics-operator/11111",
-    altReason: { text: "£1.66/hr more than this job (£14.24 vs £12.58)", variant: "amber" },
+    altBadge: "↑ £1.66/hr",
+    altReason: { text: "£1.66/hr more (£14.24 vs £12.58)" },
   },
   {
     id: 3,
@@ -106,7 +108,8 @@ const JOBS = [
     quizCount: 67,
     highlights: ["Proper breaks", "Respectful managers"],
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/22222",
-    altReason: { text: "Part time available · £2.11/hr more (£14.69 vs £12.58)", variant: "muted" },
+    altBadge: "↑ £2.11/hr",
+    altReason: { text: "Part time available · £2.11/hr more" },
   },
   {
     id: 4,
@@ -122,7 +125,8 @@ const JOBS = [
     quizCount: 89,
     highlights: ["People enjoy this job", "Learn new skills"],
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operator/33333",
-    altReason: { text: "Top rated employer in this area (7.7/10)", variant: "green" },
+    altBadge: "Better rated",
+    altReason: { text: "Top rated employer in this area (7.7/10)" },
   },
   {
     id: 5,
@@ -138,7 +142,8 @@ const JOBS = [
     quizCount: 38,
     highlights: ["Same location", "Higher employer score"],
     listingUrl: "https://www.reed.co.uk/jobs/flt-driver/44444",
-    altReason: { text: "Same location · £0.42/hr more (£13.00 vs £12.58) · Higher employer score (6.2 vs 5.2)", variant: "muted" },
+    altBadge: "↑ £0.42/hr",
+    altReason: { text: "Same location · £0.42/hr more (£13.00 vs £12.58)" },
   },
 ];
 
@@ -324,12 +329,13 @@ const FindingRow = ({ status, statement }) => {
 // White card group container: bg white, borderRadius 5, padding "8px 16px 0", mb 16px
 // Each row: padding 16px 0, borderBottom 1px solid rgba(50,50,50,0.1)
 // Coloured circle (15px, 2px white border) + short_text, expands to primary/secondary/why
-const FindingTile = ({ pct, label, heading, primary, secondary, why, variant, lit, forceOpen, isLast }) => {
+const FindingTile = ({ pct, label, heading, primary, secondary, why, variant, lit, forceOpen, isLast, opinionLabel }) => {
   const [open, setOpen] = useState(false);
   useEffect(() => { if (forceOpen) setOpen(true); }, [forceOpen]);
   const isRed   = variant === "red";
-  const dotColor = isRed ? COLORS.red : COLORS.green;
-  const expandBg = isRed ? COLORS.redBg : COLORS.greenBg;
+  const isAmber = variant === "amber";
+  const dotColor = isRed ? COLORS.red : isAmber ? COLORS.amber : COLORS.green;
+  const expandBg = isRed ? COLORS.redBg : isAmber ? COLORS.amberBg : COLORS.greenBg;
   // typography(16, 500) — matches .finding-group__finding
   const findingType = { fontSize: 16, lineHeight: "22px", fontWeight: 500 };
   return (
@@ -348,6 +354,11 @@ const FindingTile = ({ pct, label, heading, primary, secondary, why, variant, li
         transition: "outline 0.3s",
       }}
     >
+      {opinionLabel && (
+        <div style={{ ...T.smallcaps, color: COLORS.text, textTransform: "uppercase", marginBottom: S.s, fontFamily: FONT }}>
+          {opinionLabel}
+        </div>
+      )}
       {/* .finding-group__finding-description */}
       <div style={{ display: "flex", alignItems: "center", paddingRight: S.m }}>
         <span style={{ width: 15, height: 15, borderRadius: "50%", background: dotColor, border: "2px solid #fff", flexShrink: 0, marginRight: S.s }} />
@@ -441,21 +452,29 @@ const ReviewCard = ({ best, worst, score, role, date }) => (
   </div>
 );
 
-// ─── Alternative job card — matches .vacancy-card-list__item ──────────────────
-const AltJob = ({ job, onClick, isLast }) => {
-  const { title, company, companyType, pay, rating, location, highlights, altReason: reason } = job;
+// ─── Alternative job card ──────────────────────────────────────────────────────
+const AltJob = ({ job, onClick }) => {
+  const { title, company, companyType, pay, rating, location, altBadge, altReason: reason } = job;
   return (
     <div
       onClick={onClick}
       style={{
-        padding: `${S.s2}px ${S.m}px`,
-        borderBottom: isLast ? "none" : "1px solid rgba(50,50,50,0.1)",
-        cursor: "pointer",
         background: COLORS.card,
+        borderRadius: 5,
+        boxShadow: "0px 4px 4px rgba(0,0,0,0.05)",
+        padding: S.m,
+        cursor: "pointer",
       }}
     >
-      {/* Job title */}
-      <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>{title}</div>
+      {/* Title row with badge top-right */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: S.s, marginBottom: S.xs }}>
+        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{title}</div>
+        {altBadge && (
+          <span style={{ ...T.body2Bold, border: `2px solid ${COLORS.green}`, color: COLORS.greenText, background: COLORS.card, borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT, flexShrink: 0 }}>
+            {altBadge}
+          </span>
+        )}
+      </div>
       {/* .vacancy-card-list__rating-container — dial + score + employer name */}
       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: S.xs }}>
         <TinyRatingDial score={rating} />
@@ -463,17 +482,12 @@ const AltJob = ({ job, onClick, isLast }) => {
         <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{company} · {companyType}</span>
       </div>
       {/* Pay + location */}
-      <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginBottom: S.xs }}>
+      <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>
         {pay} · {location}
       </div>
-      {highlights && highlights.length > 0 && (
-        <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginTop: S.s }}>
-          {highlights.map((h) => <VacancyHighlight key={h} label={h} />)}
-        </div>
-      )}
       {reason && (
-        <div style={{ marginTop: S.s }}>
-          <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{reason.text}</span>
+        <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", paddingTop: S.s, marginTop: S.s }}>
+          <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{reason.text}</span>
         </div>
       )}
     </div>
@@ -551,10 +565,9 @@ const AlternativesList = ({ currentJobIdx, personalised, onOpenDrawer, onJobSele
       <p style={{ ...T.body2, color: COLORS.muted, margin: `0 0 ${S.m}px`, fontFamily: FONT }}>
         {personalised ? "Sorted by your preferences" : "Based on this job's location and pay range. Tell us more to get better matches."}
       </p>
-      {/* .vacancy-card-list — single card container with hairline dividers between items */}
-      <div style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", overflow: "hidden" }}>
-        {altJobs.map((j, i) => (
-          <AltJob key={j.id} job={j} onClick={() => onJobSelect(j.id)} isLast={i === altJobs.length - 1} />
+      <div style={{ display: "flex", flexDirection: "column", gap: S.s2 }}>
+        {altJobs.map((j) => (
+          <AltJob key={j.id} job={j} onClick={() => onJobSelect(j.id)} />
         ))}
       </div>
     </div>
@@ -609,11 +622,155 @@ const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect
   </div>
 );
 
+// ─── All findings data — used by "See all findings from workers" modal ─────────
+const ALL_FINDINGS = [
+  {
+    section: "Pay",
+    findings: [
+      {
+        heading: "Most people don't get sick pay",
+        opinion: "bad",
+        primary: "No. Most people don't get proper sick pay",
+        secondary: "86% of people say they wouldn't get paid if they were sick but scheduled to work.",
+        why: "Everyone gets sick sometimes. You should be able to take time off without worrying. At a good job you should still get paid if you're scheduled to work but can't due to sickness.",
+      },
+      {
+        heading: "Pay is below the London Living Wage",
+        opinion: "bad",
+        primary: "This job pays below the London Living Wage",
+        secondary: "At £12.58/hr this is below the London Living Wage of £14.80/hr. 38% of workers report being paid below Living Wage.",
+        why: "The Living Wage is the minimum needed to meet the basic cost of living. Jobs that pay below it can make it hard to cover everyday expenses.",
+      },
+      {
+        heading: "Most people get paid the same regardless of age",
+        opinion: "good",
+        primary: "Yes. Most people get equal pay regardless of age",
+        secondary: "75% of people say they get paid the same as everyone else their age.",
+        why: "Your age shouldn't affect your pay. Everyone doing the same job deserves the same rate.",
+      },
+    ],
+  },
+  {
+    section: "Hours and flexibility",
+    findings: [
+      {
+        heading: "Less than 4 weeks notice of shifts",
+        opinion: "bad",
+        primary: "Most people get less than 4 weeks notice of when they're working",
+        secondary: "67% of people with changing schedules report getting less than four weeks notice.",
+        why: "At a good job, you get plenty of notice about when you're working. This makes it easy for you to plan the rest of your life, as well as your finances, because you know how much you'll be working and when.",
+      },
+      {
+        heading: "Only some people get a choice of shifts",
+        opinion: "okay",
+        primary: "Only some people get a say in which shifts they work",
+        secondary: "52% of people say they get some choice over their shifts.",
+        why: "Being able to choose or influence your shifts makes it much easier to balance work with your life outside of it.",
+      },
+      {
+        heading: "Can be hard to change shifts",
+        opinion: "okay",
+        primary: "It can be hard to swap or change shifts",
+        secondary: "49% of people say it's difficult to change a shift when they need to.",
+        why: "Life is unpredictable. A good employer makes it reasonably easy to swap shifts when something comes up.",
+      },
+      {
+        heading: "Easy to book holiday",
+        opinion: "good",
+        primary: "Most people find it easy to book holiday",
+        secondary: "83% of people report it's easy to book holidays.",
+        why: "A good job should let you take time off when you need it, and it shouldn't be a nightmare to arrange.",
+      },
+      {
+        heading: "Shifts don't get changed at short notice",
+        opinion: "good",
+        primary: "Most people's shifts don't get changed at short notice",
+        secondary: "71% of people say their shifts are rarely or never changed at short notice.",
+        why: "Having your shifts changed at the last minute is really disruptive to your life. A good employer respects your time.",
+      },
+      {
+        heading: "Some people find it hard to take sick leave",
+        opinion: "okay",
+        primary: "Some people find it hard to take time off sick",
+        secondary: "44% of people say they find it difficult to take sick leave when they need it.",
+        why: "When you're unwell, you should be able to take time off without fear of losing your job or facing consequences.",
+      },
+    ],
+  },
+  {
+    section: "Wellbeing",
+    findings: [
+      {
+        heading: "Most people are stressed",
+        opinion: "bad",
+        primary: "Most people feel stressed here",
+        secondary: "71% of people say they often feel stressed at work.",
+        why: "Work isn't always easy, but if you're frequently stressed, that's not good. Your employer should support you with enough people and resources to get your job done without feeling overwhelmed.",
+      },
+      {
+        heading: "Most people don't get paid breaks",
+        opinion: "bad",
+        primary: "No. Most people don't get paid breaks",
+        secondary: "70% of people say they don't get paid breaks.",
+        why: "A good job should have paid breaks. You should be paid for all your time at work, whether you're on a break or not.",
+      },
+      {
+        heading: "Most people get proper breaks",
+        opinion: "good",
+        primary: "Most people get proper breaks",
+        secondary: "82% of people report that they get to take proper breaks.",
+        why: "When you take a break it should be a proper rest. It should last the full duration and you shouldn't get pulled off it.",
+      },
+      {
+        heading: "Work can be physically demanding",
+        opinion: "okay",
+        primary: "Some people find the physical demands tough",
+        secondary: "48% of people say the physical demands of the job are harder than expected.",
+        why: "Warehouse work is physically demanding. A good employer provides the right equipment, training, and breaks to protect your health.",
+      },
+    ],
+  },
+  {
+    section: "Management",
+    findings: [
+      {
+        heading: "Head office doesn't understand what's happening",
+        opinion: "bad",
+        primary: "Most people think head office doesn't understand what's happening where they work",
+        secondary: "80% of people think that this employer's head office or owners don't have a good understanding of what's really happening where they work.",
+        why: "At a good job, the role of head office should be to support the people on the frontline serving customers. To do that properly, the company's owners or head office need to have a good understanding of what's really happening on the frontline.",
+      },
+      {
+        heading: "Most people feel treated with respect",
+        opinion: "good",
+        primary: "Most people feel treated with respect by their managers",
+        secondary: "72% of people say they're treated with respect by their managers.",
+        why: "Everyone should get treated with respect by their managers. You shouldn't feel discriminated against or bullied, and if you have a problem you should be able to speak to someone about it.",
+      },
+      {
+        heading: "Some people experience bullying or harassment",
+        opinion: "okay",
+        primary: "Some people have experienced bullying or harassment",
+        secondary: "32% of people say they've experienced bullying or harassment at work.",
+        why: "No one should have to put up with bullying at work. Your employer should have clear policies and take action when people raise concerns.",
+      },
+      {
+        heading: "Not everyone finds managers easy to talk to",
+        opinion: "okay",
+        primary: "Not everyone finds their manager approachable",
+        secondary: "41% of people say they don't feel comfortable raising concerns with their manager.",
+        why: "Being able to talk to your manager is important. If you have a problem, you should be able to speak to someone without fear of consequences.",
+      },
+    ],
+  },
+];
+
 // ─── Main page ─────────────────────────────────────────────────────────────────
 
 export default function JobTriagePage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [jdModalOpen, setJdModalOpen] = useState(false);
+  const [allFindingsModalOpen, setAllFindingsModalOpen] = useState(false);
   const [personalised, setPersonalised] = useState(false);
   const [selectedJobIdx, setSelectedJobIdx] = useState(0);
   const [findingsForceOpen, setFindingsForceOpen] = useState(false);
@@ -654,17 +811,16 @@ export default function JobTriagePage() {
 
       <h1 style={{ ...(isDesktop ? T.heading2Lg : T.heading2), margin: `0 0 ${S.s2}px`, fontFamily: FONT, color: COLORS.text }}>{job.title}</h1>
 
-      <div style={{ display: "flex", gap: S.m, flexWrap: "wrap", marginBottom: S.m }}>
+      <div style={{ marginBottom: S.m }}>
         {[
           { icon: <IconPay />, text: job.pay },
           { icon: <IconLocation />, text: job.location },
-          { icon: <IconClock />, text: job.hours, sub: job.hoursSub },
+          { icon: <IconClock />, text: `${job.hours}${job.hoursSub ? ` (${job.hoursSub})` : ""}` },
           { icon: <IconClock />, text: job.shifts },
         ].map((f, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "center", gap: S.xs }}>
-            {f.icon}
-            <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{f.text}</span>
-            {f.sub && <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>({f.sub})</span>}
+          <div key={i} style={{ display: "flex", alignItems: "flex-start", marginBottom: S.s }}>
+            <span style={{ marginRight: S.s, marginTop: S.xs, flexShrink: 0, display: "flex" }}>{f.icon}</span>
+            <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, lineHeight: 1.5 }}>{f.text}</span>
           </div>
         ))}
       </div>
@@ -786,7 +942,7 @@ export default function JobTriagePage() {
         </div>
         </div>
 
-        <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "center", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.xs }}>
+        <div onClick={() => setAllFindingsModalOpen(true)} style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "center", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.xs }}>
           See all findings from workers →
         </div>
       </Section>
@@ -865,6 +1021,46 @@ export default function JobTriagePage() {
 
       <OnboardingDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)}
         onSubmit={() => { setPersonalised(true); setDrawerOpen(false); }} />
+
+      {/* All findings modal */}
+      {allFindingsModalOpen && (
+        <>
+          <div onClick={() => setAllFindingsModalOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 100 }} />
+          <div style={{ position: "fixed", inset: 0, zIndex: 101, overflow: "auto", padding: `${S.l}px ${S.m}px` }}>
+            <div style={{ background: COLORS.bg, borderRadius: 5, maxWidth: 640, margin: "0 auto", padding: S.l, position: "relative" }}>
+              <button onClick={() => setAllFindingsModalOpen(false)}
+                style={{ position: "absolute", top: S.m, right: S.m, background: "none", border: "none", cursor: "pointer", ...T.body2Bold, color: COLORS.muted, fontFamily: FONT }}>
+                ✕ Close
+              </button>
+              <h2 style={{ ...T.heading2, margin: `0 0 ${S.m2}px`, fontFamily: FONT, color: COLORS.text }}>All findings from workers</h2>
+              {ALL_FINDINGS.map((group) => (
+                <div key={group.section} style={{ marginBottom: S.l }}>
+                  <h3 style={{ ...T.lead2, margin: `0 0 ${S.s2}px`, fontFamily: FONT, color: COLORS.text }}>{group.section}</h3>
+                  {/* .finding-group card */}
+                  <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0` }}>
+                    {group.findings.map((f, i) => {
+                      const opinionLabel = f.opinion === "bad" ? "Needs improving" : f.opinion === "okay" ? "Okay" : "Good";
+                      return (
+                        <FindingTile
+                          key={f.heading}
+                          heading={f.heading}
+                          label={f.heading}
+                          primary={f.primary}
+                          secondary={f.secondary}
+                          why={f.why}
+                          variant={f.opinion === "bad" ? "red" : f.opinion === "okay" ? "amber" : "green"}
+                          isLast={i === group.findings.length - 1}
+                          opinionLabel={opinionLabel}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Job description modal */}
       {jdModalOpen && (
