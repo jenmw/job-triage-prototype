@@ -290,7 +290,7 @@ const FindingRow = ({ status, statement }) => {
 };
 
 // ─── Finding tile (expandable compact card for the findings grid) ──────────────
-const FindingTile = ({ pct, label, primary, secondary, why, variant, lit, forceOpen }) => {
+const FindingTile = ({ pct, label, heading, primary, secondary, why, variant, lit, forceOpen }) => {
   const [open, setOpen] = useState(false);
   useEffect(() => { if (forceOpen) setOpen(true); }, [forceOpen]);
   const isRed = variant === "red";
@@ -316,7 +316,7 @@ const FindingTile = ({ pct, label, primary, secondary, why, variant, lit, forceO
         <span style={{ ...T.body2Bold, color: pctColor, fontFamily: FONT, flex: 1 }}>{pct}%</span>
         <span style={{ ...T.body2, color: COLORS.muted, fontSize: 10, transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "rotate(0deg)", display: "inline-block" }}>▾</span>
       </div>
-      <div style={{ ...T.body2, color: COLORS.muted, lineHeight: 1.3, fontFamily: FONT }}>{label}</div>
+      <div style={{ ...T.body2, color: COLORS.muted, lineHeight: 1.3, fontFamily: FONT }}>{heading ?? label}</div>
       <div style={{ maxHeight: open ? 300 : 0, overflow: "hidden", transition: "max-height 0.3s ease" }}>
         <div style={{ borderTop: `1px solid ${borderNorm}`, marginTop: S.xs, paddingTop: S.s }}>
           <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>{primary}</div>
@@ -631,24 +631,28 @@ export default function JobTriagePage() {
           {[
             {
               pct: 86, label: "No sick pay",
+              heading: "Most people don't get sick pay",
               primary: "No. Most people don't get proper sick pay",
               secondary: "86% of people say they wouldn't get paid if they were sick but scheduled to work.",
               why: "Everyone gets sick sometimes. You should be able to take time off without worrying. At a good job you should still get paid if you're scheduled to work but can't due to sickness.",
             },
             {
               pct: 71, label: "Stressful work",
+              heading: "Most people are stressed",
               primary: "Most people feel stressed here",
               secondary: "71% of people say they often feel stressed at work.",
               why: "Work isn't always easy, but if you're frequently stressed, that's not good. Your employer should support you with enough people and resources to get your job done without feeling overwhelmed.",
             },
             {
               pct: 70, label: "Unpaid breaks",
+              heading: "Most people don't get paid breaks",
               primary: "No. Most people don't get paid breaks",
               secondary: "70% of people say they don't get paid breaks.",
               why: "A good job should have paid breaks. You should be paid for all your time at work, whether you're on a break or not.",
             },
             {
               pct: 80, label: "Disconnected management",
+              heading: "Head office doesn't understand what's happening",
               primary: "Most people think head office doesn't understand what's happening where they work",
               secondary: "80% of people think that this employer's head office or owners don't have a good understanding of what's really happening where they work.",
               why: "At a good job, the role of head office should be to support the people on the frontline serving customers. To do that properly, the company's owners or head office need to have a good understanding of what's really happening on the frontline.",
@@ -664,24 +668,28 @@ export default function JobTriagePage() {
           {[
             {
               pct: 72, label: "Respectful managers",
+              heading: "Most people feel treated with respect",
               primary: "Most people feel treated with respect by their managers",
               secondary: "72% of people say they're treated with respect by their managers.",
               why: "Everyone should get treated with respect by their managers. You shouldn't feel discriminated against or bullied, and if you have a problem you should be able to speak to someone about it.",
             },
             {
               pct: 82, label: "Proper breaks",
+              heading: "Most people get proper breaks",
               primary: "Most people get proper breaks",
               secondary: "82% of people report that they get to take proper breaks.",
               why: "When you take a break it should be a proper rest. It should last the full duration and you shouldn't get pulled off it.",
             },
             {
               pct: 83, label: "Easy to book holiday",
+              heading: "Easy to book holiday",
               primary: "Most people find it easy to book holiday",
               secondary: "83% of people report it's easy to book holidays.",
               why: "A good job should let you take time off when you need it, and it shouldn't be a nightmare to arrange.",
             },
             {
               pct: 69, label: "Stable shift patterns",
+              heading: "4+ weeks notice of shifts",
               primary: "Most people get 4 weeks notice of when they're working",
               secondary: "69% of people with changing schedules report getting four weeks notice or more.",
               why: "At a good job, you get plenty of notice about when you're working. This makes it easy for you to plan the rest of your life, as well as your finances, because you know how much you'll be working and when.",
