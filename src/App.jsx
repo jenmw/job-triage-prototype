@@ -10,6 +10,7 @@ const COLORS = {
   muted: "#646362",
   border: "#e1e1e1",
   green: "#6dba84",
+  greenText: "#008728",
   greenBg: "#eaf6e8",
   greenBorder: "#6dba84",
   amber: "#ffcf4d",
@@ -292,11 +293,11 @@ const VacancyHighlight = ({ label, onClick }) => (
     onClick={onClick}
     style={{
       ...T.body2Bold, borderRadius: 20, border: `2px solid ${COLORS.green}`,
-      color: COLORS.green, display: "inline-flex", alignItems: "center", gap: 5,
-      padding: "2px 10px", whiteSpace: "nowrap", fontFamily: FONT,
+      color: COLORS.greenText, background: COLORS.card,
+      display: "inline-flex", alignItems: "center", gap: 5,
+      padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT,
       cursor: onClick ? "pointer" : "default",
-      textDecoration: onClick ? "underline" : "none",
-      textDecorationColor: COLORS.greenBorder,
+      textDecoration: "none",
     }}
   >
     <IconThumbsUp /> {label}
@@ -440,28 +441,30 @@ const ReviewCard = ({ best, worst, score, role, date }) => (
   </div>
 );
 
-// ─── Alternative job card ──────────────────────────────────────────────────────
-const AltJob = ({ job, onClick }) => {
-  const { title, company, pay, rating, location, highlights, altReason: reason } = job;
+// ─── Alternative job card — matches .vacancy-card-list__item ──────────────────
+const AltJob = ({ job, onClick, isLast }) => {
+  const { title, company, companyType, pay, rating, location, highlights, altReason: reason } = job;
   return (
     <div
       onClick={onClick}
-      style={{ padding: `${S.s2}px ${S.m}px`, border: `1px solid ${COLORS.border}`, borderRadius: 5, cursor: "pointer", transition: "border-color 0.15s", background: COLORS.card }}
-      onMouseEnter={(e) => { e.currentTarget.style.borderColor = COLORS.accent; }}
-      onMouseLeave={(e) => { e.currentTarget.style.borderColor = COLORS.border; }}
+      style={{
+        padding: `${S.s2}px ${S.m}px`,
+        borderBottom: isLast ? "none" : "1px solid rgba(50,50,50,0.1)",
+        cursor: "pointer",
+        background: COLORS.card,
+      }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: S.s2 }}>
-        <div style={{ flex: 1 }}>
-          <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{title}</div>
-          <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontFamily: FONT }}>{company} · {location}</div>
-        </div>
-        <div style={{ textAlign: "right", flexShrink: 0 }}>
-          <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{pay}</div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: S.xs, marginTop: 2 }}>
-            <TinyRatingDial score={rating} />
-            <span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{rating.toFixed(1)}</span>
-          </div>
-        </div>
+      {/* Job title */}
+      <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>{title}</div>
+      {/* .vacancy-card-list__rating-container — dial + score + employer name */}
+      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: S.xs }}>
+        <TinyRatingDial score={rating} />
+        <span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{rating.toFixed(1)}</span>
+        <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{company} · {companyType}</span>
+      </div>
+      {/* Pay + location */}
+      <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginBottom: S.xs }}>
+        {pay} · {location}
       </div>
       {highlights && highlights.length > 0 && (
         <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginTop: S.s }}>
@@ -469,7 +472,7 @@ const AltJob = ({ job, onClick }) => {
         </div>
       )}
       {reason && (
-        <div style={{ marginTop: S.s, paddingTop: S.s, borderTop: `1px solid ${COLORS.border}` }}>
+        <div style={{ marginTop: S.s }}>
           <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{reason.text}</span>
         </div>
       )}
@@ -535,24 +538,28 @@ const OnboardingDrawer = ({ open, onClose, onSubmit }) => {
 
 // ─── Shared sub-components ─────────────────────────────────────────────────────
 
-const AlternativesList = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect }) => (
-  <div>
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: S.xs }}>
-      <h2 style={{ ...T.lead1, margin: 0, fontFamily: FONT, color: COLORS.text }}>Similar jobs nearby</h2>
-      <button onClick={onOpenDrawer} style={{ ...T.body2Bold, color: COLORS.accent, background: "none", border: "none", cursor: "pointer", fontFamily: FONT, textDecoration: "underline" }}>
-        Match me
-      </button>
+const AlternativesList = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect }) => {
+  const altJobs = JOBS.filter((j) => j.id !== currentJobIdx);
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: S.xs }}>
+        <h2 style={{ ...T.lead1, margin: 0, fontFamily: FONT, color: COLORS.text }}>Similar jobs nearby</h2>
+        <button onClick={onOpenDrawer} style={{ ...T.body2Bold, color: COLORS.accent, background: "none", border: "none", cursor: "pointer", fontFamily: FONT, textDecoration: "underline" }}>
+          Match me
+        </button>
+      </div>
+      <p style={{ ...T.body2, color: COLORS.muted, margin: `0 0 ${S.m}px`, fontFamily: FONT }}>
+        {personalised ? "Sorted by your preferences" : "Based on this job's location and pay range. Tell us more to get better matches."}
+      </p>
+      {/* .vacancy-card-list — single card container with hairline dividers between items */}
+      <div style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", overflow: "hidden" }}>
+        {altJobs.map((j, i) => (
+          <AltJob key={j.id} job={j} onClick={() => onJobSelect(j.id)} isLast={i === altJobs.length - 1} />
+        ))}
+      </div>
     </div>
-    <p style={{ ...T.body2, color: COLORS.muted, margin: `0 0 ${S.m}px`, fontFamily: FONT }}>
-      {personalised ? "Sorted by your preferences" : "Based on this job's location and pay range. Tell us more to get better matches."}
-    </p>
-    <div style={{ display: "flex", flexDirection: "column", gap: S.s2 }}>
-      {JOBS.filter((j) => j.id !== currentJobIdx).map((j) => (
-        <AltJob key={j.id} job={j} onClick={() => onJobSelect(j.id)} />
-      ))}
-    </div>
-  </div>
-);
+  );
+};
 
 const PersonaliseNudge = ({ personalised, onOpenDrawer }) =>
   personalised ? (
@@ -594,8 +601,8 @@ const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect
       </div>
     </div>
 
-    {/* Alternatives card — not sticky, scrolls with page */}
-    <div style={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 5, padding: S.m2 }}>
+    {/* Alternatives — not sticky, scrolls with page */}
+    <div>
       <AlternativesList currentJobIdx={currentJobIdx} personalised={personalised} onOpenDrawer={onOpenDrawer} onJobSelect={onJobSelect} />
       <PersonaliseNudge personalised={personalised} onOpenDrawer={onOpenDrawer} />
     </div>
