@@ -289,6 +289,42 @@ const FindingRow = ({ status, statement }) => {
   );
 };
 
+// ─── Finding tile (expandable compact card for the findings grid) ──────────────
+const FindingTile = ({ pct, label, detail, variant, lit }) => {
+  const [open, setOpen] = useState(false);
+  const isRed = variant === "red";
+  const dotColor   = isRed ? COLORS.red   : COLORS.green;
+  const pctColor   = isRed ? COLORS.red   : COLORS.green;
+  const bgNormal   = isRed ? COLORS.redBg : COLORS.greenBg;
+  const bgLit      = isRed ? COLORS.redBg : COLORS.green + "30";
+  const borderNorm = isRed ? COLORS.redBorder : COLORS.greenBorder;
+  const borderLit  = isRed ? COLORS.red   : COLORS.green;
+  return (
+    <div
+      onClick={() => setOpen(!open)}
+      style={{
+        padding: `${S.s}px ${S.s2}px`, borderRadius: 4, cursor: "pointer",
+        background: lit ? bgLit : bgNormal,
+        border: `1px solid ${lit ? borderLit : borderNorm}`,
+        boxShadow: lit ? `0 0 0 2px ${dotColor}` : "none",
+        transition: "background 0.3s, border-color 0.3s, box-shadow 0.3s",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: S.xs, marginBottom: 2 }}>
+        <span style={{ width: 8, height: 8, borderRadius: "50%", background: dotColor, flexShrink: 0, display: "inline-block" }} />
+        <span style={{ ...T.body2Bold, color: pctColor, fontFamily: FONT, flex: 1 }}>{pct}%</span>
+        <span style={{ ...T.body2, color: COLORS.muted, fontSize: 10, transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "rotate(0deg)", display: "inline-block" }}>▾</span>
+      </div>
+      <div style={{ ...T.body2, color: COLORS.muted, lineHeight: 1.3, fontFamily: FONT }}>{label}</div>
+      <div style={{ maxHeight: open ? 120 : 0, overflow: "hidden", transition: "max-height 0.25s ease" }}>
+        <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginTop: S.xs, lineHeight: 1.4, borderTop: `1px solid ${borderNorm}`, paddingTop: S.xs }}>
+          {detail}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // ─── Signal card (prototype-specific) ─────────────────────────────────────────
 const Signal = ({ status, label, detail, subtext }) => {
   const c = status === "good"
@@ -589,18 +625,12 @@ export default function JobTriagePage() {
         <div style={{ ...T.smallcaps, color: COLORS.red, marginBottom: S.xs, fontFamily: FONT }}>Red flags</div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: S.xs }}>
           {[
-            { pct: 86, label: "No sick pay" },
-            { pct: 71, label: "Stressful work" },
-            { pct: 70, label: "Unpaid breaks" },
-            { pct: 80, label: "Disconnected management" },
+            { pct: 86, label: "No sick pay",             detail: "86% of workers say The Best Connection doesn't offer sick pay. If you can't work due to illness, you likely won't get paid." },
+            { pct: 71, label: "Stressful work",          detail: "71% of workers describe the role as stressful. High workload and time pressure are common complaints." },
+            { pct: 70, label: "Unpaid breaks",           detail: "70% say breaks are unpaid. On a 12-hour shift that can mean up to an hour's earnings deducted." },
+            { pct: 80, label: "Disconnected management", detail: "80% feel management is out of touch with day-to-day work. Workers report decisions being made without consulting them." },
           ].map((v) => (
-            <div key={v.label} style={{ padding: `${S.s}px ${S.s2}px`, borderRadius: 4, background: COLORS.redBg, border: `1px solid ${COLORS.redBorder}` }}>
-              <div style={{ display: "flex", alignItems: "center", gap: S.xs, marginBottom: 2 }}>
-                <span style={{ width: 8, height: 8, borderRadius: "50%", background: COLORS.red, flexShrink: 0, display: "inline-block" }} />
-                <span style={{ ...T.body2Bold, color: COLORS.red, fontFamily: FONT }}>{v.pct}%</span>
-              </div>
-              <div style={{ ...T.body2, color: COLORS.muted, lineHeight: 1.3, fontFamily: FONT }}>{v.label}</div>
-            </div>
+            <FindingTile key={v.label} {...v} variant="red" />
           ))}
         </div>
 
@@ -608,28 +638,13 @@ export default function JobTriagePage() {
         <div style={{ ...T.smallcaps, color: COLORS.green, marginTop: S.s2, marginBottom: S.xs, fontFamily: FONT }}>Good things</div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: S.xs }}>
           {[
-            { pct: 72, label: "Respectful managers" },
-            { pct: 82, label: "Proper breaks" },
-            { pct: 83, label: "Easy to book holiday" },
-            { pct: 69, label: "Stable shift patterns" },
-          ].map((v) => {
-            const lit = highlightFinding === v.label;
-            return (
-              <div key={v.label} style={{
-                padding: `${S.s}px ${S.s2}px`, borderRadius: 4,
-                background: lit ? COLORS.green + "30" : COLORS.greenBg,
-                border: `1px solid ${lit ? COLORS.green : COLORS.greenBorder}`,
-                boxShadow: lit ? `0 0 0 2px ${COLORS.green}` : "none",
-                transition: "background 0.3s, border-color 0.3s, box-shadow 0.3s",
-              }}>
-                <div style={{ display: "flex", alignItems: "center", gap: S.xs, marginBottom: 2 }}>
-                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: COLORS.green, flexShrink: 0, display: "inline-block" }} />
-                  <span style={{ ...T.body2Bold, color: COLORS.green, fontFamily: FONT }}>{v.pct}%</span>
-                </div>
-                <div style={{ ...T.body2, color: COLORS.muted, lineHeight: 1.3, fontFamily: FONT }}>{v.label}</div>
-              </div>
-            );
-          })}
+            { pct: 72, label: "Respectful managers",    detail: "72% say managers treat them with respect. Workers mention feeling valued and not talked down to." },
+            { pct: 82, label: "Proper breaks",          detail: "82% say they get their breaks. Workers report being able to actually take their allocated rest time." },
+            { pct: 83, label: "Easy to book holiday",   detail: "83% find it easy to get holiday approved. Workers say the process is straightforward with good notice." },
+            { pct: 69, label: "Stable shift patterns",  detail: "69% have a stable rota. Most workers know their shifts in advance, making it easier to plan around work." },
+          ].map((v) => (
+            <FindingTile key={v.label} {...v} variant="green" lit={highlightFinding === v.label} />
+          ))}
         </div>
 
         <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "center", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.xs }}>
