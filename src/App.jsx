@@ -1012,7 +1012,7 @@ export default function JobTriagePage() {
         </div>
         </div>
 
-        <div onClick={() => setAllFindingsModalOpen(true)} style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "center", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.xs }}>
+        <div onClick={() => setAllFindingsModalOpen(true)} style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "left", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.xs }}>
           See all findings from workers →
         </div>
       </Section>
@@ -1026,7 +1026,7 @@ export default function JobTriagePage() {
           best="Good training when you start, friendly team"
           worst="Long shifts and no overtime pay after 12 hours"
           score={6.5} role="Branch manager" date="Jun 2024" />
-        <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "center", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.s }}>See all {job.quizCount} reviews →</div>
+        <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "left", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.s }}>See all {job.quizCount} reviews →</div>
       </Section>
 
       <Section title="Full job details">
@@ -1036,7 +1036,7 @@ export default function JobTriagePage() {
           <p style={{ margin: `0 0 ${S.s}px` }}><strong style={{ color: COLORS.text }}>You'll need:</strong> Valid photo ID, 5-year address history, DBS check and Aviation Security Course (both paid by employer).</p>
           <p style={{ margin: 0 }}><strong style={{ color: COLORS.text }}>Regulated by:</strong> Civil Aviation Authority (CAA) — that's why the background checks are strict.</p>
         </div>
-        <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "center", padding: `${S.xs}px 0`, fontFamily: FONT }}
+        <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "left", padding: `${S.xs}px 0`, fontFamily: FONT }}
           onClick={() => setJdModalOpen(true)}>
           See full job description →
         </div>
