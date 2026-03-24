@@ -311,37 +311,40 @@ const FindingRow = ({ status, statement }) => {
   );
 };
 
-// ─── Finding tile (expandable compact card for the findings grid) ──────────────
+// ─── Finding tile — matches .finding-group__finding linear accordion ─────────────
+// White card group container: bg white, borderRadius 5, padding "8px 16px 0", mb 16px
+// Each row: padding 16px 0, borderBottom 1px solid rgba(50,50,50,0.1)
+// Coloured circle (15px, 2px white border) + short_text, expands to primary/secondary/why
 const FindingTile = ({ pct, label, heading, primary, secondary, why, variant, lit, forceOpen }) => {
   const [open, setOpen] = useState(false);
   useEffect(() => { if (forceOpen) setOpen(true); }, [forceOpen]);
-  const isRed = variant === "red";
-  const dotColor   = isRed ? COLORS.red   : COLORS.green;
-  const pctColor   = isRed ? COLORS.red   : COLORS.green;
-  const bgNormal   = isRed ? COLORS.redBg : COLORS.greenBg;
-  const bgLit      = isRed ? COLORS.redBg : COLORS.green + "30";
-  const borderNorm = isRed ? COLORS.redBorder : COLORS.greenBorder;
-  const borderLit  = isRed ? COLORS.red   : COLORS.green;
+  const isRed   = variant === "red";
+  const dotColor = isRed ? COLORS.red : COLORS.green;
+  const expandBg = isRed ? COLORS.redBg : COLORS.greenBg;
   return (
     <div
       onClick={() => setOpen(!open)}
       style={{
-        padding: `${S.s}px ${S.s2}px`, borderRadius: 4, cursor: "pointer",
-        background: lit ? bgLit : bgNormal,
-        border: `1px solid ${lit ? borderLit : borderNorm}`,
-        boxShadow: lit ? `0 0 0 2px ${dotColor}` : "none",
-        transition: "background 0.3s, border-color 0.3s, box-shadow 0.3s",
+        padding: `${S.m}px 0`,
+        borderBottom: "1px solid rgba(50,50,50,0.1)",
+        cursor: "pointer",
+        outline: lit ? `2px solid ${dotColor}` : "none",
+        outlineOffset: -2,
+        transition: "outline 0.3s",
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: S.xs, marginBottom: 2 }}>
-        <span style={{ width: 8, height: 8, borderRadius: "50%", background: dotColor, flexShrink: 0, display: "inline-block" }} />
-        <span style={{ ...T.body2Bold, color: pctColor, fontFamily: FONT, flex: 1 }}>{pct}%</span>
-        <span style={{ ...T.body2, color: COLORS.muted, transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "rotate(0deg)", display: "inline-block" }}>▾</span>
+      {/* .finding-group__finding-description — statement row with chevron */}
+      <div style={{ display: "flex", alignItems: "center", paddingRight: S.m }}>
+        {/* .finding-statement::before — 15px coloured circle */}
+        <span style={{ width: 15, height: 15, borderRadius: "50%", background: dotColor, border: "2px solid #fff", outline: `1px solid ${dotColor}`, flexShrink: 0, marginRight: S.s }} />
+        <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, flex: 1 }}>{heading ?? label}</span>
+        <span style={{ ...T.body2, color: COLORS.muted, marginLeft: S.s, transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "rotate(0deg)", display: "inline-block" }}>▾</span>
       </div>
-      <div style={{ ...T.body2, color: COLORS.muted, lineHeight: 1.3, fontFamily: FONT }}>{heading ?? label}</div>
-      <div style={{ maxHeight: open ? 300 : 0, overflow: "hidden", transition: "max-height 0.3s ease" }}>
-        <div style={{ borderTop: `1px solid ${borderNorm}`, marginTop: S.xs, paddingTop: S.s }}>
-          <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>{primary}</div>
+      {/* .finding-group__finding-data — expandable content */}
+      <div style={{ maxHeight: open ? 400 : 0, overflow: "hidden", transition: "max-height 0.3s ease" }}>
+        <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", marginTop: S.m, padding: S.m, background: expandBg, borderRadius: 4 }}>
+          <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>{primary}</div>
+          <div style={{ ...T.smallcaps, color: COLORS.muted, fontFamily: FONT, margin: `${S.s}px 0 ${S.xs}px` }}>How we know this</div>
           <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginBottom: S.s }}>{secondary}</div>
           <div style={{ ...T.smallcaps, color: COLORS.muted, fontFamily: FONT, marginBottom: S.xs }}>Why this matters</div>
           <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, fontStyle: "italic", lineHeight: 1.5 }}>{why}</div>
@@ -371,16 +374,12 @@ const Signal = ({ status, label, detail, subtext }) => {
 };
 
 // ─── Collapsible section ───────────────────────────────────────────────────────
-const Section = ({ title, icon, children, defaultOpen = false, badge, badgeEl, number, forceOpen, sectionRef }) => {
+const Section = ({ title, children, defaultOpen = false, badge, badgeEl, forceOpen, sectionRef }) => {
   const [open, setOpen] = useState(defaultOpen);
   useEffect(() => { if (forceOpen) setOpen(true); }, [forceOpen]);
   return (
     <div ref={sectionRef} style={{ borderBottom: `1px solid ${COLORS.border}` }}>
       <button onClick={() => setOpen(!open)} style={{ width: "100%", padding: `${S.m}px 0`, background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: S.s, fontFamily: FONT }}>
-        {number != null && (
-          <span style={{ ...T.smallcaps, width: 20, height: 20, borderRadius: "50%", background: COLORS.border, color: COLORS.muted, display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{number}</span>
-        )}
-        {icon}
         <span style={{ ...T.body1Bold, color: COLORS.text, flex: 1, textAlign: "left", fontFamily: FONT }}>{title}</span>
         {badgeEl ?? (badge && <span style={{ ...T.smallcaps, padding: `${S.xs}px ${S.s}px`, borderRadius: 100, background: badge.bg, color: badge.textColor }}>{badge.text}</span>)}
         <span style={{ ...T.body2, color: COLORS.muted, transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "rotate(0deg)", display: "inline-block" }}>▾</span>
@@ -392,22 +391,35 @@ const Section = ({ title, icon, children, defaultOpen = false, badge, badgeEl, n
   );
 };
 
-// ─── Review snippet ────────────────────────────────────────────────────────────
+// ─── Review card — matches .what-people-say__list__person .card ────────────────
+// White card, box-shadow, RatingDial floating top-right (position absolute, top -28, right 14)
+// "Best thing" / "Worst thing" in smallcaps, quote in body-1 italic
+// Job info pill: inline-block, rgba(50,50,50,0.05) bg, borderRadius 20, padding 10px 16px 8px
 const ReviewSnippet = ({ quote, score, role, date, best }) => (
-  <div style={{ padding: `${S.s2}px ${S.m}px`, background: COLORS.bg, borderRadius: 5, border: `1px solid ${COLORS.border}` }}>
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: S.s }}>
-      <span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{best ? "👍 Best:" : "👎 Worst:"}</span>
-      <span style={{ ...T.body2Bold, color: score >= 6 ? COLORS.green : score >= 4 ? COLORS.amberText : COLORS.red, fontFamily: FONT }}>{score}/10</span>
+  <div style={{ position: "relative", marginTop: S.l2 }}>
+    {/* Rating dial floats above card top-right */}
+    <div style={{ position: "absolute", top: -28, right: 14, background: COLORS.card, borderRadius: 56, padding: S.s, boxShadow: "0px 2px 6px rgba(0,0,0,0.1)", zIndex: 1 }}>
+      <RatingDial score={score} displaySize={44} />
     </div>
-    <div style={{ ...T.body2, color: COLORS.muted, fontStyle: "italic", fontFamily: FONT }}>"{quote}"</div>
-    <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontFamily: FONT }}>{role} · {date}</div>
+    {/* .card */}
+    <div style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", overflow: "hidden" }}>
+      <div style={{ padding: `${S.m}px ${S.m}px ${S.s2}px` }}>
+        <div style={{ ...T.smallcaps, color: COLORS.muted, fontFamily: FONT, marginBottom: S.s }}>{best ? "Best thing" : "Worst thing"}</div>
+        <div style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, fontStyle: "italic", lineHeight: 1.5 }}>"{quote}"</div>
+      </div>
+      {/* .job-info pill */}
+      <div style={{ padding: `0 ${S.m}px ${S.m}px` }}>
+        <span style={{ ...T.body2, display: "inline-block", background: "rgba(50,50,50,0.05)", borderRadius: 20, padding: "10px 16px 8px", color: COLORS.muted, fontFamily: FONT }}>
+          {role} · {date}
+        </span>
+      </div>
+    </div>
   </div>
 );
 
 // ─── Alternative job card ──────────────────────────────────────────────────────
 const AltJob = ({ job, onClick }) => {
   const { title, company, pay, rating, location, highlights, altReason: reason } = job;
-  const reasonDot = reason?.variant === "green" ? COLORS.green : reason?.variant === "amber" ? COLORS.amber : COLORS.muted;
   return (
     <div
       onClick={onClick}
@@ -435,7 +447,7 @@ const AltJob = ({ job, onClick }) => {
       )}
       {reason && (
         <div style={{ marginTop: S.s, paddingTop: S.s, borderTop: `1px solid ${COLORS.border}` }}>
-          <span style={{ ...T.body2, color: reasonDot === COLORS.muted ? COLORS.muted : reasonDot, fontFamily: FONT }}>{reason.text}</span>
+          <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{reason.text}</span>
         </div>
       )}
     </div>
@@ -647,7 +659,7 @@ export default function JobTriagePage() {
 
   const sectionsBlock = (
     <>
-      <Section number={1} title="Can you do this job?" icon={<IconAlertCircle />} defaultOpen={true} badge={{ text: "CHECK FIRST", bg: COLORS.amberBg, textColor: COLORS.amberText }}>
+      <Section title="Can you do this job?" defaultOpen={true} badge={{ text: "CHECK FIRST", bg: COLORS.amberBg, textColor: COLORS.amberText }}>
         <Signal status="warning" label="Pay: below London Living Wage"
           detail={`${job.pay} — the London Living Wage is £14.80/hr. 38% of workers here say they're paid below Living Wage.`}
           subtext="That's ~£26,165/yr before tax on these shifts" />
@@ -661,10 +673,11 @@ export default function JobTriagePage() {
           detail="The listing doesn't require previous warehouse experience — just that you're reliable and comfortable with physical work." />
       </Section>
 
-      <Section number={2} title="What's it really like here?" icon={<IconRanking />} badgeEl={<span style={{ display: "inline-flex", alignItems: "center", gap: S.xs }}><TinyRatingDial score={rating} /><span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{rating.toFixed(1)}/10</span></span>} forceOpen={findingsForceOpen} sectionRef={findingsSectionRef}>
-        {/* Red flags group */}
-        <div style={{ ...T.smallcaps, color: COLORS.red, marginBottom: S.xs, fontFamily: FONT }}>Red flags</div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: S.xs }}>
+      <Section title="What's it really like here?" badgeEl={<span style={{ display: "inline-flex", alignItems: "center", gap: S.xs }}><TinyRatingDial score={rating} /><span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{rating.toFixed(1)}/10</span></span>} forceOpen={findingsForceOpen} sectionRef={findingsSectionRef}>
+        {/* Red flags group — .finding-group */}
+        <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0`, marginBottom: S.m }}>
+        <div style={{ ...T.smallcaps, color: COLORS.red, padding: `${S.s}px 0`, fontFamily: FONT }}>Red flags</div>
+        <div>
           {[
             {
               pct: 86, label: "No sick pay",
@@ -698,10 +711,12 @@ export default function JobTriagePage() {
             <FindingTile key={v.label} {...v} variant="red" />
           ))}
         </div>
+        </div>
 
-        {/* Good things group */}
-        <div style={{ ...T.smallcaps, color: COLORS.green, marginTop: S.s2, marginBottom: S.xs, fontFamily: FONT }}>Good things</div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: S.xs }}>
+        {/* Good things group — .finding-group */}
+        <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0` }}>
+        <div style={{ ...T.smallcaps, color: COLORS.green, padding: `${S.s}px 0`, fontFamily: FONT }}>Good things</div>
+        <div>
           {[
             {
               pct: 72, label: "Respectful managers",
@@ -735,20 +750,21 @@ export default function JobTriagePage() {
             <FindingTile key={v.label} {...v} variant="green" lit={highlightFinding === v.label} forceOpen={highlightFinding === v.label} />
           ))}
         </div>
+        </div>
 
         <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "center", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.xs }}>
           See all findings from workers →
         </div>
       </Section>
 
-      <Section number={3} title="What workers actually said" icon={<IconMessageCircle />}>
+      <Section title="What workers actually said">
         <ReviewSnippet best={true} quote="Flexible when needed" score={8.2} role="Agency worker" date="Sep 2024" />
         <ReviewSnippet best={true} quote="Good team and good training" score={8.0} role="Branch manager" date="Jun 2024" />
         <ReviewSnippet best={false} quote="The managers, the stress levels" score={1.8} role="Administrator" date="Jul 2023" />
         <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "center", padding: `${S.xs}px 0`, fontFamily: FONT }}>See all {job.quizCount} reviews →</div>
       </Section>
 
-      <Section number={4} title="Full job details" icon={<IconApply />}>
+      <Section title="Full job details">
         <a href={job.listingUrl} target="_blank" rel="noopener noreferrer"
           style={{ ...T.body2Bold, color: COLORS.accent, fontFamily: FONT, display: "inline-flex", alignItems: "center", gap: S.xs, textDecoration: "none" }}>
           View full listing on employer site ↗
