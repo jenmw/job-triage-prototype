@@ -321,6 +321,7 @@ const FindingTile = ({ pct, label, primary, secondary, why, variant, lit, forceO
         <div style={{ borderTop: `1px solid ${borderNorm}`, marginTop: S.xs, paddingTop: S.s }}>
           <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>{primary}</div>
           <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginBottom: S.s }}>{secondary}</div>
+          <div style={{ ...T.smallcaps, color: COLORS.muted, fontFamily: FONT, marginBottom: S.xs }}>Why this matters</div>
           <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, fontStyle: "italic", lineHeight: 1.5 }}>{why}</div>
         </div>
       </div>
