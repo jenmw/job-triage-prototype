@@ -392,12 +392,16 @@ const AltJob = ({ job, onClick }) => {
   return (
     <div
       onClick={onClick}
-      style={{ padding: `${S.s2}px ${S.m}px`, border: `1px solid ${COLORS.border}`, borderRadius: 5, cursor: "pointer", transition: "border-color 0.15s", background: COLORS.card, position: "relative" }}
+      style={{ padding: `${S.s2}px ${S.m}px`, border: `1px solid ${COLORS.border}`, borderRadius: 5, cursor: "pointer", transition: "border-color 0.15s", background: COLORS.card }}
       onMouseEnter={(e) => { e.currentTarget.style.borderColor = COLORS.accent; }}
       onMouseLeave={(e) => { e.currentTarget.style.borderColor = COLORS.border; }}
     >
-      {badge && <div style={{ position: "absolute", top: -8, right: S.s2, ...T.smallcaps, padding: `${S.xs}px ${S.s}px`, borderRadius: 100, background: badge.bg, color: badge.color, border: `1px solid ${badge.border}` }}>{badge.text}</div>}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: S.s2, paddingTop: badge ? S.s : 0 }}>
+      {badge && (
+        <div style={{ marginBottom: S.s }}>
+          <span style={{ ...T.body2Bold, padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, background: badge.bg, color: badge.color, border: `1px solid ${badge.border}`, fontFamily: FONT, display: "inline-block" }}>{badge.text}</span>
+        </div>
+      )}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: S.s2 }}>
         <div style={{ flex: 1 }}>
           <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{title}</div>
           <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontFamily: FONT }}>{company} · {location}</div>
