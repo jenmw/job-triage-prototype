@@ -41,213 +41,400 @@ const T = {
   smallcaps: { fontSize: 14, lineHeight: "20px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" },
 };
 
-// Jobs data — the current listing plus the five alternatives
+// ─── Utility ────────────────────────────────────────────────────────────────
+const toHourly = (pay, type) => (type === "annual" ? pay / 2080 : pay);
+
+// Jobs data — the current listing plus nine alternatives
 const JOBS = [
+  // ── 0: Main job — GXO Logistics ─────────────────────────────────────────────
   {
     id: 0,
     title: "Warehouse Operative",
-    company: "The Best Connection",
-    companyType: "Agency",
-    pay: "£12.58/hr",
-    location: "Hounslow",
+    company: "GXO Logistics",
+    companyType: "Employer",
+    pay: "£25,958/yr",
+    payType: "annual",
+    payAlt: "≈ £12.48/hr",
+    location: "Corby, NN18",
     hours: "Full time",
-    hoursSub: "4 on / 4 off",
-    shifts: "12hr shifts",
-    rating: 5.2,
-    quizCount: 53,
-    highlights: ["Respectful managers", "Proper breaks"],
-    listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/56629861",
+    hoursSub: null,
+    shifts: "Rotating day shifts",
+    rating: 6.7,
+    quizCount: 918,
+    highlights: ["No last-minute shift changes", "Hours security"],
+    listingUrl: "https://www.breakroom.cc/en-gb/jobs/listing/89531552-gxo-logistics-warehouse-operative-corby-northamptonshire",
     altBadge: null,
-    altHighlight: null,
-    payBenchmark: { verdict: "below", label: "below average for warehouse operatives in London", range: "£13.50–£16/hr typical" },
+    altReason: null,
+    payBenchmark: { verdict: "below", label: "below average for warehouse operatives in Northamptonshire", range: "£27,000–£32,000/yr typical" },
+    findingDiffs: [],
+    requiresFltLicence: false,
+    signals: [
+      { status: "good", label: "No qualifications required — warehouse experience preferred but not essential", detail: "GXO ask for warehouse experience and inventory process knowledge, but this is 'preferred' rather than a hard requirement.", subtext: null, findingLabel: null },
+      { status: "good", label: "Rotating day shifts Mon–Fri — no nights, no weekends", detail: "Shifts rotate between 06:00–14:00 and 14:00–22:00, Monday to Friday. No night shifts or weekend work.", subtext: null, findingLabel: null },
+      { status: "bad", label: "70% of GXO workers don't get sick pay", detail: "70% of workers say they wouldn't be paid if they were sick but scheduled to work.", subtext: "Based on 918 Breakroom Quiz responses", findingLabel: "No sick pay" },
+    ],
     jd: [
       { label: "Job title", text: "Warehouse Operative" },
-      { label: "Employer", text: "The Best Connection (Employment Agency)" },
-      { label: "Pay", text: "£12.58 per hour" },
-      { label: "Location", text: "Hounslow, TW6 (near Heathrow Airport)" },
-      { label: "Hours", text: "Full time — 4 on / 4 off rotation, 12-hour shifts (6am–6pm, 8am–8pm, or 10am–10pm)" },
-      { label: "Role description", text: "We are recruiting Warehouse Operatives on behalf of a major international logistics facility based near Heathrow Airport. You will be responsible for sorting, scanning, and processing mail bags and parcels for international dispatch. Working in a fast-paced, physically demanding environment, you'll be part of a team that keeps global supply chains moving." },
-      { label: "Responsibilities", text: "Sort and scan incoming and outgoing mail bags; Process items for international dispatch using handheld scanners; Maintain a safe and organised work area; Meet daily throughput targets; Report any discrepancies or damaged items." },
-      { label: "Requirements", text: "Valid photo ID; 5-year address history (for security vetting); Must be able to pass a DBS check and CAA Aviation Security Course (funded by employer); Comfortable with heavy lifting up to 30kg; Ability to work rotating 12-hour shifts." },
-      { label: "Please note", text: "Due to the location's proximity to Heathrow Airport, this role is regulated by the Civil Aviation Authority (CAA). All candidates must successfully complete an Aviation Security background check before starting." },
+      { label: "Employer", text: "GXO Logistics (Direct Employer)" },
+      { label: "Pay", text: "£25,958/yr base + £945/yr shift premium — total approx. £26,904/yr" },
+      { label: "Location", text: "Corby, Northamptonshire, NN18 8EY" },
+      { label: "Hours", text: "Full time, Monday–Friday, rotating shifts: 06:00–14:00 and 14:00–22:00" },
+      { label: "Role description", text: "GXO Logistics is one of the world's largest contract logistics companies. At our Corby site, you'll play a central role in the smooth and efficient running of the warehouse — accurately picking customer orders and ensuring goods are processed to the highest standard." },
+      { label: "Responsibilities", text: "Accurately picking customer orders to meet daily targets; Loading and unloading vehicles using counterbalance and electric pump trucks; Working at heights to retrieve and store pallets; Identifying quality issues and reporting incidents; Complying with health and safety procedures at all times." },
+      { label: "Requirements", text: "Warehouse experience and knowledge of inventory processes (preferred, not essential); Material handling equipment (MHE) driving experience desirable but not required; Team-orientated with a positive attitude; Computer literate; Strong commitment to health and safety." },
+      { label: "Benefits", text: "Holiday pay; Workplace pension; My Benefits platform — high street discounts, cycle-to-work scheme, cashback cards and savings programmes." },
     ],
   },
+  // ── 1: Amazon Warehouse Associate ───────────────────────────────────────────
   {
     id: 1,
-    title: "Warehouse Operative",
-    company: "Gap Personnel",
-    companyType: "Agency",
-    pay: "£13.25–17.25/hr",
-    location: "London",
-    hours: "Full time",
-    hoursSub: null,
-    shifts: "8hr shifts",
-    rating: 7.4,
-    quizCount: 121,
-    highlights: ["Proper breaks", "Respectful managers"],
-    listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/67890",
-    altBadge: "↑ £0.67/hr",
-    altReason: null,
-    payBenchmark: { verdict: "fair", label: "around average for warehouse operatives in London", range: "£13.50–£16/hr typical" },
-    findingDiffs: ["More people get sick pay", "Better shift notice"],
-    jd: [
-      { label: "Job title", text: "Warehouse Operative" },
-      { label: "Employer", text: "Gap Personnel (Employment Agency)" },
-      { label: "Pay", text: "£13.25–£17.25 per hour (including shift premiums)" },
-      { label: "Location", text: "London (various sites)" },
-      { label: "Hours", text: "Full time, 8-hour shifts — days and nights available" },
-      { label: "Role description", text: "Gap Personnel are recruiting Warehouse Operatives for immediate start positions across multiple sites in London. Whether you're experienced in a warehouse environment or looking for your first role, we want to hear from you. We offer weekly pay and ongoing placements." },
-      { label: "Responsibilities", text: "Picking and packing orders to meet accuracy and speed targets; Loading and unloading vehicles; Using RF scanners; Stock replenishment and rotation; Keeping work areas clean and tidy." },
-      { label: "Requirements", text: "Previous warehouse experience preferred but not essential; Able to work in a team environment; Comfortable standing for long periods; Reliable and punctual; Must have the right to work in the UK." },
-      { label: "Benefits", text: "Competitive hourly rate with shift premiums; Weekly pay; Holiday pay accrual; Opportunity for temp-to-perm positions." },
-    ],
-  },
-  {
-    id: 2,
-    title: "Logistics Operator",
-    company: "Shorterm Group",
-    companyType: "Agency",
-    pay: "£14.24–18.37/hr",
-    location: "London SE25",
-    hours: "Full time",
-    hoursSub: null,
-    shifts: "Day shifts",
-    rating: 5.0,
-    quizCount: 44,
-    highlights: ["Paid breaks", "Regular hours"],
-    listingUrl: "https://www.reed.co.uk/jobs/logistics-operator/11111",
-    altBadge: "↑ £1.66/hr",
-    altReason: null,
-    payBenchmark: { verdict: "good", label: "above average for logistics operators in London", range: "£12.50–£15/hr typical" },
-    findingDiffs: ["Easier to book holiday", "Fewer last-minute shift changes"],
-    jd: [
-      { label: "Job title", text: "Logistics Operator" },
-      { label: "Employer", text: "Shorterm Group (Employment Agency)" },
-      { label: "Pay", text: "£14.24–£18.37 per hour" },
-      { label: "Location", text: "London SE25" },
-      { label: "Hours", text: "Full time, day shifts" },
-      { label: "Role description", text: "Shorterm Group are looking for experienced Logistics Operators to join a busy distribution centre in south-east London. This is a fast-paced role requiring attention to detail and the ability to work to tight deadlines. Immediate start available for the right candidates." },
-      { label: "Responsibilities", text: "Receiving, processing, and dispatching stock; Operating warehouse management systems (WMS); Coordinating with drivers and third-party logistics partners; Ensuring accurate inventory records; Participating in stock takes." },
-      { label: "Requirements", text: "Previous logistics or warehouse experience essential; Familiarity with WMS software desirable; Strong numeracy and communication skills; Ability to work independently and as part of a team; Forklift licence advantageous but not required." },
-      { label: "Benefits", text: "Enhanced hourly rate; Daytime hours only; 28 days holiday (pro rata); Consistent shifts." },
-    ],
-  },
-  {
-    id: 3,
-    title: "Warehouse Operative",
-    company: "Gi Group",
-    companyType: "Agency",
-    pay: "£14.69/hr",
-    location: "London",
-    hours: "Part time",
-    hoursSub: null,
-    shifts: "Day shifts",
-    rating: 6.0,
-    quizCount: 67,
-    highlights: ["Proper breaks", "Respectful managers"],
-    listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/22222",
-    altBadge: "↑ £2.11/hr",
-    altReason: { text: "Part time available" },
-    payBenchmark: { verdict: "good", label: "above average for warehouse operatives in London", range: "£13.50–£16/hr typical" },
-    findingDiffs: ["More people get proper breaks", "Less people are stressed"],
-    jd: [
-      { label: "Job title", text: "Warehouse Operative (Part Time)" },
-      { label: "Employer", text: "Gi Group (Employment Agency)" },
-      { label: "Pay", text: "£14.69 per hour" },
-      { label: "Location", text: "London" },
-      { label: "Hours", text: "Part time, day shifts — flexible hours to suit" },
-      { label: "Role description", text: "Gi Group are recruiting part-time Warehouse Operatives for a well-established client based in London. This is an ideal opportunity for those who need flexible working arrangements. Positions are available immediately with the potential to increase hours." },
-      { label: "Responsibilities", text: "Manual handling of goods and materials; Picking orders to specification; Maintaining stock accuracy; Assisting with deliveries and collections; General warehouse housekeeping." },
-      { label: "Requirements", text: "Previous warehouse experience an advantage; Must be physically fit — role involves lifting; Flexible and adaptable approach to work; Good communication skills; Right to work in the UK required." },
-      { label: "Benefits", text: "Competitive part-time pay rate; Flexible shift patterns; Weekly pay; Holiday pay; Ongoing work with potential for increased hours." },
-    ],
-  },
-  {
-    id: 4,
-    title: "Warehouse Operator (Nights)",
-    company: "DSV",
+    title: "Warehouse Associate",
+    company: "Amazon",
     companyType: "Employer",
-    pay: "No pay info",
-    location: "Hounslow",
-    hours: "Full time",
-    hoursSub: null,
-    shifts: "Night shifts",
-    rating: 7.7,
-    quizCount: 89,
-    highlights: ["People enjoy this job", "Learn new skills"],
-    listingUrl: "https://www.reed.co.uk/jobs/warehouse-operator/33333",
-    altBadge: "Better rated",
-    altReason: null,
-    findingDiffs: ["Less people are stressed", "More people feel respected at work"],
-    jd: [
-      { label: "Job title", text: "Warehouse Operator (Night Shift)" },
-      { label: "Employer", text: "DSV UK Ltd (Direct Employer)" },
-      { label: "Pay", text: "Competitive — discussed at interview" },
-      { label: "Location", text: "Hounslow, TW4" },
-      { label: "Hours", text: "Full time, night shifts (10pm–6am or similar rotation)" },
-      { label: "Role description", text: "DSV is a leading global transport and logistics company and we're looking for Warehouse Operators to join our night shift team at our Hounslow facility. As part of our warehouse team, you'll play a key role in ensuring goods are processed accurately and on time, ready for next-day delivery." },
-      { label: "Responsibilities", text: "Processing inbound and outbound freight; Loading and unloading HGVs; Sorting and scanning parcels; Operating warehouse equipment; Ensuring health and safety compliance at all times." },
-      { label: "Requirements", text: "Previous warehouse or logistics experience preferred; Ability to work unsupervised on night shifts; Good attention to detail; Physically fit and able to lift up to 25kg; Counter-balance forklift licence desirable." },
-      { label: "About DSV", text: "DSV operates a global network of more than 75,000 employees across over 90 countries. We are committed to creating a positive working environment with strong career development opportunities." },
-      { label: "Benefits", text: "Competitive salary; Night shift allowance; 25 days holiday; Company pension; Career development and training." },
-    ],
-  },
-  {
-    id: 5,
-    title: "FLT Driver",
-    company: "Manpower",
-    companyType: "Agency",
-    pay: "£13/hr",
-    location: "Hounslow",
-    hours: "Full time",
-    hoursSub: null,
-    shifts: "Day shifts",
-    rating: 6.2,
-    quizCount: 38,
-    highlights: ["Same location", "Higher employer score"],
-    listingUrl: "https://www.reed.co.uk/jobs/flt-driver/44444",
-    altBadge: "↑ £0.42/hr",
-    altReason: { text: "FLT licence required" },
-    payBenchmark: { verdict: "below", label: "below average for FLT drivers in London", range: "£14–£17/hr typical" },
-    findingDiffs: [],
-    jd: [
-      { label: "Job title", text: "FLT Driver (Counterbalance / Reach)" },
-      { label: "Employer", text: "Manpower (Employment Agency)" },
-      { label: "Pay", text: "£13.00 per hour" },
-      { label: "Location", text: "Hounslow, Middlesex" },
-      { label: "Hours", text: "Full time, day shifts (Monday–Friday)" },
-      { label: "Role description", text: "Manpower are looking for an experienced FLT Driver to join a busy warehouse operation in Hounslow. You will be operating counterbalance and reach trucks in a fast-paced distribution environment. This is a temp-to-perm opportunity for the right candidate." },
-      { label: "Responsibilities", text: "Operating counterbalance and reach forklift trucks safely; Loading and unloading vehicles; Moving stock around the warehouse; Checking goods in and out; Maintaining accurate records." },
-      { label: "Requirements", text: "Valid RTITB or ITSSAR forklift licence (counterbalance essential, reach desirable); Minimum 1 year's FLT experience; Ability to work in a team; Good attention to detail; Physically fit; No criminal convictions." },
-      { label: "Benefits", text: "Competitive pay rate; Monday–Friday days — no weekend work; Weekly pay; Holiday pay; Temp-to-perm opportunity." },
-    ],
-  },
-  {
-    id: 6,
-    title: "Warehouse Operative",
-    company: "Brook Street",
-    companyType: "Agency",
-    pay: "£11.44/hr",
-    location: "Hounslow",
+    pay: "£13.00/hr",
+    payType: "hourly",
+    payAlt: "≈ £27,040/yr",
+    location: "Corby, NN18",
     hours: "Full time",
     hoursSub: null,
     shifts: "Various shifts",
-    rating: 4.1,
-    quizCount: 29,
+    rating: 7.5,
+    quizCount: 3798,
     highlights: [],
-    listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/55555",
-    altBadge: null,
+    listingUrl: "https://www.amazon.jobs/en-gb",
+    altBadge: "Better rated",
     altReason: null,
-    payBenchmark: { verdict: "below", label: "below average for warehouse operatives in Hounslow", range: "£13.50–£16/hr typical" },
-    findingDiffs: [],
+    payBenchmark: { verdict: "good", label: "above average for warehouse associates in Northamptonshire", range: "£12–£14/hr typical" },
+    findingDiffs: ["No experience required", "Better rated employer"],
+    requiresFltLicence: false,
+    signals: [
+      { status: "good", label: "No experience required — Amazon trains you from day one", detail: "Amazon specifically say no prior warehouse experience is needed. Full paid training is provided from your first day.", subtext: null, findingLabel: null },
+      { status: "warning", label: "Physically demanding — walking 10–15 miles per shift, lifting up to 23kg", detail: "Amazon warehouse roles are high-activity roles. Workers stand and walk for the full shift and are expected to hit productivity targets.", subtext: null, findingLabel: null },
+      { status: "bad", label: "86% of Amazon workers don't get sick pay", detail: "Despite Amazon's higher rating, sick pay is still a major gap — consistent across all Amazon roles.", subtext: "Based on 3,798 Breakroom Quiz responses", findingLabel: null },
+    ],
+    jd: [
+      { label: "Job title", text: "Warehouse Associate (Fulfilment Centre)" },
+      { label: "Employer", text: "Amazon (Direct Employer)" },
+      { label: "Pay", text: "From £13.00/hr (plus overnight and weekend premiums where applicable)" },
+      { label: "Location", text: "Corby, Northamptonshire, NN18" },
+      { label: "Hours", text: "Full time and part time available — fixed shifts including days, nights, and weekends" },
+      { label: "Role description", text: "Amazon's fulfilment centres are where customer orders come to life. As a Warehouse Associate you'll receive products, pick orders, pack and ship — helping ensure every customer gets their order on time. No experience needed — we'll train you from day one." },
+      { label: "Responsibilities", text: "Receiving and storing incoming stock; Picking orders accurately from shelves and bins; Packing and labelling orders for dispatch; Sorting parcels; Meeting daily productivity targets; Following all safety procedures." },
+      { label: "Requirements", text: "No previous warehouse experience required; Ability to stand and walk for your full shift; Able to lift and carry items up to 23kg; Reliable and punctual; Right to work in the UK." },
+      { label: "Benefits", text: "Pay from £13.00/hr; Pension scheme; Employee discount on Amazon purchases; 24/7 on-site support; Career development pathways." },
+    ],
+  },
+  // ── 2: DHL Supply Chain ──────────────────────────────────────────────────────
+  {
+    id: 2,
+    title: "Warehouse Operative",
+    company: "DHL Supply Chain",
+    companyType: "Employer",
+    pay: "£12.75/hr",
+    payType: "hourly",
+    payAlt: "≈ £26,520/yr",
+    location: "Northampton, NN4",
+    hours: "Full time",
+    hoursSub: null,
+    shifts: "Day shifts",
+    rating: 6.7,
+    quizCount: 364,
+    highlights: [],
+    listingUrl: "https://www.dhl.com/gb-en/home/careers.html",
+    altBadge: "↑ £0.27/hr",
+    altReason: null,
+    payBenchmark: { verdict: "fair", label: "around average for warehouse operatives in Northamptonshire", range: "£12–£14/hr typical" },
+    findingDiffs: ["Better sick pay cover", "Less unpaid overtime"],
+    requiresFltLicence: false,
+    signals: [
+      { status: "good", label: "No formal qualifications required", detail: "DHL ask for previous warehouse experience as a preference, but no licences or certificates are required to apply.", subtext: null, findingLabel: null },
+      { status: "warning", label: "40% of DHL workers do unpaid extra work", detail: "Four in ten DHL workers report doing work they're not paid for. Worth asking about overtime expectations at interview.", subtext: "Based on 364 Breakroom Quiz responses", findingLabel: null },
+      { status: "warning", label: "60% don't get sick pay — better than most logistics employers", detail: "A majority still lack sick pay, but this compares favourably to GXO (70%), XPO (83%) and Clipper (90%).", subtext: "Based on 364 Breakroom Quiz responses", findingLabel: null },
+    ],
     jd: [
       { label: "Job title", text: "Warehouse Operative" },
-      { label: "Employer", text: "Brook Street (Employment Agency)" },
-      { label: "Pay", text: "£11.44 per hour (National Living Wage)" },
-      { label: "Location", text: "Hounslow" },
-      { label: "Hours", text: "Full time, various shifts including weekends" },
-      { label: "Role description", text: "Brook Street are recruiting Warehouse Operatives for a general distribution warehouse in Hounslow. Duties include picking, packing, and general warehouse housekeeping. This is a short-term temporary position with no guarantee of ongoing work." },
-      { label: "Requirements", text: "No experience necessary; Must be able to lift up to 25kg; Reliable and able to commit to shift schedule; Right to work in the UK." },
+      { label: "Employer", text: "DHL Supply Chain (Direct Employer)" },
+      { label: "Pay", text: "£12.75/hr" },
+      { label: "Location", text: "Northampton, NN4 (approx. 20 miles from Corby)" },
+      { label: "Hours", text: "Full time, day shifts (Monday–Friday)" },
+      { label: "Role description", text: "DHL Supply Chain is one of the world's leading logistics providers. We're looking for Warehouse Operatives to join our busy Northampton site, supporting a key retail client with efficient movement, storage, and distribution of goods." },
+      { label: "Responsibilities", text: "Picking and packing customer orders; Loading and unloading vehicles; Operating RF scanners; Stock replenishment and rotation; Maintaining a clean and safe working environment; Meeting daily KPIs." },
+      { label: "Requirements", text: "Previous warehouse or logistics experience preferred; Good attention to detail; Comfortable standing for long periods and lifting up to 25kg; Team player; Right to work in the UK." },
+      { label: "Benefits", text: "Company pension; 25 days holiday (pro rata); DHL employee discount programme; Career development opportunities." },
+    ],
+  },
+  // ── 3: Wincanton ─────────────────────────────────────────────────────────────
+  {
+    id: 3,
+    title: "Warehouse Operative",
+    company: "Wincanton",
+    companyType: "Employer",
+    pay: "£12.00/hr",
+    payType: "hourly",
+    payAlt: null,
+    location: "Kettering, NN16",
+    hours: "Full time",
+    hoursSub: null,
+    shifts: "Mixed shifts",
+    rating: 6.1,
+    quizCount: 659,
+    highlights: [],
+    listingUrl: "https://www.wincanton.co.uk/careers",
+    altBadge: null,
+    altReason: null,
+    payBenchmark: { verdict: "below", label: "below average for warehouse operatives in Northamptonshire", range: "£12–£14/hr typical" },
+    findingDiffs: [],
+    requiresFltLicence: false,
+    signals: [
+      { status: "good", label: "No specific qualifications required", detail: "Wincanton ask for warehouse or logistics experience as a preference. No licences or certificates are needed for this role.", subtext: null, findingLabel: null },
+      { status: "bad", label: "56% of Wincanton workers are paid below average for the role", detail: "Pay is the biggest concern at Wincanton — more than half of workers say they earn below average for warehouse work.", subtext: "Based on 659 Breakroom Quiz responses", findingLabel: null },
+      { status: "bad", label: "59% get one week or less notice of shifts", detail: "Short notice makes it hard to plan childcare, travel, or other commitments around work.", subtext: "Based on 659 Breakroom Quiz responses", findingLabel: null },
+    ],
+    jd: [
+      { label: "Job title", text: "Warehouse Operative" },
+      { label: "Employer", text: "Wincanton (Direct Employer)" },
+      { label: "Pay", text: "£12.00/hr" },
+      { label: "Location", text: "Kettering, Northamptonshire, NN16" },
+      { label: "Hours", text: "Full time, mixed day and afternoon shifts" },
+      { label: "Role description", text: "Wincanton is one of the UK's leading supply chain businesses. We're recruiting Warehouse Operatives to join our Kettering site, supporting a major retail client with picking, packing, and processing orders in a fast-paced environment." },
+      { label: "Responsibilities", text: "Picking and packing orders accurately; Receiving and put-away of inbound stock; Operating handheld RF scanners; Stock counting and inventory checks; Ensuring the warehouse is clean and tidy; Working to daily throughput targets." },
+      { label: "Requirements", text: "Previous warehouse or distribution experience preferred; Good numeracy and attention to detail; Comfortable with physical work and lifting up to 25kg; Reliable attendance record; Right to work in the UK." },
+      { label: "Benefits", text: "Company pension; 28 days holiday (including bank holidays); Employee assistance programme; On-site parking; Opportunities for progression." },
+    ],
+  },
+  // ── 4: XPO Logistics FLT Driver ──────────────────────────────────────────────
+  {
+    id: 4,
+    title: "FLT Driver",
+    company: "XPO Logistics",
+    companyType: "Employer",
+    pay: "£14.50/hr",
+    payType: "hourly",
+    payAlt: "≈ £30,160/yr",
+    location: "Northampton, NN4",
+    hours: "Full time",
+    hoursSub: null,
+    shifts: "Day shifts",
+    rating: 5.8,
+    quizCount: 372,
+    highlights: [],
+    listingUrl: "https://www.xpo.com/en-gb/careers",
+    altBadge: "↑ £2.02/hr",
+    altReason: { text: "FLT licence required" },
+    payBenchmark: { verdict: "fair", label: "around average for FLT drivers in Northamptonshire", range: "£14–£17/hr typical" },
+    findingDiffs: ["Higher pay rate"],
+    requiresFltLicence: true,
+    signals: [
+      { status: null, label: null, detail: null, subtext: null, findingLabel: null, isFltLicenceSignal: true },
+      { status: "warning", label: "Minimum 1 year counterbalance FLT experience required", detail: "XPO require at least a year of documented forklift operating experience. Reach truck experience is desirable but not essential.", subtext: null, findingLabel: null },
+      { status: "bad", label: "74% get one week or less notice of shifts", detail: "Short notice of shifts is the strongest worker complaint at XPO.", subtext: "Based on 372 Breakroom Quiz responses", findingLabel: null },
+    ],
+    jd: [
+      { label: "Job title", text: "FLT Driver (Counterbalance / Reach)" },
+      { label: "Employer", text: "XPO Logistics (Direct Employer)" },
+      { label: "Pay", text: "£14.50/hr" },
+      { label: "Location", text: "Northampton, NN4" },
+      { label: "Hours", text: "Full time, day shifts (Monday–Friday)" },
+      { label: "Role description", text: "XPO Logistics is a global provider of transport and logistics solutions. We're looking for an experienced FLT Driver to join our Northampton distribution centre, operating counterbalance and reach trucks to support daily warehouse operations." },
+      { label: "Responsibilities", text: "Operating counterbalance and reach forklift trucks safely; Loading and unloading HGV trailers; Moving and placing palletised stock; Completing vehicle pre-use checks; Maintaining accurate stock movement records; Adhering to health and safety procedures." },
+      { label: "Requirements", text: "Valid RTITB or ITSSAR forklift licence — counterbalance essential, reach desirable; Minimum 1 year documented FLT operating experience; Good attention to detail; Physically fit; Right to work in the UK." },
+      { label: "Benefits", text: "Competitive hourly rate; Pension scheme; 25 days holiday; Potential for overtime; Career development within a global business." },
+    ],
+  },
+  // ── 5: Amazon Warehouse Team Leader ──────────────────────────────────────────
+  {
+    id: 5,
+    title: "Warehouse Team Leader",
+    company: "Amazon",
+    companyType: "Employer",
+    pay: "£34,320/yr",
+    payType: "annual",
+    payAlt: "≈ £16.50/hr",
+    location: "Corby, NN18",
+    hours: "Full time",
+    hoursSub: null,
+    shifts: "Various shifts",
+    rating: 7.5,
+    quizCount: 3798,
+    highlights: [],
+    listingUrl: "https://www.amazon.jobs/en-gb",
+    altBadge: "↑ £4.02/hr",
+    altReason: { text: "Leadership experience required" },
+    payBenchmark: { verdict: "good", label: "above average for warehouse team leaders in Northamptonshire", range: "£30,000–£38,000/yr typical" },
+    findingDiffs: ["Higher pay", "Better rated employer"],
+    requiresFltLicence: false,
+    signals: [
+      { status: "warning", label: "Team leader or supervisory experience required", detail: "Amazon require evidence of leading a team, coaching others, or first-line management. Promote-from-within candidates are welcome.", subtext: null, findingLabel: null },
+      { status: "warning", label: "Working supervisor role — you manage a team while meeting your own targets", detail: "Amazon Team Leaders are hands-on. You'll be on the warehouse floor managing a team while also hitting your own productivity metrics.", subtext: null, findingLabel: null },
+      { status: "good", label: "Amazon scores 7.5/10 — one of the better-rated warehouse employers", detail: "74% feel respected by managers, 89% earn above average for their role.", subtext: "Based on 3,798 Breakroom Quiz responses", findingLabel: null },
+    ],
+    jd: [
+      { label: "Job title", text: "Warehouse Team Leader (Process Guide)" },
+      { label: "Employer", text: "Amazon (Direct Employer)" },
+      { label: "Pay", text: "£34,320/yr (approx. £16.50/hr)" },
+      { label: "Location", text: "Corby, Northamptonshire, NN18" },
+      { label: "Hours", text: "Full time — fixed shifts including days, nights, and weekends" },
+      { label: "Role description", text: "Amazon Team Leaders (Process Guides) are working supervisors in our fulfilment centres. You'll lead a team of associates, drive productivity, and help maintain the standards that keep our customers happy. If you've led a team before and want to take the next step, this could be the role for you." },
+      { label: "Responsibilities", text: "Leading and motivating a team of 15–20 warehouse associates; Monitoring team productivity and identifying improvements; Coaching associates on processes and safety; Managing attendance and escalating HR issues; Completing end-of-shift reporting." },
+      { label: "Requirements", text: "Previous team leader, supervisor, or first-line management experience required; Strong communication and coaching skills; Confident with warehouse management systems; Comfortable on the warehouse floor for full shifts; Flexible to work a range of shifts." },
+      { label: "Benefits", text: "Salary from £34,320/yr; Pension scheme; Employee discount; Career development and internal progression; Access to Amazon's learning and development programmes." },
+    ],
+  },
+  // ── 6: Greencore Production Operative ────────────────────────────────────────
+  {
+    id: 6,
+    title: "Production Operative",
+    company: "Greencore",
+    companyType: "Employer",
+    pay: "£13.25/hr",
+    payType: "hourly",
+    payAlt: "≈ £27,560/yr",
+    location: "Corby, NN17",
+    hours: "Full time",
+    hoursSub: null,
+    shifts: "Rotating shifts",
+    rating: 7.2,
+    quizCount: 320,
+    highlights: [],
+    listingUrl: "https://www.greencore.com/careers",
+    altBadge: "Better rated",
+    altReason: { text: "Food production role" },
+    payBenchmark: { verdict: "good", label: "above average for production operatives in Northamptonshire", range: "£12–£15/hr typical" },
+    findingDiffs: ["Better rated employer", "Above average pay"],
+    requiresFltLicence: false,
+    signals: [
+      { status: "warning", label: "Food production environment — different to general warehouse work", detail: "This is a production line role in a food factory, not a pick/pack warehouse. You'll work in a temperature-controlled environment with strict hygiene requirements.", subtext: null, findingLabel: null },
+      { status: "good", label: "No prior food production experience required — full training provided", detail: "Greencore train you on food safety and production processes from day one. A Level 2 Food Hygiene certificate is preferred but Greencore can support you to get it.", subtext: null, findingLabel: null },
+      { status: "good", label: "75% of Greencore workers earn above average for their role", detail: "Pay is genuinely competitive for production work in this area — one of Greencore's strongest Breakroom findings.", subtext: "Based on 320 Breakroom Quiz responses", findingLabel: null },
+    ],
+    jd: [
+      { label: "Job title", text: "Production Operative" },
+      { label: "Employer", text: "Greencore (Direct Employer)" },
+      { label: "Pay", text: "£13.25/hr" },
+      { label: "Location", text: "Corby, Northamptonshire, NN17" },
+      { label: "Hours", text: "Full time, rotating shifts (days, afternoons, and nights)" },
+      { label: "Role description", text: "Greencore is one of the UK's leading manufacturers of convenience food. At our Corby site we produce chilled meals for major supermarkets. We're looking for Production Operatives to join our teams — no prior food production experience is needed, just a positive attitude and willingness to learn." },
+      { label: "Responsibilities", text: "Working on production lines making chilled food products; Operating food processing equipment; Ensuring products meet quality and safety standards; Following hygiene and food safety procedures at all times; Assisting with cleaning and changeovers; Maintaining accurate production records." },
+      { label: "Requirements", text: "No previous food production experience required — full training provided; Level 2 Food Hygiene certificate preferred (Greencore can support you to obtain this); Able to work in a chilled environment; Physically fit and able to stand for extended periods; Team player with reliable attendance." },
+      { label: "Benefits", text: "Competitive pay; Company pension; 33 days holiday (including bank holidays); Free on-site meals during shifts; Colleague discounts; Opportunities for skill development and promotion." },
+    ],
+  },
+  // ── 7: Royal Mail Parcel Sorter ───────────────────────────────────────────────
+  {
+    id: 7,
+    title: "Parcel Sorter",
+    company: "Royal Mail",
+    companyType: "Employer",
+    pay: "£13.15/hr",
+    payType: "hourly",
+    payAlt: "≈ £27,352/yr",
+    location: "Wellingborough, NN8",
+    hours: "Full time",
+    hoursSub: null,
+    shifts: "Early mornings",
+    rating: 5.5,
+    quizCount: 3650,
+    highlights: [],
+    listingUrl: "https://www.royalmailgroup.com/en/careers",
+    altBadge: "↑ £0.67/hr",
+    altReason: null,
+    payBenchmark: { verdict: "good", label: "above average for parcel sorters in Northamptonshire", range: "£11.50–£14/hr typical" },
+    findingDiffs: ["Better sick pay cover"],
+    requiresFltLicence: false,
+    signals: [
+      { status: "good", label: "No qualifications required — Royal Mail trains you", detail: "No previous experience needed. Royal Mail provide a full induction and on-the-job training.", subtext: null, findingLabel: null },
+      { status: "warning", label: "Unsocial hours — shifts typically start at 05:00 or earlier", detail: "Parcel sorting operations run in the early hours to meet delivery schedules. Reliable transport at unsocial hours is essential.", subtext: null, findingLabel: null },
+      { status: "good", label: "53% of Royal Mail workers would get paid if sick — better than most", detail: "Royal Mail is one of the few logistics employers where over half of workers have access to sick pay.", subtext: "Based on 3,650 Breakroom Quiz responses", findingLabel: null },
+    ],
+    jd: [
+      { label: "Job title", text: "Parcel Sorter (Delivery Office)" },
+      { label: "Employer", text: "Royal Mail (Direct Employer)" },
+      { label: "Pay", text: "£13.15/hr" },
+      { label: "Location", text: "Wellingborough Delivery Office, Northamptonshire, NN8" },
+      { label: "Hours", text: "Full time, early start (typically 05:00–13:00)" },
+      { label: "Role description", text: "Royal Mail is the UK's postal service, delivering letters and parcels across the country every day. At our Wellingborough delivery office, Parcel Sorters play a vital role in getting the mail ready for delivery — physical, fast-paced work that makes a real difference." },
+      { label: "Responsibilities", text: "Sorting incoming parcels and letters by delivery route; Preparing mail for delivery rounds; Operating scanning equipment; Loading and unloading delivery vehicles; Keeping the sorting area clean and organised; Meeting daily throughput targets." },
+      { label: "Requirements", text: "No previous experience required; Must be able to lift and carry items up to 20kg; Reliable attendance — early starts are essential; Comfortable working in a busy, fast-paced environment; Right to work in the UK." },
+      { label: "Benefits", text: "Competitive hourly rate; Pension scheme; 25 days holiday plus bank holidays; Sick pay scheme (eligibility criteria apply); Employee discount and perks." },
+    ],
+  },
+  // ── 8: Evri Parcel Hub Operative ─────────────────────────────────────────────
+  {
+    id: 8,
+    title: "Parcel Hub Operative",
+    company: "Evri",
+    companyType: "Employer",
+    pay: "£11.85/hr",
+    payType: "hourly",
+    payAlt: null,
+    location: "Corby, NN18",
+    hours: "Various",
+    hoursSub: null,
+    shifts: "Various shifts",
+    rating: 4.9,
+    quizCount: 609,
+    highlights: [],
+    listingUrl: "https://careers.evri.com",
+    altBadge: null,
+    altReason: null,
+    payBenchmark: { verdict: "below", label: "below average for parcel hub operatives in Northamptonshire", range: "£12–£14/hr typical" },
+    findingDiffs: [],
+    requiresFltLicence: false,
+    signals: [
+      { status: "bad", label: "37% of Evri workers are on zero-hours contracts — check before accepting", detail: "Over a third of Evri workers have no guaranteed hours. Make sure you understand what contract type you're being offered before accepting.", subtext: "Based on 609 Breakroom Quiz responses", findingLabel: null },
+      { status: "warning", label: "Physical role — parcels up to 31.5kg, standing for the full shift", detail: "Parcel hub work involves continuous lifting and sorting. A basic level of physical fitness is required.", subtext: null, findingLabel: null },
+      { status: "bad", label: "80% of Evri workers often feel stressed — highest in this comparison", detail: "Stress levels at Evri are among the worst of any logistics employer on Breakroom.", subtext: "Based on 609 Breakroom Quiz responses", findingLabel: null },
+    ],
+    jd: [
+      { label: "Job title", text: "Parcel Hub Operative" },
+      { label: "Employer", text: "Evri (Direct Employer)" },
+      { label: "Pay", text: "£11.85/hr" },
+      { label: "Location", text: "Corby, Northamptonshire, NN18" },
+      { label: "Hours", text: "Flexible hours — full time and part time available; days, nights, and weekends" },
+      { label: "Role description", text: "Evri is one of the UK's largest parcel delivery businesses. At our Corby hub, you'll be part of the team that keeps parcels moving through our network — sorting, scanning, and loading in a fast-paced environment." },
+      { label: "Responsibilities", text: "Sorting and scanning parcels on a moving belt; Loading and unloading trailers; Using handheld scanning equipment; Meeting hourly throughput targets; Following health and safety procedures." },
+      { label: "Requirements", text: "No previous experience required; Able to lift parcels up to 31.5kg; Comfortable standing and moving for the full shift; Flexible with shift times; Right to work in the UK." },
+      { label: "Please note", text: "Contract types vary — full time, part time, and zero-hours contracts are offered. Please check the contract type before accepting any offer." },
+      { label: "Benefits", text: "Flexible hours; Weekly pay; Staff discount on Evri deliveries; Free on-site parking." },
+    ],
+  },
+  // ── 9: Clipper Logistics Pick & Pack ──────────────────────────────────────────
+  {
+    id: 9,
+    title: "Pick & Pack Operative",
+    company: "Clipper Logistics",
+    companyType: "Employer",
+    pay: "£12.10/hr",
+    payType: "hourly",
+    payAlt: null,
+    location: "Corby, NN17",
+    hours: "Full time",
+    hoursSub: null,
+    shifts: "Day shifts",
+    rating: 6.0,
+    quizCount: 107,
+    highlights: [],
+    listingUrl: "https://www.clipperlogistics.com/careers",
+    altBadge: null,
+    altReason: null,
+    payBenchmark: { verdict: "below", label: "below average for pick & pack operatives in Northamptonshire", range: "£12–£14/hr typical" },
+    findingDiffs: [],
+    requiresFltLicence: false,
+    signals: [
+      { status: "good", label: "No experience required — good entry-level role", detail: "Clipper welcome applicants without prior warehouse experience. Full training is provided on the job.", subtext: null, findingLabel: null },
+      { status: "warning", label: "Target-driven picking role — performance is monitored", detail: "Pick & pack operatives are expected to meet hourly pick rates. Performance monitoring is a standard part of the role.", subtext: null, findingLabel: null },
+      { status: "bad", label: "90% of Clipper workers don't get sick pay — the worst in this comparison", detail: "Sick pay is Clipper's single most striking Breakroom finding — significantly worse than any other employer shown here.", subtext: "Based on 107 Breakroom Quiz responses", findingLabel: null },
+    ],
+    jd: [
+      { label: "Job title", text: "Pick & Pack Operative" },
+      { label: "Employer", text: "Clipper Logistics (Direct Employer)" },
+      { label: "Pay", text: "£12.10/hr" },
+      { label: "Location", text: "Corby, Northamptonshire, NN17" },
+      { label: "Hours", text: "Full time, day shifts (Monday–Friday)" },
+      { label: "Role description", text: "Clipper Logistics provides supply chain solutions for some of the UK's biggest fashion and retail brands. At our Corby site you'll be picking and packing orders for online customers, helping ensure every order arrives on time and in perfect condition." },
+      { label: "Responsibilities", text: "Picking individual customer orders accurately from warehouse locations; Packing and labelling items to brand standards; Using handheld RF scanners; Meeting hourly pick rate targets; Replenishing stock as needed; Maintaining a clean work area." },
+      { label: "Requirements", text: "No previous experience required; Comfortable with repetitive work and meeting targets; Good attention to detail; Physically fit — role involves standing and walking all shift; Reliable and punctual; Right to work in the UK." },
+      { label: "Benefits", text: "Competitive hourly rate; Pension scheme; 28 days holiday (including bank holidays); Staff discount at client retail brands; Opportunities for overtime." },
     ],
   },
 ];
@@ -769,12 +956,14 @@ const LicenceModal = ({ open, onClose, userLicences, onSave }) => {
 const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
   const [postcode, setPostcode] = useState(initialValues.postcode || "");
   const [currentPay, setCurrentPay] = useState(initialValues.currentPay || "");
+  const [payType, setPayType] = useState(initialValues.payType || "hourly");
   const [travel, setTravel] = useState(initialValues.travel || "");
   const [priorities, setPriorities] = useState(new Set(initialValues.priorities || []));
   useEffect(() => {
     if (open) {
       setPostcode(initialValues.postcode || "");
       setCurrentPay(initialValues.currentPay || "");
+      setPayType(initialValues.payType || "hourly");
       setTravel(initialValues.travel || "");
       setPriorities(new Set(initialValues.priorities || []));
     }
@@ -794,8 +983,18 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
         <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>Your postcode (for commute times)</label>
         <input value={postcode} onChange={(e) => setPostcode(e.target.value)} placeholder="e.g. TW1 3QS" style={inputStyle} />
 
-        <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>What do you currently earn? (per hour)</label>
-        <input value={currentPay} onChange={(e) => setCurrentPay(e.target.value)} placeholder="e.g. £12.00" style={inputStyle} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: S.s }}>
+          <label style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>What do you currently earn?</label>
+          <div style={{ display: "flex", gap: S.xs }}>
+            {[["per hour", "hourly"], ["per year", "annual"]].map(([label, val]) => (
+              <button key={val} onClick={() => setPayType(val)}
+                style={{ ...T.body2Bold, fontFamily: FONT, padding: "3px 10px", borderRadius: 20, border: `2px solid ${payType === val ? COLORS.accent : COLORS.border}`, background: payType === val ? COLORS.accentBg : "transparent", color: payType === val ? COLORS.accent : COLORS.muted, cursor: "pointer" }}>
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <input value={currentPay} onChange={(e) => setCurrentPay(e.target.value)} placeholder={payType === "hourly" ? "e.g. £12.50" : "e.g. £26,000"} style={inputStyle} />
 
         <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>How do you get to work?</label>
         <div style={{ display: "flex", gap: S.s, marginBottom: S.m, flexWrap: "wrap" }}>
@@ -817,7 +1016,7 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
           ))}
         </div>
 
-        <button onClick={() => onSubmit({ postcode, currentPay, travel, priorities: [...priorities] })}
+        <button onClick={() => onSubmit({ postcode, currentPay, payType, travel, priorities: [...priorities] })}
           style={{ width: "100%", padding: S.m, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
           Show me better matches →
         </button>
@@ -830,11 +1029,12 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
 };
 
 // ─── Profile hub ───────────────────────────────────────────────────────────────
-const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, currentPay, travel, priorities, userLicences, onSavePrefs, onOpenLicenceModal, onOpenDrawer, hasPersonalisation }) => {
+const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, currentPay, currentPayType = "hourly", travel, priorities, userLicences, onSavePrefs, onOpenLicenceModal, onOpenDrawer, hasPersonalisation }) => {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState(false);
   const [lPostcode, setLPostcode] = useState(postcode);
   const [lPay, setLPay] = useState(currentPay);
+  const [lPayType, setLPayType] = useState(currentPayType);
   const [lTravel, setLTravel] = useState(travel);
   const [lPriorities, setLPriorities] = useState(new Set(priorities));
 
@@ -844,6 +1044,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
       setEmailError(false);
       setLPostcode(postcode);
       setLPay(currentPay);
+      setLPayType(currentPayType);
       setLTravel(travel);
       setLPriorities(new Set(priorities));
     }
@@ -903,7 +1104,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
               We'll remember what matters to you across every job you look at.
             </p>
             {(() => {
-              const formatPay = (v) => { if (!v) return null; const n = parseFloat(String(v).replace(/[^0-9.]/g, "")); return isNaN(n) ? v : `£${n.toFixed(2)}/hr`; };
+              const formatPay = (v) => { if (!v) return null; const n = parseFloat(String(v).replace(/[^0-9.]/g, "")); if (isNaN(n)) return v; return currentPayType === "annual" ? `£${Math.round(n).toLocaleString()}/yr` : `£${n.toFixed(2)}/hr`; };
               const hasLicences = userLicences.size > 0;
               const hasPriorities = priorities.length > 0;
               const lastField = hasLicences ? "licences" : hasPriorities ? "priorities" : travel ? "travel" : currentPay ? "pay" : "postcode";
@@ -950,8 +1151,18 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
               <div style={{ ...T.lead2, color: COLORS.text, fontFamily: FONT, marginBottom: S.m }}>Job preferences</div>
               <label style={sectionLabel}>Your postcode (for commute times)</label>
               <input value={lPostcode} onChange={e => setLPostcode(e.target.value)} placeholder="e.g. TW1 3QS" style={inputStyle} />
-              <label style={sectionLabel}>What do you currently earn? (per hour)</label>
-              <input value={lPay} onChange={e => setLPay(e.target.value)} placeholder="e.g. £12.00" style={inputStyle} />
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: S.s }}>
+                <label style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>What do you currently earn?</label>
+                <div style={{ display: "flex", gap: S.xs }}>
+                  {[["per hour", "hourly"], ["per year", "annual"]].map(([lab, val]) => (
+                    <button key={val} onClick={() => setLPayType(val)}
+                      style={{ ...T.body2Bold, fontFamily: FONT, padding: "3px 10px", borderRadius: 20, border: `2px solid ${lPayType === val ? COLORS.accent : COLORS.border}`, background: lPayType === val ? COLORS.accentBg : "transparent", color: lPayType === val ? COLORS.accent : COLORS.muted, cursor: "pointer" }}>
+                      {lab}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <input value={lPay} onChange={e => setLPay(e.target.value)} placeholder={lPayType === "hourly" ? "e.g. £12.50" : "e.g. £26,000"} style={inputStyle} />
               <label style={sectionLabel}>How do you get to work?</label>
               <div style={{ display: "flex", gap: S.s, marginBottom: S.m, flexWrap: "wrap" }}>
                 {["🚗 Drive", "🚌 Bus", "🚂 Train", "🚲 Cycle", "🚶 Walk"].map(t => (
@@ -970,7 +1181,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
                   </button>
                 ))}
               </div>
-              <button onClick={() => onSavePrefs({ postcode: lPostcode, currentPay: lPay, travel: lTravel, priorities: [...lPriorities] })}
+              <button onClick={() => onSavePrefs({ postcode: lPostcode, currentPay: lPay, payType: lPayType, travel: lTravel, priorities: [...lPriorities] })}
                 style={{ width: "100%", padding: S.s2, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
                 Save preferences →
               </button>
@@ -1081,21 +1292,21 @@ const ALL_FINDINGS = [
         heading: "Most people don't get sick pay",
         opinion: "bad",
         primary: "No. Most people don't get proper sick pay",
-        secondary: "86% of people say they wouldn't get paid if they were sick but scheduled to work.",
+        secondary: "70% of people say they wouldn't get paid if they were sick but scheduled to work.",
         why: "Everyone gets sick sometimes. You should be able to take time off without worrying. At a good job you should still get paid if you're scheduled to work but can't due to sickness.",
       },
       {
-        heading: "Pay is below the London Living Wage",
-        opinion: "bad",
-        primary: "This job pays below the London Living Wage",
-        secondary: "At £12.58/hr this is below the London Living Wage of £14.80/hr. 38% of workers report being paid below Living Wage.",
-        why: "The Living Wage is the minimum needed to meet the basic cost of living. Jobs that pay below it can make it hard to cover everyday expenses.",
+        heading: "Pay is around or below average for the area",
+        opinion: "okay",
+        primary: "Pay at GXO is around the local average for warehouse work",
+        secondary: "£25,958/yr (≈ £12.48/hr) is at the lower end of the range for warehouse operatives in Northamptonshire.",
+        why: "The Living Wage is the minimum needed to meet the basic cost of living. It's worth comparing pay across similar roles before deciding.",
       },
       {
         heading: "Most people get paid the same regardless of age",
         opinion: "good",
         primary: "Yes. Most people get equal pay regardless of age",
-        secondary: "75% of people say they get paid the same as everyone else their age.",
+        secondary: "76% of people say they get paid the same as everyone else their age.",
         why: "Your age shouldn't affect your pay. Everyone doing the same job deserves the same rate.",
       },
     ],
@@ -1104,45 +1315,31 @@ const ALL_FINDINGS = [
     section: "Hours and flexibility",
     findings: [
       {
-        heading: "Less than 4 weeks notice of shifts",
-        opinion: "bad",
-        primary: "Most people get less than 4 weeks notice of when they're working",
-        secondary: "67% of people with changing schedules report getting less than four weeks notice.",
-        why: "At a good job, you get plenty of notice about when you're working. This makes it easy for you to plan the rest of your life, as well as your finances, because you know how much you'll be working and when.",
-      },
-      {
-        heading: "Only some people get a choice of shifts",
-        opinion: "okay",
-        primary: "Only some people get a say in which shifts they work",
-        secondary: "52% of people say they get some choice over their shifts.",
-        why: "Being able to choose or influence your shifts makes it much easier to balance work with your life outside of it.",
-      },
-      {
-        heading: "Can be hard to change shifts",
-        opinion: "okay",
-        primary: "It can be hard to swap or change shifts",
-        secondary: "49% of people say it's difficult to change a shift when they need to.",
-        why: "Life is unpredictable. A good employer makes it reasonably easy to swap shifts when something comes up.",
-      },
-      {
-        heading: "Easy to book holiday",
-        opinion: "good",
-        primary: "Most people find it easy to book holiday",
-        secondary: "83% of people report it's easy to book holidays.",
-        why: "A good job should let you take time off when you need it, and it shouldn't be a nightmare to arrange.",
-      },
-      {
         heading: "Shifts don't get changed at short notice",
         opinion: "good",
         primary: "Most people's shifts don't get changed at short notice",
-        secondary: "71% of people say their shifts are rarely or never changed at short notice.",
+        secondary: "93% of people say their manager doesn't change their shifts at the last minute.",
         why: "Having your shifts changed at the last minute is really disruptive to your life. A good employer respects your time.",
+      },
+      {
+        heading: "People don't worry about getting enough hours",
+        opinion: "good",
+        primary: "Most people don't worry about getting enough hours",
+        secondary: "92% of people don't worry about getting enough hours.",
+        why: "Knowing you'll get enough hours makes it much easier to manage your finances and plan your life.",
+      },
+      {
+        heading: "Some people find it hard to change shifts",
+        opinion: "okay",
+        primary: "It can be hard to swap or change shifts",
+        secondary: "47% of people say it's difficult to change a shift when they need to.",
+        why: "Life is unpredictable. A good employer makes it reasonably easy to swap shifts when something comes up.",
       },
       {
         heading: "Some people find it hard to take sick leave",
         opinion: "okay",
         primary: "Some people find it hard to take time off sick",
-        secondary: "44% of people say they find it difficult to take sick leave when they need it.",
+        secondary: "41% of people say they find it difficult to take sick leave when they need it.",
         why: "When you're unwell, you should be able to take time off without fear of losing your job or facing consequences.",
       },
     ],
@@ -1154,57 +1351,43 @@ const ALL_FINDINGS = [
         heading: "Most people are stressed",
         opinion: "bad",
         primary: "Most people feel stressed here",
-        secondary: "71% of people say they often feel stressed at work.",
+        secondary: "68% of people say they often feel stressed at work.",
         why: "Work isn't always easy, but if you're frequently stressed, that's not good. Your employer should support you with enough people and resources to get your job done without feeling overwhelmed.",
       },
       {
         heading: "Most people don't get paid breaks",
         opinion: "bad",
         primary: "No. Most people don't get paid breaks",
-        secondary: "70% of people say they don't get paid breaks.",
+        secondary: "54% of people say they don't get paid breaks.",
         why: "A good job should have paid breaks. You should be paid for all your time at work, whether you're on a break or not.",
       },
       {
         heading: "Head office doesn't understand what's happening",
         opinion: "bad",
-        primary: "Most people think head office doesn't understand what's happening where they work",
-        secondary: "80% of people think that this employer's head office or owners don't have a good understanding of what's really happening where they work.",
+        primary: "Most people think head office doesn't understand what's happening",
+        secondary: "82% of people think head office doesn't have a good understanding of what's really happening where they work.",
         why: "At a good job, the role of head office should be to support the people on the frontline serving customers. To do that properly, the company's owners or head office need to have a good understanding of what's really happening on the frontline.",
       },
       {
         heading: "Most people get proper breaks",
         opinion: "good",
         primary: "Most people get proper breaks",
-        secondary: "82% of people report that they get to take proper breaks.",
+        secondary: "90% of people report that they get to take proper breaks.",
         why: "When you take a break it should be a proper rest. It should last the full duration and you shouldn't get pulled off it.",
       },
       {
         heading: "Most people feel treated with respect",
         opinion: "good",
         primary: "Most people feel treated with respect by their managers",
-        secondary: "72% of people say they're treated with respect by their managers.",
+        secondary: "74% of people say they're treated with respect by their managers.",
         why: "Everyone should get treated with respect by their managers. You shouldn't feel discriminated against or bullied, and if you have a problem you should be able to speak to someone about it.",
       },
       {
         heading: "Work can be physically demanding",
         opinion: "okay",
         primary: "Some people find the physical demands tough",
-        secondary: "48% of people say the physical demands of the job are harder than expected.",
+        secondary: "45% of people say the physical demands of the job are harder than expected.",
         why: "Warehouse work is physically demanding. A good employer provides the right equipment, training, and breaks to protect your health.",
-      },
-      {
-        heading: "Some people experience bullying or harassment",
-        opinion: "okay",
-        primary: "Some people have experienced bullying or harassment",
-        secondary: "32% of people say they've experienced bullying or harassment at work.",
-        why: "No one should have to put up with bullying at work. Your employer should have clear policies and take action when people raise concerns.",
-      },
-      {
-        heading: "Not everyone finds managers easy to talk to",
-        opinion: "okay",
-        primary: "Not everyone finds their manager approachable",
-        secondary: "41% of people say they don't feel comfortable raising concerns with their manager.",
-        why: "Being able to talk to your manager is important. If you have a problem, you should be able to speak to someone without fear of consequences.",
       },
     ],
   },
@@ -1226,14 +1409,16 @@ export default function JobTriagePage() {
   const [userEmail, setUserEmail] = useState("");
   const [profilePostcode, setProfilePostcode] = useState("");
   const [profileCurrentPay, setProfileCurrentPay] = useState("");
+  const [profilePayType, setProfilePayType] = useState("hourly");
   const [profileTravel, setProfileTravel] = useState("");
   const [profilePriorities, setProfilePriorities] = useState([]);
 
   const hasPersonalisation = personalised || userLicences.size > 0;
 
-  const handleSavePrefs = ({ postcode, currentPay, travel, priorities }) => {
+  const handleSavePrefs = ({ postcode, currentPay, payType = "hourly", travel, priorities }) => {
     setProfilePostcode(postcode);
     setProfileCurrentPay(currentPay);
+    setProfilePayType(payType);
     setProfileTravel(travel);
     setProfilePriorities(priorities);
     if (postcode || currentPay || travel || priorities.length > 0) setPersonalised(true);
@@ -1282,7 +1467,7 @@ export default function JobTriagePage() {
       {/* .vacancy-card__divider + .vacancy__details */}
       <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", borderBottom: "1px solid rgba(50,50,50,0.1)", marginTop: S.m, marginBottom: S.m, paddingTop: S.m, paddingBottom: S.s, maxWidth: 500 }}>
         {[
-          { icon: <IconPay />, text: job.pay, benchmark: job.payBenchmark },
+          { icon: <IconPay />, text: job.pay, textAlt: job.payAlt || null, benchmark: job.payBenchmark },
           { icon: <IconLocation />, text: job.location, sublabel: profilePostcode ? `Is this commutable from ${profilePostcode}? →` : "Is this commutable for you? →" },
           { icon: <IconClock />, text: `${job.hours}${job.hoursSub ? ` (${job.hoursSub})` : ""}` },
           { icon: <IconClock />, text: job.shifts },
@@ -1290,7 +1475,10 @@ export default function JobTriagePage() {
           <div key={i} style={{ display: "flex", alignItems: "flex-start", marginBottom: S.s }}>
             <span style={{ marginRight: S.s, marginTop: S.xs, flexShrink: 0, display: "flex" }}>{f.icon}</span>
             <div>
-              <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, lineHeight: 1.5 }}>{f.text}</span>
+              <div>
+                <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, lineHeight: 1.5 }}>{f.text}</span>
+                {f.textAlt && <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginLeft: S.s }}>{f.textAlt}</span>}
+              </div>
               {f.benchmark && (() => {
                 const { verdict, label, range } = f.benchmark;
                 const color = verdict === "below" ? COLORS.red : verdict === "good" ? COLORS.green : COLORS.amberText;
@@ -1335,36 +1523,30 @@ export default function JobTriagePage() {
       <div style={{ borderBottom: `1px solid ${COLORS.border}`, paddingBottom: S.m }}>
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, padding: `${S.m}px 0` }}>Can you do this job?</div>
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `0 ${S.m}px` }}>
-          {job.id === 5 ? (
-            <>
-              <Signal
-                status={userLicences.has("flt") ? "good" : "bad"}
-                label={userLicences.has("flt") ? "Forklift licence: you have the required licence" : "Forklift licence required (RTITB or ITSSAR)"}
-                detail="A valid counterbalance forklift licence is required. Reach truck licence is desirable."
-                subtext={userLicences.has("flt") ? "✓ You told us you have an FLT licence" : "Tell us if you have a forklift licence →"}
-                subtextClick={userLicences.has("flt") ? null : () => setLicenceModalOpen(true)}
+          {job.signals.map((sig, i, arr) => {
+            if (sig.isFltLicenceSignal) {
+              return (
+                <Signal key={i}
+                  status={userLicences.has("flt") ? "good" : "bad"}
+                  label={userLicences.has("flt") ? "Forklift licence: you have the required licence" : "Forklift licence required (RTITB or ITSSAR)"}
+                  detail="A valid counterbalance forklift licence is required. Reach truck licence is desirable."
+                  subtext={userLicences.has("flt") ? "✓ You told us you have an FLT licence" : "Tell us if you have a forklift licence →"}
+                  subtextClick={userLicences.has("flt") ? null : () => setLicenceModalOpen(true)}
+                  isLast={i === arr.length - 1}
+                />
+              );
+            }
+            return (
+              <Signal key={i}
+                status={sig.status}
+                label={sig.label}
+                detail={sig.detail}
+                subtext={sig.subtext}
+                labelClick={sig.findingLabel ? () => handlePillClick(sig.findingLabel) : null}
+                isLast={i === arr.length - 1}
               />
-              <Signal status="warning" label="Pay: below the London Living Wage"
-                detail="At £13/hr this is below the London Living Wage of £14.80/hr."
-                subtext="Based on ONS earnings data and Breakroom member reports" />
-              <Signal status="warning" label="Minimum 1 year FLT experience required"
-                detail="The listing asks for at least 1 year operating a counterbalance forklift."
-                isLast={true} />
-            </>
-          ) : (
-            <>
-              <Signal status="warning" label="Most people here don't get sick pay"
-                detail="86% of workers say they wouldn't get paid if they were sick but scheduled to work."
-                subtext={`Based on ${job.quizCount} Breakroom Quiz responses`}
-                labelClick={() => handlePillClick("No sick pay")} />
-              <Signal status="warning" label="Requirements: 5-year background check + DBS"
-                detail="You'll need 5 years of address history and references. CAA security clearance required (they pay for it). Must have valid photo ID."
-                subtext="Heavy lifting up to 30kg required" />
-              <Signal status="good" label="No prior warehouse experience mentioned"
-                detail="The listing doesn't require previous warehouse experience — just that you're reliable and comfortable with physical work."
-                isLast={true} />
-            </>
-          )}
+            );
+          })}
         </div>
       </div>
 
@@ -1375,31 +1557,31 @@ export default function JobTriagePage() {
         <div>
           {[
             {
-              pct: 86, label: "No sick pay",
+              pct: 70, label: "No sick pay",
               heading: "Most people don't get sick pay",
               primary: "No. Most people don't get proper sick pay",
-              secondary: "86% of people say they wouldn't get paid if they were sick but scheduled to work.",
+              secondary: "70% of people say they wouldn't get paid if they were sick but scheduled to work.",
               why: "Everyone gets sick sometimes. You should be able to take time off without worrying. At a good job you should still get paid if you're scheduled to work but can't due to sickness.",
             },
             {
-              pct: 71, label: "Stressful work",
+              pct: 68, label: "Stressful work",
               heading: "Most people are stressed",
               primary: "Most people feel stressed here",
-              secondary: "71% of people say they often feel stressed at work.",
+              secondary: "68% of people say they often feel stressed at work.",
               why: "Work isn't always easy, but if you're frequently stressed, that's not good. Your employer should support you with enough people and resources to get your job done without feeling overwhelmed.",
             },
             {
-              pct: 70, label: "Unpaid breaks",
+              pct: 54, label: "Unpaid breaks",
               heading: "Most people don't get paid breaks",
               primary: "No. Most people don't get paid breaks",
-              secondary: "70% of people say they don't get paid breaks.",
+              secondary: "54% of people say they don't get paid breaks.",
               why: "A good job should have paid breaks. You should be paid for all your time at work, whether you're on a break or not.",
             },
             {
-              pct: 80, label: "Disconnected management",
+              pct: 82, label: "Disconnected management",
               heading: "Head office doesn't understand what's happening",
-              primary: "Most people think head office doesn't understand what's happening where they work",
-              secondary: "80% of people think that this employer's head office or owners don't have a good understanding of what's really happening where they work.",
+              primary: "Most people think head office doesn't understand what's happening",
+              secondary: "82% of people think head office doesn't have a good understanding of what's really happening where they work.",
               why: "At a good job, the role of head office should be to support the people on the frontline serving customers. To do that properly, the company's owners or head office need to have a good understanding of what's really happening on the frontline.",
             },
           ].map((v, i, arr) => (
@@ -1414,32 +1596,25 @@ export default function JobTriagePage() {
         <div>
           {[
             {
-              pct: 72, label: "Respectful managers",
-              heading: "Most people feel treated with respect",
-              primary: "Most people feel treated with respect by their managers",
-              secondary: "72% of people say they're treated with respect by their managers.",
-              why: "Everyone should get treated with respect by their managers. You shouldn't feel discriminated against or bullied, and if you have a problem you should be able to speak to someone about it.",
+              pct: 93, label: "No last-minute shift changes",
+              heading: "Shifts rarely get changed at short notice",
+              primary: "Most people's shifts don't get changed at short notice",
+              secondary: "93% of people say their manager doesn't change their shifts at the last minute.",
+              why: "Having your shifts changed at the last minute is really disruptive. It makes it hard to plan childcare, travel, and your personal life. At a good job your schedule should be reliable.",
             },
             {
-              pct: 82, label: "Proper breaks",
+              pct: 92, label: "Hours security",
+              heading: "People don't worry about getting enough hours",
+              primary: "Most people don't worry about getting enough hours",
+              secondary: "92% of people don't worry about getting enough hours.",
+              why: "Knowing you'll get enough hours makes it much easier to manage your finances and plan your life. You shouldn't have to chase your employer for shifts.",
+            },
+            {
+              pct: 90, label: "Proper breaks",
               heading: "Most people get proper breaks",
               primary: "Most people get proper breaks",
-              secondary: "82% of people report that they get to take proper breaks.",
+              secondary: "90% of people report that they get to take proper breaks.",
               why: "When you take a break it should be a proper rest. It should last the full duration and you shouldn't get pulled off it.",
-            },
-            {
-              pct: 83, label: "Easy to book holiday",
-              heading: "Easy to book holiday",
-              primary: "Most people find it easy to book holiday",
-              secondary: "83% of people report it's easy to book holidays.",
-              why: "A good job should let you take time off when you need it, and it shouldn't be a nightmare to arrange.",
-            },
-            {
-              pct: 69, label: "Stable shift patterns",
-              heading: "4+ weeks notice of shifts",
-              primary: "Most people get 4 weeks notice of when they're working",
-              secondary: "69% of people with changing schedules report getting four weeks notice or more.",
-              why: "At a good job, you get plenty of notice about when you're working. This makes it easy for you to plan the rest of your life, as well as your finances, because you know how much you'll be working and when.",
             },
           ].map((v, i, arr) => (
             <FindingTile key={v.label} {...v} variant="green" lit={highlightFinding === v.label} forceOpen={highlightFinding === v.label} isLast={i === arr.length - 1} />
@@ -1547,7 +1722,7 @@ export default function JobTriagePage() {
       )}
 
       <OnboardingDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)}
-        initialValues={{ postcode: profilePostcode, currentPay: profileCurrentPay, travel: profileTravel, priorities: profilePriorities }}
+        initialValues={{ postcode: profilePostcode, currentPay: profileCurrentPay, payType: profilePayType, travel: profileTravel, priorities: profilePriorities }}
         onSubmit={(data) => { handleSavePrefs(data); setDrawerOpen(false); }} />
 
       <LicenceModal open={licenceModalOpen} onClose={() => setLicenceModalOpen(false)}
@@ -1556,7 +1731,7 @@ export default function JobTriagePage() {
       <ProfileHub
         open={profileOpen} onClose={() => setProfileOpen(false)}
         isSignedIn={isSignedIn} userEmail={userEmail} onSignIn={handleSignIn}
-        postcode={profilePostcode} currentPay={profileCurrentPay} travel={profileTravel} priorities={profilePriorities}
+        postcode={profilePostcode} currentPay={profileCurrentPay} currentPayType={profilePayType} travel={profileTravel} priorities={profilePriorities}
         userLicences={userLicences} onSavePrefs={(data) => { handleSavePrefs(data); }} onOpenLicenceModal={() => { setProfileOpen(false); setLicenceModalOpen(true); }}
         hasPersonalisation={hasPersonalisation} onOpenDrawer={() => { setProfileOpen(false); setDrawerOpen(true); }}
       />
