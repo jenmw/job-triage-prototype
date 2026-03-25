@@ -596,11 +596,20 @@ const AltJob = ({ job, onClick }) => {
       {/* Title row with badge top-right */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: S.s, marginBottom: S.xs }}>
         <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{title}</div>
-        {altBadge && (
-          <span style={{ ...T.body2Bold, border: `2px solid ${COLORS.green}`, color: COLORS.greenText, background: COLORS.card, borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT, flexShrink: 0 }}>
-            {altBadge}
-          </span>
-        )}
+        {altBadge && (() => {
+          const isRating = altBadge === "Better rated";
+          return (
+            <span style={{
+              ...T.body2Bold,
+              border: `2px solid ${isRating ? COLORS.amberBorder : COLORS.green}`,
+              color: isRating ? COLORS.amberText : COLORS.greenText,
+              background: isRating ? COLORS.amberBg : COLORS.card,
+              borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT, flexShrink: 0,
+            }}>
+              {isRating ? `★ ${altBadge}` : altBadge}
+            </span>
+          );
+        })()}
       </div>
       {/* .vacancy-card-list__rating-container — dial + score + employer name */}
       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: S.xs }}>
@@ -612,7 +621,7 @@ const AltJob = ({ job, onClick }) => {
       <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>
         {pay} · {location}
       </div>
-      {/* Reason row: finding-diff chips + factual note */}
+      {/* Reason row: all items as uniform chips */}
       {(hasDiffs || hasReason) && (
         <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", paddingTop: S.s, marginTop: S.s, display: "flex", flexWrap: "wrap", alignItems: "center", gap: S.xs }}>
           {findingDiffs?.map((diff, i) => (
@@ -621,7 +630,9 @@ const AltJob = ({ job, onClick }) => {
             </span>
           ))}
           {hasReason && (
-            <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{reason.text}</span>
+            <span style={{ fontSize: 12, fontWeight: 500, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT, whiteSpace: "nowrap" }}>
+              {reason.text}
+            </span>
           )}
         </div>
       )}
