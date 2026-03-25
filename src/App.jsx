@@ -375,7 +375,8 @@ const AnimatedRatingDial = ({ score }) => {
         strokeDasharray={`${circumference} ${circumference}`}
         strokeDashoffset={circumference}
         strokeLinecap="round"
-        transform={`rotate(-82,${halfSize},${halfSize})`} />
+        transform={`rotate(-82,${halfSize},${halfSize})`}
+        style={{ transition: "stroke 0.25s ease" }} />
     </svg>
   );
 };
