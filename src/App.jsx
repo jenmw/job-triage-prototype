@@ -38,7 +38,7 @@ const T = {
   body1Bold: { fontSize: 16, lineHeight: "22px", fontWeight: 700 },
   body2:     { fontSize: 14, lineHeight: "20px", fontWeight: 400 },
   body2Bold: { fontSize: 14, lineHeight: "20px", fontWeight: 700 },
-  smallcaps: { fontSize: 16, lineHeight: "22px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" },
+  smallcaps: { fontSize: 14, lineHeight: "20px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" },
 };
 
 // Jobs data — the current listing plus the five alternatives
@@ -1049,7 +1049,7 @@ const DesktopSidebar = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawer,
     <div style={{ position: "sticky", top: 70 + S.m, zIndex: 10 }}>
       <div style={{ position: "absolute", top: -32, left: 0, right: 0, height: 32, background: `linear-gradient(to bottom, transparent, ${COLORS.bg})`, pointerEvents: "none" }} />
       <div style={{ position: "absolute", bottom: -32, left: 0, right: 0, height: 32, background: `linear-gradient(to top, transparent, ${COLORS.bg})`, pointerEvents: "none" }} />
-    <div style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: `${S.m}px ${S.m2}px` }}>
+    <div style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 8px rgba(0,0,0,0.1)", padding: `${S.m}px ${S.m2}px` }}>
       <div style={{ padding: `${S.s2}px ${S.s2}px`, background: COLORS.amberBg, border: `1px solid ${COLORS.amberBorder}`, borderRadius: 4, ...T.body1, color: COLORS.amberText, marginBottom: S.m, fontFamily: FONT }}>
         ⚠ <strong>Rated below average by workers.</strong> Pay and working conditions have mixed reviews — read the full picture before applying.
       </div>
