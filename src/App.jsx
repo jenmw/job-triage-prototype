@@ -1101,7 +1101,7 @@ export default function JobTriagePage() {
         <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "left", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.s }}>See all {job.quizCount} reviews →</div>
       </Section>
 
-      <Section title="Job description">
+      <Section title={`Job description from ${job.company}`}>
         <div style={{ ...T.body1, color: COLORS.muted, lineHeight: 1.7, fontFamily: FONT }}>
           {job.jd.map(({ label, text }, i) => (
             <p key={i} style={{ margin: `0 0 ${S.m}px` }}>
