@@ -793,12 +793,12 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
   const licenceLabels = { flt: "FLT / Forklift licence", car: "UK car driving licence (category B)", hgv: "HGV licence (category C)", van: "Van / light goods licence (category B+E)" };
 
   // Summary row for read-only state
-  const SummaryRow = ({ label, value, onClick }) => !value ? null : (
-    <div onClick={onClick} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: `${S.s}px 0`, borderBottom: `1px solid ${COLORS.border}`, cursor: onClick ? "pointer" : "default" }}>
+  const SummaryRow = ({ label, value, onClick, isLast }) => !value ? null : (
+    <div onClick={onClick} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: `${S.s}px 0`, borderBottom: isLast ? "none" : `1px solid ${COLORS.border}`, cursor: onClick ? "pointer" : "default" }}>
       <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{label}</span>
-      <div style={{ display: "flex", alignItems: "center", gap: S.xs }}>
-        <span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT, textAlign: "right", maxWidth: "60%" }}>{value}</span>
-        {onClick && <span style={{ ...T.body2, color: COLORS.accent, fontFamily: FONT }}>›</span>}
+      <div style={{ display: "flex", alignItems: "center", gap: S.s, flexShrink: 0 }}>
+        <span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT, textAlign: "right" }}>{value}</span>
+        {onClick && <IconChevronDown color={COLORS.accent} rotated={false} style={{ transform: "rotate(-90deg)" }} />}
       </div>
     </div>
   );
@@ -840,18 +840,38 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
             <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m2}px` }}>
               We'll remember what matters to you across every job you look at.
             </p>
-            <div style={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 8, padding: `0 ${S.m}px`, marginBottom: S.m2 }}>
-              <SummaryRow label="Postcode" value={postcode || null} onClick={() => { onClose(); onOpenDrawer(); }} />
-              <SummaryRow label="Current pay" value={currentPay || null} onClick={() => { onClose(); onOpenDrawer(); }} />
-              <SummaryRow label="Travel" value={travel || null} onClick={() => { onClose(); onOpenDrawer(); }} />
-              <SummaryRow label="Priorities" value={priorities.length > 0 ? priorities.join(", ") : null} onClick={() => { onClose(); onOpenDrawer(); }} />
-              {userLicences.size > 0 && (
-                <SummaryRow label="Licences" value={[...userLicences].map(l => licenceLabels[l] || l).join(", ")} onClick={() => { onClose(); onOpenLicenceModal(); }} />
-              )}
-            </div>
+            {(() => {
+              const formatPay = (v) => { if (!v) return null; const n = parseFloat(String(v).replace(/[^0-9.]/g, "")); return isNaN(n) ? v : `£${n.toFixed(2)}/hr`; };
+              const hasLicences = userLicences.size > 0;
+              const hasPriorities = priorities.length > 0;
+              const lastField = hasLicences ? "licences" : hasPriorities ? "priorities" : travel ? "travel" : currentPay ? "pay" : "postcode";
+              return (
+                <div style={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 8, padding: `0 ${S.m}px`, marginBottom: S.m2 }}>
+                  <SummaryRow label="Postcode" value={postcode || null} onClick={() => { onClose(); onOpenDrawer(); }} isLast={lastField === "postcode"} />
+                  <SummaryRow label="Current pay" value={formatPay(currentPay)} onClick={() => { onClose(); onOpenDrawer(); }} isLast={lastField === "pay"} />
+                  <SummaryRow label="Travel" value={travel || null} onClick={() => { onClose(); onOpenDrawer(); }} isLast={lastField === "travel"} />
+                  <SummaryRow label="Priorities" value={hasPriorities ? priorities.join(", ") : null} onClick={() => { onClose(); onOpenDrawer(); }} isLast={lastField === "priorities"} />
+                  {hasLicences && (
+                    <SummaryRow label="Licences" value={[...userLicences].map(l => licenceLabels[l] || l).join(", ")} onClick={() => { onClose(); onOpenLicenceModal(); }} isLast />
+                  )}
+                </div>
+              );
+            })()}
+            <input
+              type="email"
+              placeholder="Your email address"
+              value={email}
+              onChange={e => { setEmail(e.target.value); setEmailError(false); }}
+              style={{ width: "100%", padding: S.s2, borderRadius: 4, border: `1px solid ${emailError ? "#e53e3e" : COLORS.border}`, ...T.body2, fontFamily: FONT, marginBottom: emailError ? S.s : S.s2, boxSizing: "border-box", outline: "none" }}
+            />
+            {emailError && (
+              <p style={{ ...T.body2, color: "#e53e3e", fontFamily: FONT, margin: `0 0 ${S.s2}px` }}>
+                Please enter your email address.
+              </p>
+            )}
             <button onClick={() => { if (!email) { setEmailError(true); } else { onSignIn(email); } }}
               style={{ width: "100%", padding: S.s2, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
-              Save these to a free Breakroom account →
+              Create Breakroom account
             </button>
           </>
         )}
@@ -922,33 +942,35 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
 
 // ─── Shared sub-components ─────────────────────────────────────────────────────
 
-const AlternativesList = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect }) => {
+const AlternativesList = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawer, onOpenProfile, onJobSelect }) => {
   const currentJob = JOBS.find((j) => j.id === currentJobIdx);
   const altJobs = JOBS.filter((j) => j.id !== currentJobIdx).sort((a, b) => b.rating - a.rating);
+  const sep = <span style={{ color: COLORS.border, margin: `0 ${S.xs}px` }}>·</span>;
   return (
     <div>
       <h2 style={{ ...T.lead1, margin: `0 0 ${S.s}px`, fontFamily: FONT, color: COLORS.text }}>Similar jobs nearby</h2>
-      {/* Priorities nudge — always above the job list */}
-      {personalised ? (
+      {personalised && (
         <p style={{ ...T.body2, color: COLORS.muted, margin: `0 0 ${S.m}px`, fontFamily: FONT }}>
-          ✓ Personalised for you ·{" "}
-          <span onClick={onOpenDrawer} style={{ textDecoration: "underline", cursor: "pointer", color: COLORS.accent }}>Edit preferences</span>
+          ✓ Personalised for you
+          {sep}
+          <span onClick={onOpenDrawer} style={{ textDecoration: "underline", cursor: "pointer", color: COLORS.accent }}>Edit</span>
+          {!isSignedIn && <>{sep}<span onClick={onOpenProfile} style={{ textDecoration: "underline", cursor: "pointer", color: COLORS.accent }}>Save your preferences</span></>}
         </p>
-      ) : (
-        <button onClick={onOpenDrawer} style={{
-          display: "flex", justifyContent: "space-between", alignItems: "center",
-          width: "100%", marginBottom: S.m, padding: `${S.s2}px ${S.m}px`,
-          borderRadius: 5, border: `1.5px solid ${COLORS.accent}`,
-          background: COLORS.accentBg, cursor: "pointer", fontFamily: FONT, textAlign: "left",
-        }}>
-          <div>
-            <div style={{ ...T.body2Bold, color: COLORS.accent, fontFamily: FONT }}>What matters most to you?</div>
-            <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>Set your priorities to see better-matched jobs</div>
-          </div>
-          <span style={{ ...T.body1Bold, color: COLORS.accent, fontFamily: FONT, flexShrink: 0, paddingLeft: S.s }}>→</span>
-        </button>
       )}
       <div style={{ display: "flex", flexDirection: "column", gap: S.s2 }}>
+        {!personalised && (
+          <button onClick={onOpenDrawer} style={{
+            background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)",
+            padding: S.m, cursor: "pointer", border: "none", fontFamily: FONT, textAlign: "left", width: "100%",
+            display: "flex", justifyContent: "space-between", alignItems: "center",
+          }}>
+            <div>
+              <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>What matters most to you?</div>
+              <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>Set your priorities to see better-matched jobs</div>
+            </div>
+            <span style={{ ...T.body1Bold, color: COLORS.accent, fontFamily: FONT, flexShrink: 0, paddingLeft: S.m }}>→</span>
+          </button>
+        )}
         {altJobs.map((j) => (
           <AltJob key={j.id} job={j} onClick={() => onJobSelect(j.id)} betterRated={j.rating > currentJob.rating} />
         ))}
@@ -957,61 +979,35 @@ const AlternativesList = ({ currentJobIdx, personalised, onOpenDrawer, onJobSele
   );
 };
 
-const PersonaliseNudge = ({ personalised, onOpenDrawer }) =>
-  personalised ? (
-    <div style={{ marginTop: S.m, padding: `${S.s2}px ${S.m}px`, background: COLORS.greenBg, borderRadius: 5, border: `1px solid ${COLORS.greenBorder}`, textAlign: "center" }}>
-      <div style={{ ...T.body2Bold, color: COLORS.green, fontFamily: FONT }}>✓ Showing personalised matches</div>
-      <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontFamily: FONT }}>
-        Based on your commute, pay, and preferences ·{" "}
-        <span onClick={onOpenDrawer} style={{ textDecoration: "underline", cursor: "pointer", color: COLORS.accent }}>Edit</span>
-      </div>
-    </div>
-  ) : (
-    <button onClick={onOpenDrawer} style={{ width: "100%", marginTop: S.m2, padding: S.m, borderRadius: 5, border: `1.5px dashed ${COLORS.accent}`, background: COLORS.accentBg, cursor: "pointer", fontFamily: FONT, textAlign: "center" }}>
-      <div style={{ ...T.body1Bold, color: COLORS.accent, fontFamily: FONT }}>🎯 Get jobs that match your life</div>
-      <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontFamily: FONT }}>Tell us your postcode, current pay, and what matters — we'll filter out the noise</div>
-    </button>
-  );
-
-const SaveNudge = ({ show, onOpenProfile }) => !show ? null : (
-  <div style={{ marginTop: S.m, padding: `${S.s2}px ${S.m}px`, borderRadius: 5, border: `1px solid ${COLORS.border}`, background: COLORS.accentBg, display: "flex", alignItems: "center", justifyContent: "space-between", gap: S.s }}>
-    <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>Your preferences aren't saved yet.</span>
-    <button onClick={onOpenProfile} style={{ ...T.body2Bold, color: COLORS.accent, background: "none", border: "none", cursor: "pointer", fontFamily: FONT, textDecoration: "underline", whiteSpace: "nowrap" }}>
-      Save them →
-    </button>
-  </div>
-);
-
 // ─── Desktop sidebar ───────────────────────────────────────────────────────────
 
-const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect, showSaveNudge, onOpenProfile }) => (
+const DesktopSidebar = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawer, onJobSelect, onOpenProfile }) => (
   <div style={{ display: "flex", flexDirection: "column", gap: S.l2, paddingTop: S.m2 }}>
     {/* CTA card — sticky below header (70px) + S.m gap */}
-    <div style={{ position: "sticky", top: 70 + S.m, zIndex: 10, background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 5, padding: `${S.m}px ${S.m2}px` }}>
+    <div style={{ position: "sticky", top: 70 + S.m, zIndex: 10 }}>
+      <div style={{ position: "absolute", top: -32, left: 0, right: 0, height: 32, background: `linear-gradient(to bottom, transparent, ${COLORS.bg})`, pointerEvents: "none" }} />
+      <div style={{ position: "absolute", bottom: -32, left: 0, right: 0, height: 32, background: `linear-gradient(to top, transparent, ${COLORS.bg})`, pointerEvents: "none" }} />
+    <div style={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 5, padding: `${S.m}px ${S.m2}px` }}>
       <div style={{ padding: `${S.s2}px ${S.s2}px`, background: COLORS.amberBg, border: `1px solid ${COLORS.amberBorder}`, borderRadius: 4, ...T.body2, color: COLORS.amberText, marginBottom: S.m, fontFamily: FONT }}>
         ⚠ <strong>Rated below average by workers.</strong> Pay and working conditions have mixed reviews — read the full picture before applying.
       </div>
-
       <button style={{ width: "100%", padding: S.s2, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT, marginBottom: S.s }}
         onMouseEnter={(e) => e.target.style.opacity = "0.85"} onMouseLeave={(e) => e.target.style.opacity = "1"}>
         Apply on external site →
       </button>
       <div style={{ display: "flex", gap: S.s }}>
-        <button style={{ flex: 1, padding: S.s2, borderRadius: 4, border: `1.5px solid ${COLORS.border}`, background: COLORS.card, ...T.body2Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
+        <button style={{ flex: 1, padding: S.s2, borderRadius: 4, border: `2px solid #323232`, background: COLORS.card, ...T.body2Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
           ☆ Save for later
         </button>
-        <button onClick={onOpenDrawer} style={{ flex: 1, padding: S.s2, borderRadius: 4, border: `1.5px solid ${COLORS.accent}`, background: COLORS.accentBg, ...T.body2Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.accent }}>
+        <button onClick={onOpenDrawer} style={{ flex: 1, padding: S.s2, borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, ...T.body2Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.accent }}>
           Match me
         </button>
       </div>
     </div>
+    </div>
 
     {/* Alternatives — not sticky, scrolls with page */}
-    <div>
-      <AlternativesList currentJobIdx={currentJobIdx} personalised={personalised} onOpenDrawer={onOpenDrawer} onJobSelect={onJobSelect} />
-      <PersonaliseNudge personalised={personalised} onOpenDrawer={onOpenDrawer} />
-      <SaveNudge show={showSaveNudge} onOpenProfile={onOpenProfile} />
-    </div>
+    <AlternativesList currentJobIdx={currentJobIdx} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={onOpenDrawer} onOpenProfile={onOpenProfile} onJobSelect={onJobSelect} />
   </div>
 );
 
@@ -1436,12 +1432,10 @@ export default function JobTriagePage() {
             </button>
             {/* .header__btn .header__profile */}
             <button onClick={() => setProfileOpen(true)} style={{ height: "100%", minWidth: 48, background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", gap: 5, padding: "14px 8px 0", position: "relative" }}>
-              <span style={{ position: "relative", display: "block" }}>
-                <IconUserNav />
-                {hasPersonalisation && !isSignedIn && (
-                  <span style={{ position: "absolute", top: -2, right: -2, width: 8, height: 8, borderRadius: "50%", background: COLORS.accent, border: `2px solid ${COLORS.card}` }} />
-                )}
-              </span>
+              <IconUserNav />
+              {hasPersonalisation && !isSignedIn && (
+                <span style={{ position: "absolute", top: 12, right: 6, width: 8, height: 8, borderRadius: "50%", background: COLORS.accent, border: `2px solid ${COLORS.card}` }} />
+              )}
               <span style={{ fontSize: 12, fontWeight: 700, color: COLORS.text, fontFamily: FONT, lineHeight: 1 }}>Profile</span>
             </button>
             {/* .header__btn .header__menu */}
@@ -1459,16 +1453,14 @@ export default function JobTriagePage() {
             {heroBlock}
             {sectionsBlock}
           </div>
-          <DesktopSidebar currentJobIdx={selectedJobIdx} personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} showSaveNudge={hasPersonalisation && !isSignedIn} onOpenProfile={() => setProfileOpen(true)} />
+          <DesktopSidebar currentJobIdx={selectedJobIdx} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} onOpenProfile={() => setProfileOpen(true)} />
         </div>
       ) : (
         <div style={{ padding: `0 ${S.m}px ${S.xxl}px` }}>
           {heroBlock}
           {sectionsBlock}
           <div style={{ marginTop: S.m2, marginBottom: S.s }}>
-            <AlternativesList currentJobIdx={selectedJobIdx} personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} />
-            <PersonaliseNudge personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} />
-            <SaveNudge show={hasPersonalisation && !isSignedIn} onOpenProfile={() => setProfileOpen(true)} />
+            <AlternativesList currentJobIdx={selectedJobIdx} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={() => setDrawerOpen(true)} onOpenProfile={() => setProfileOpen(true)} onJobSelect={handleJobSelect} />
           </div>
         </div>
       )}
