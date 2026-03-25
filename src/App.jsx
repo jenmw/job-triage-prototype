@@ -614,8 +614,8 @@ const AltJob = ({ job, onClick, betterRated }) => {
               </span>
             )}
             {showRatingBadge && (
-              <span style={{ ...T.body2Bold, border: `2px solid ${COLORS.amberBorder}`, color: COLORS.amberText, background: COLORS.amberBg, borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT }}>
-                ★ Better rated
+              <span style={{ ...T.body2Bold, border: `2px solid ${COLORS.amberBorder}`, color: COLORS.amberText, background: COLORS.card, borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT }}>
+                ↑ Better rated
               </span>
             )}
           </div>
