@@ -163,7 +163,7 @@ const JOBS = [
     title: "Warehouse Operator (Nights)",
     company: "DSV",
     companyType: "Employer",
-    pay: "TBC",
+    pay: "No pay info",
     location: "Hounslow",
     hours: "Full time",
     hoursSub: null,
@@ -623,7 +623,7 @@ const AltJob = ({ job, onClick }) => {
       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: S.xs }}>
         <TinyRatingDial score={rating} />
         <span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{rating.toFixed(1)}</span>
-        <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{company} · {companyType}</span>
+        <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{company}</span>
       </div>
       {/* Pay + location */}
       <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>
@@ -1208,7 +1208,7 @@ export default function JobTriagePage() {
   const heroBlock = (
     <div style={{ paddingTop: S.m2, paddingBottom: S.m }}>
       <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>
-        {job.company} <span style={{ fontWeight: 400, color: COLORS.muted }}>· {job.companyType}</span>
+        {job.company}
       </div>
 
       <h1 style={{ ...(isDesktop ? T.heading2Lg : T.heading2), margin: `0 0 ${S.s2}px`, fontFamily: FONT, color: COLORS.text }}>{job.title}</h1>
