@@ -86,7 +86,8 @@ const JOBS = [
     highlights: ["Proper breaks", "Respectful managers"],
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/67890",
     altBadge: "↑ £0.67/hr",
-    altReason: { text: "Better rated (7.4 vs 5.2) · More pay" },
+    altReason: null,
+    findingDiffs: ["More people get sick pay", "Better shift notice"],
     jd: [
       { label: "Job title", text: "Warehouse Operative" },
       { label: "Employer", text: "Gap Personnel (Employment Agency)" },
@@ -109,12 +110,13 @@ const JOBS = [
     hours: "Full time",
     hoursSub: null,
     shifts: "Day shifts",
-    rating: 6.3,
+    rating: 5.0,
     quizCount: 44,
     highlights: ["Paid breaks", "Regular hours"],
     listingUrl: "https://www.reed.co.uk/jobs/logistics-operator/11111",
     altBadge: "↑ £1.66/hr",
     altReason: null,
+    findingDiffs: ["Easy to book holiday", "Shifts don't get changed at short notice"],
     jd: [
       { label: "Job title", text: "Logistics Operator" },
       { label: "Employer", text: "Shorterm Group (Employment Agency)" },
@@ -142,7 +144,8 @@ const JOBS = [
     highlights: ["Proper breaks", "Respectful managers"],
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/22222",
     altBadge: "↑ £2.11/hr",
-    altReason: { text: "Part time available · £2.11/hr more" },
+    altReason: { text: "Part time available" },
+    findingDiffs: ["Most people get proper breaks", "Less people are stressed"],
     jd: [
       { label: "Job title", text: "Warehouse Operative (Part Time)" },
       { label: "Employer", text: "Gi Group (Employment Agency)" },
@@ -170,7 +173,8 @@ const JOBS = [
     highlights: ["People enjoy this job", "Learn new skills"],
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operator/33333",
     altBadge: "Better rated",
-    altReason: { text: "Top rated employer in this area (7.7/10)" },
+    altReason: null,
+    findingDiffs: ["Less people are stressed", "Most people feel treated with respect"],
     jd: [
       { label: "Job title", text: "Warehouse Operator (Night Shift)" },
       { label: "Employer", text: "DSV UK Ltd (Direct Employer)" },
@@ -199,7 +203,8 @@ const JOBS = [
     highlights: ["Same location", "Higher employer score"],
     listingUrl: "https://www.reed.co.uk/jobs/flt-driver/44444",
     altBadge: "↑ £0.42/hr",
-    altReason: { text: "Same location · £0.42/hr more (£13.00 vs £12.58)" },
+    altReason: { text: "FLT licence required" },
+    findingDiffs: [],
     jd: [
       { label: "Job title", text: "FLT Driver (Counterbalance / Reach)" },
       { label: "Employer", text: "Manpower (Employment Agency)" },
@@ -210,6 +215,33 @@ const JOBS = [
       { label: "Responsibilities", text: "Operating counterbalance and reach forklift trucks safely; Loading and unloading vehicles; Moving stock around the warehouse; Checking goods in and out; Maintaining accurate records." },
       { label: "Requirements", text: "Valid RTITB or ITSSAR forklift licence (counterbalance essential, reach desirable); Minimum 1 year's FLT experience; Ability to work in a team; Good attention to detail; Physically fit; No criminal convictions." },
       { label: "Benefits", text: "Competitive pay rate; Monday–Friday days — no weekend work; Weekly pay; Holiday pay; Temp-to-perm opportunity." },
+    ],
+  },
+  {
+    id: 6,
+    title: "Warehouse Operative",
+    company: "Brook Street",
+    companyType: "Agency",
+    pay: "£11.44/hr",
+    location: "Hounslow",
+    hours: "Full time",
+    hoursSub: null,
+    shifts: "Various shifts",
+    rating: 4.1,
+    quizCount: 29,
+    highlights: [],
+    listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/55555",
+    altBadge: null,
+    altReason: null,
+    findingDiffs: [],
+    jd: [
+      { label: "Job title", text: "Warehouse Operative" },
+      { label: "Employer", text: "Brook Street (Employment Agency)" },
+      { label: "Pay", text: "£11.44 per hour (National Living Wage)" },
+      { label: "Location", text: "Hounslow" },
+      { label: "Hours", text: "Full time, various shifts including weekends" },
+      { label: "Role description", text: "Brook Street are recruiting Warehouse Operatives for a general distribution warehouse in Hounslow. Duties include picking, packing, and general warehouse housekeeping. This is a short-term temporary position with no guarantee of ongoing work." },
+      { label: "Requirements", text: "No experience necessary; Must be able to lift up to 25kg; Reliable and able to commit to shift schedule; Right to work in the UK." },
     ],
   },
 ];
@@ -547,7 +579,9 @@ const ReviewCard = ({ best, worst, score, role, date }) => (
 
 // ─── Alternative job card ──────────────────────────────────────────────────────
 const AltJob = ({ job, onClick }) => {
-  const { title, company, companyType, pay, rating, location, altBadge, altReason: reason } = job;
+  const { title, company, companyType, pay, rating, location, altBadge, altReason: reason, findingDiffs } = job;
+  const hasDiffs = findingDiffs?.length > 0;
+  const hasReason = !!reason;
   return (
     <div
       onClick={onClick}
@@ -578,9 +612,17 @@ const AltJob = ({ job, onClick }) => {
       <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>
         {pay} · {location}
       </div>
-      {reason && (
-        <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", paddingTop: S.s, marginTop: S.s }}>
-          <span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{reason.text}</span>
+      {/* Reason row: finding-diff chips + factual note */}
+      {(hasDiffs || hasReason) && (
+        <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", paddingTop: S.s, marginTop: S.s, display: "flex", flexWrap: "wrap", alignItems: "center", gap: S.xs }}>
+          {findingDiffs?.map((diff, i) => (
+            <span key={i} style={{ fontSize: 12, fontWeight: 500, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT, whiteSpace: "nowrap" }}>
+              {diff}
+            </span>
+          ))}
+          {hasReason && (
+            <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{reason.text}</span>
+          )}
         </div>
       )}
     </div>
@@ -696,15 +738,27 @@ const AlternativesList = ({ currentJobIdx, personalised, onOpenDrawer, onJobSele
   const altJobs = JOBS.filter((j) => j.id !== currentJobIdx);
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: S.xs }}>
-        <h2 style={{ ...T.lead1, margin: 0, fontFamily: FONT, color: COLORS.text }}>Similar jobs nearby</h2>
-        <button onClick={onOpenDrawer} style={{ ...T.body2Bold, color: COLORS.accent, background: "none", border: "none", cursor: "pointer", fontFamily: FONT, textDecoration: "underline" }}>
-          Match me
+      <h2 style={{ ...T.lead1, margin: `0 0 ${S.s}px`, fontFamily: FONT, color: COLORS.text }}>Similar jobs nearby</h2>
+      {/* Priorities nudge — always above the job list */}
+      {personalised ? (
+        <p style={{ ...T.body2, color: COLORS.muted, margin: `0 0 ${S.m}px`, fontFamily: FONT }}>
+          ✓ Personalised for you ·{" "}
+          <span onClick={onOpenDrawer} style={{ textDecoration: "underline", cursor: "pointer", color: COLORS.accent }}>Edit preferences</span>
+        </p>
+      ) : (
+        <button onClick={onOpenDrawer} style={{
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          width: "100%", marginBottom: S.m, padding: `${S.s2}px ${S.m}px`,
+          borderRadius: 5, border: `1.5px solid ${COLORS.accent}`,
+          background: COLORS.accentBg, cursor: "pointer", fontFamily: FONT, textAlign: "left",
+        }}>
+          <div>
+            <div style={{ ...T.body2Bold, color: COLORS.accent, fontFamily: FONT }}>What matters most to you?</div>
+            <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>Set your priorities to see better-matched jobs</div>
+          </div>
+          <span style={{ ...T.body1Bold, color: COLORS.accent, fontFamily: FONT, flexShrink: 0, paddingLeft: S.s }}>→</span>
         </button>
-      </div>
-      <p style={{ ...T.body2, color: COLORS.muted, margin: `0 0 ${S.m}px`, fontFamily: FONT }}>
-        {personalised ? "Sorted by your preferences" : "Based on this job's location and pay range. Tell us more to get better matches."}
-      </p>
+      )}
       <div style={{ display: "flex", flexDirection: "column", gap: S.s2 }}>
         {altJobs.map((j) => (
           <AltJob key={j.id} job={j} onClick={() => onJobSelect(j.id)} />
@@ -757,7 +811,6 @@ const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect
     {/* Alternatives — not sticky, scrolls with page */}
     <div>
       <AlternativesList currentJobIdx={currentJobIdx} personalised={personalised} onOpenDrawer={onOpenDrawer} onJobSelect={onJobSelect} />
-      <PersonaliseNudge personalised={personalised} onOpenDrawer={onOpenDrawer} />
     </div>
   </div>
 );
