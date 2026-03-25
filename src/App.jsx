@@ -335,6 +335,51 @@ const TinyRatingDial = ({ score }) => {
   );
 };
 
+// ─── Animated rating dial — fills from empty on mount, colour transitions through thresholds ─
+const AnimatedRatingDial = ({ score }) => {
+  const arcRef = useRef(null);
+  const displaySize = 19;
+  const svgStrokeWidth = 16;
+  const halfSize = 50;
+  const halfWidth = Math.round((100 - svgStrokeWidth) / 2);
+  const circumference = Math.round((2 * Math.PI * halfWidth - svgStrokeWidth) * 1000) / 1000;
+  const targetOffset = Math.round(circumference * (1 - ((score - 1) / 9.0 * 0.9 + 0.1)) * 1000) / 1000;
+
+  useEffect(() => {
+    const el = arcRef.current;
+    if (!el) return;
+    const duration = 1400;
+    let start = null;
+    const animate = (ts) => {
+      if (!start) start = ts;
+      const progress = Math.min((ts - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const currentScore = eased * score;
+      const color = currentScore >= 7.0 ? COLORS.green : currentScore >= 5.5 ? COLORS.amber : COLORS.red;
+      el.style.strokeDashoffset = circumference - eased * (circumference - targetOffset);
+      el.style.stroke = color;
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+    el.style.strokeDashoffset = circumference;
+    el.style.stroke = COLORS.red;
+    const id = setTimeout(() => requestAnimationFrame(animate), 200);
+    return () => clearTimeout(id);
+  }, [score]);
+
+  return (
+    <svg viewBox="0 0 100 100" width={displaySize} height={displaySize} style={{ flexShrink: 0, display: "block" }}>
+      <circle cx={halfSize} cy={halfSize} r={halfWidth} fill="none" stroke="rgba(50,50,50,0.1)" strokeWidth={svgStrokeWidth} />
+      <circle ref={arcRef}
+        cx={halfSize} cy={halfSize} r={halfWidth} fill="none"
+        stroke={COLORS.red} strokeWidth={svgStrokeWidth}
+        strokeDasharray={`${circumference} ${circumference}`}
+        strokeDashoffset={circumference}
+        strokeLinecap="round"
+        transform={`rotate(-82,${halfSize},${halfSize})`} />
+    </svg>
+  );
+};
+
 // ─── Breakroom UI icons (inline SVG, semibold weight) ──────────────────────────
 const IconAlertCircle = ({ color = COLORS.text }) => (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "block", flexShrink: 0 }}>
@@ -1245,7 +1290,7 @@ export default function JobTriagePage() {
       <div style={{ marginBottom: S.s2 }}>
         <div style={{ display: "flex", alignItems: "center", gap: S.s, marginBottom: S.xs }}>
           <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>Breakroom Rating</span>
-          <TinyRatingDial score={rating} />
+          <AnimatedRatingDial score={rating} />
           <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{rating.toFixed(1)}</span>
         </div>
         <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>
