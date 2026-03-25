@@ -586,10 +586,12 @@ const ReviewCard = ({ best, worst, score, role, date }) => (
 );
 
 // ─── Alternative job card ──────────────────────────────────────────────────────
-const AltJob = ({ job, onClick }) => {
-  const { title, company, companyType, pay, rating, location, altBadge, altReason: reason, findingDiffs } = job;
+const AltJob = ({ job, onClick, betterRated }) => {
+  const { title, company, pay, rating, location, altBadge, altReason: reason, findingDiffs } = job;
   const hasDiffs = findingDiffs?.length > 0;
   const hasReason = !!reason;
+  const showPayBadge = altBadge && altBadge !== "Better rated";
+  const showRatingBadge = betterRated;
   return (
     <div
       onClick={onClick}
@@ -601,23 +603,23 @@ const AltJob = ({ job, onClick }) => {
         cursor: "pointer",
       }}
     >
-      {/* Title row with badge top-right */}
+      {/* Title row with badge(s) top-right */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: S.s, marginBottom: S.xs }}>
         <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{title}</div>
-        {altBadge && (() => {
-          const isRating = altBadge === "Better rated";
-          return (
-            <span style={{
-              ...T.body2Bold,
-              border: `2px solid ${isRating ? COLORS.amberBorder : COLORS.green}`,
-              color: isRating ? COLORS.amberText : COLORS.greenText,
-              background: isRating ? COLORS.amberBg : COLORS.card,
-              borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT, flexShrink: 0,
-            }}>
-              {isRating ? `★ ${altBadge}` : altBadge}
-            </span>
-          );
-        })()}
+        {(showPayBadge || showRatingBadge) && (
+          <div style={{ display: "flex", gap: S.xs, flexShrink: 0, flexWrap: "wrap", justifyContent: "flex-end" }}>
+            {showPayBadge && (
+              <span style={{ ...T.body2Bold, border: `2px solid ${COLORS.green}`, color: COLORS.greenText, background: COLORS.card, borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT }}>
+                {altBadge}
+              </span>
+            )}
+            {showRatingBadge && (
+              <span style={{ ...T.body2Bold, border: `2px solid ${COLORS.amberBorder}`, color: COLORS.amberText, background: COLORS.amberBg, borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT }}>
+                ★ Better rated
+              </span>
+            )}
+          </div>
+        )}
       </div>
       {/* .vacancy-card-list__rating-container — dial + score + employer name */}
       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: S.xs }}>
@@ -915,7 +917,8 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
 // ─── Shared sub-components ─────────────────────────────────────────────────────
 
 const AlternativesList = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect }) => {
-  const altJobs = JOBS.filter((j) => j.id !== currentJobIdx);
+  const currentJob = JOBS.find((j) => j.id === currentJobIdx);
+  const altJobs = JOBS.filter((j) => j.id !== currentJobIdx).sort((a, b) => b.rating - a.rating);
   return (
     <div>
       <h2 style={{ ...T.lead1, margin: `0 0 ${S.s}px`, fontFamily: FONT, color: COLORS.text }}>Similar jobs nearby</h2>
@@ -941,7 +944,7 @@ const AlternativesList = ({ currentJobIdx, personalised, onOpenDrawer, onJobSele
       )}
       <div style={{ display: "flex", flexDirection: "column", gap: S.s2 }}>
         {altJobs.map((j) => (
-          <AltJob key={j.id} job={j} onClick={() => onJobSelect(j.id)} />
+          <AltJob key={j.id} job={j} onClick={() => onJobSelect(j.id)} betterRated={j.rating > currentJob.rating} />
         ))}
       </div>
     </div>
