@@ -623,7 +623,7 @@ const AltJob = ({ job, onClick }) => {
       </div>
       {/* Reason row: all items as uniform chips */}
       {(hasDiffs || hasReason) && (
-        <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", paddingTop: S.s, marginTop: S.s, display: "flex", flexWrap: "wrap", alignItems: "center", gap: S.xs }}>
+        <div style={{ marginTop: S.s, display: "flex", flexWrap: "wrap", alignItems: "center", gap: S.xs }}>
           {findingDiffs?.map((diff, i) => (
             <span key={i} style={{ fontSize: 12, fontWeight: 500, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT, whiteSpace: "nowrap" }}>
               {diff}
