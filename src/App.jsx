@@ -1292,7 +1292,10 @@ export default function JobTriagePage() {
         <div style={{ display: "flex", alignItems: "center", gap: S.s, marginBottom: S.xs }}>
           <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>Breakroom Rating</span>
           <AnimatedRatingDial score={rating} />
-          <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{rating.toFixed(1)}</span>
+          <span style={{ fontFamily: FONT }}>
+            <span style={{ ...T.body1Bold, color: COLORS.text }}>{rating.toFixed(1)}</span>
+            <span style={{ ...T.body2, color: COLORS.muted }}> out of 10</span>
+          </span>
         </div>
         <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>
           Rating based on {job.quizCount} employees who took the Breakroom Quiz
