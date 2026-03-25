@@ -578,14 +578,14 @@ const FindingTile = ({ pct, label, heading, primary, secondary, why, variant, li
 
 // ─── Signal row — matches .finding-group__finding linear style ─────────────────
 // White card container wraps all signals in a section; each row has a coloured dot
-const Signal = ({ status, label, detail, subtext, subtextClick, isLast }) => {
+const Signal = ({ status, label, detail, subtext, subtextClick, labelClick, isLast }) => {
   const dot = status === "good" ? COLORS.green : status === "warning" ? COLORS.amber : COLORS.red;
   return (
     <div style={{ fontSize: 16, lineHeight: "22px", fontWeight: 500, color: COLORS.text, padding: `${S.m}px 0`, borderBottom: isLast ? "none" : "1px solid rgba(50,50,50,0.1)", position: "relative" }}>
       <div style={{ display: "flex", alignItems: "flex-start", gap: S.s }}>
         <span style={{ width: 15, height: 15, borderRadius: "50%", background: dot, border: "2px solid #fff", flexShrink: 0, marginTop: 3 }} />
         <div style={{ flex: 1, fontFamily: FONT }}>
-          <div>{label}</div>
+          <div onClick={labelClick} style={labelClick ? { cursor: "pointer", color: COLORS.accent, fontWeight: 700 } : {}}>{label}{labelClick && " →"}</div>
           {detail && <div style={{ ...T.body1, color: COLORS.muted, marginTop: S.xs, fontWeight: 400 }}>{detail}</div>}
           {subtext && (
             <div onClick={subtextClick} style={{ ...T.body1, color: subtextClick ? COLORS.accent : COLORS.muted, marginTop: S.xs, fontWeight: subtextClick ? 700 : 400, cursor: subtextClick ? "pointer" : "default" }}>
@@ -1355,7 +1355,8 @@ export default function JobTriagePage() {
             <>
               <Signal status="warning" label="Most people here don't get sick pay"
                 detail="86% of workers say they wouldn't get paid if they were sick but scheduled to work."
-                subtext={`Based on ${job.quizCount} Breakroom Quiz responses`} />
+                subtext={`Based on ${job.quizCount} Breakroom Quiz responses`}
+                labelClick={() => handlePillClick("No sick pay")} />
               <Signal status="warning" label="Requirements: 5-year background check + DBS"
                 detail="You'll need 5 years of address history and references. CAA security clearance required (they pay for it). Must have valid photo ID."
                 subtext="Heavy lifting up to 30kg required" />
@@ -1402,7 +1403,7 @@ export default function JobTriagePage() {
               why: "At a good job, the role of head office should be to support the people on the frontline serving customers. To do that properly, the company's owners or head office need to have a good understanding of what's really happening on the frontline.",
             },
           ].map((v, i, arr) => (
-            <FindingTile key={v.label} {...v} variant="red" isLast={i === arr.length - 1} />
+            <FindingTile key={v.label} {...v} variant="red" lit={highlightFinding === v.label} forceOpen={highlightFinding === v.label} isLast={i === arr.length - 1} />
           ))}
         </div>
         </div>
