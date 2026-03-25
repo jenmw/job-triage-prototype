@@ -661,12 +661,12 @@ const AltJob = ({ job, onClick, betterRated }) => {
         {(showPayBadge || showRatingBadge) && (
           <div style={{ display: "flex", gap: S.xs, flexShrink: 0, flexWrap: "wrap", justifyContent: "flex-end" }}>
             {showPayBadge && (
-              <span style={{ ...T.body1Bold, border: `2px solid ${COLORS.green}`, color: COLORS.greenText, background: COLORS.card, borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT }}>
+              <span style={{ ...T.body2Bold, border: `2px solid ${COLORS.green}`, color: COLORS.greenText, background: COLORS.card, borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT }}>
                 {altBadge}
               </span>
             )}
             {showRatingBadge && (
-              <span style={{ ...T.body1Bold, border: `2px solid ${COLORS.amberBorder}`, color: COLORS.amberText, background: COLORS.card, borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT }}>
+              <span style={{ ...T.body2Bold, border: `2px solid ${COLORS.amberBorder}`, color: COLORS.amberText, background: COLORS.card, borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT }}>
                 ↑ Better rated
               </span>
             )}
@@ -687,12 +687,12 @@ const AltJob = ({ job, onClick, betterRated }) => {
       {(hasDiffs || hasReason) && (
         <div style={{ marginTop: S.s, display: "flex", flexWrap: "wrap", alignItems: "center", gap: S.xs }}>
           {findingDiffs?.map((diff, i) => (
-            <span key={i} style={{ ...T.body1Bold, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT, whiteSpace: "nowrap" }}>
+            <span key={i} style={{ ...T.body2Bold, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT, whiteSpace: "nowrap" }}>
               {diff}
             </span>
           ))}
           {hasReason && (
-            <span style={{ ...T.body1Bold, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT, whiteSpace: "nowrap" }}>
+            <span style={{ ...T.body2Bold, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT, whiteSpace: "nowrap" }}>
               {reason.text}
             </span>
           )}
