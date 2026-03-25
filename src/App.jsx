@@ -59,6 +59,7 @@ const JOBS = [
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/56629861",
     altBadge: null,
     altHighlight: null,
+    payBenchmark: { verdict: "below", label: "below average for warehouse work in London", range: "£13.50–£16/hr typical" },
     jd: [
       { label: "Job title", text: "Warehouse Operative" },
       { label: "Employer", text: "The Best Connection (Employment Agency)" },
@@ -1219,14 +1220,22 @@ export default function JobTriagePage() {
       {/* .vacancy-card__divider + .vacancy__details */}
       <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", borderBottom: "1px solid rgba(50,50,50,0.1)", marginTop: S.m, marginBottom: S.m, paddingTop: S.m, paddingBottom: S.s, maxWidth: 500 }}>
         {[
-          { icon: <IconPay />, text: job.pay },
+          { icon: <IconPay />, text: job.pay, benchmark: job.payBenchmark },
           { icon: <IconLocation />, text: job.location },
           { icon: <IconClock />, text: `${job.hours}${job.hoursSub ? ` (${job.hoursSub})` : ""}` },
           { icon: <IconClock />, text: job.shifts },
         ].map((f, i) => (
           <div key={i} style={{ display: "flex", alignItems: "flex-start", marginBottom: S.s }}>
             <span style={{ marginRight: S.s, marginTop: S.xs, flexShrink: 0, display: "flex" }}>{f.icon}</span>
-            <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, lineHeight: 1.5 }}>{f.text}</span>
+            <div>
+              <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, lineHeight: 1.5 }}>{f.text}</span>
+              {f.benchmark && (() => {
+                const { verdict, label, range } = f.benchmark;
+                const color = verdict === "below" ? COLORS.red : verdict === "good" ? COLORS.green : COLORS.amberText;
+                const arrow = verdict === "below" ? "↓" : verdict === "good" ? "↑" : "→";
+                return <div style={{ ...T.body2, color, fontFamily: FONT, marginTop: 2 }}>{arrow} {label} · {range}</div>;
+              })()}
+            </div>
           </div>
         ))}
       </div>
@@ -1278,9 +1287,9 @@ export default function JobTriagePage() {
             </>
           ) : (
             <>
-              <Signal status="warning" label="Pay: below average for warehouse work in London"
-                detail={`${job.pay} — warehouse operatives in London typically earn £13.50–£16.00/hr. This role pays below the median and below the London Living Wage of £14.80/hr.`}
-                subtext="Based on ONS earnings data and Breakroom member reports" />
+              <Signal status="warning" label="Most people feel the pay doesn't reflect the work"
+                detail={`62% of workers at ${job.company} say their pay doesn't reflect what the job involves. Workers report that shift premiums and overtime can be inconsistent.`}
+                subtext={`Based on ${job.quizCount} Breakroom Quiz responses`} />
               <Signal status="warning" label="Commute: Hounslow (near Heathrow)"
                 detail="Shift times are 6am, 8am, or 10am starts — check early-morning transport from your area."
                 subtext="Tap to check commute from your postcode →"
