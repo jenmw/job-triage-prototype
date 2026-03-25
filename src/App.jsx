@@ -835,7 +835,6 @@ const ALL_FINDINGS = [
 
 export default function JobTriagePage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [jdModalOpen, setJdModalOpen] = useState(false);
   const [allFindingsModalOpen, setAllFindingsModalOpen] = useState(false);
   const [personalised, setPersonalised] = useState(false);
   const [selectedJobIdx, setSelectedJobIdx] = useState(0);
@@ -1029,16 +1028,13 @@ export default function JobTriagePage() {
         <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "center", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.s }}>See all {job.quizCount} reviews →</div>
       </Section>
 
-      <Section title="Full job details">
+      <Section title="Job description">
         <div style={{ ...T.body1, color: COLORS.muted, lineHeight: 1.7, fontFamily: FONT }}>
-          <p style={{ margin: `0 0 ${S.s}px` }}><strong style={{ color: COLORS.text }}>What you'll do:</strong> Sorting, scanning, and processing mail bags for international dispatch. Heavy lifting up to 30kg.</p>
-          <p style={{ margin: `0 0 ${S.s}px` }}><strong style={{ color: COLORS.text }}>Shifts:</strong> 4 on / 4 off rotation. Starts 6am–6pm, 8am–8pm, or 10am–10pm (12-hour shifts).</p>
-          <p style={{ margin: `0 0 ${S.s}px` }}><strong style={{ color: COLORS.text }}>You'll need:</strong> Valid photo ID, 5-year address history, DBS check and Aviation Security Course (both paid by employer).</p>
-          <p style={{ margin: 0 }}><strong style={{ color: COLORS.text }}>Regulated by:</strong> Civil Aviation Authority (CAA) — that's why the background checks are strict.</p>
-        </div>
-        <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "center", padding: `${S.xs}px 0`, fontFamily: FONT }}
-          onClick={() => setJdModalOpen(true)}>
-          See full job description →
+          {job.jd.map(({ label, text }, i) => (
+            <p key={i} style={{ margin: `0 0 ${S.m}px` }}>
+              <strong style={{ color: COLORS.text }}>{label}:</strong> {text}
+            </p>
+          ))}
         </div>
       </Section>
     </>
@@ -1132,28 +1128,6 @@ export default function JobTriagePage() {
         </>
       )}
 
-      {/* Job description modal */}
-      {jdModalOpen && (
-        <>
-          <div onClick={() => setJdModalOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 100 }} />
-          <div style={{ position: "fixed", inset: 0, zIndex: 101, overflow: "auto", padding: `${S.l}px ${S.m}px` }}>
-            <div style={{ background: COLORS.card, borderRadius: 5, maxWidth: 600, margin: "0 auto", padding: S.l, position: "relative" }}>
-              <button onClick={() => setJdModalOpen(false)}
-                style={{ position: "absolute", top: S.m, right: S.m, background: "none", border: "none", cursor: "pointer", ...T.body2Bold, color: COLORS.muted, fontFamily: FONT }}>
-                ✕ Close
-              </button>
-              <h2 style={{ ...T.heading2, margin: `0 0 ${S.m2}px`, fontFamily: FONT, color: COLORS.text }}>Full job description</h2>
-              <div style={{ ...T.body1, color: COLORS.muted, lineHeight: 1.7, fontFamily: FONT }}>
-                {job.jd.map(({ label, text }, i) => (
-                  <p key={i} style={{ margin: `0 0 ${S.m}px` }}>
-                    <strong style={{ color: COLORS.text }}>{label}:</strong> {text}
-                  </p>
-                ))}
-              </div>
-            </div>
-          </div>
-        </>
-      )}
     </div>
   );
 }
