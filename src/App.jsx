@@ -377,6 +377,14 @@ const IconMenuNav = () => (
     </g>
   </svg>
 );
+const IconUserNav = () => (
+  <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="#323232" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+      <circle cx="12" cy="7" r="4"/>
+    </g>
+  </svg>
+);
 
 // ─── Hero detail field icons ────────────────────────────────────────────────────
 const IconPay = ({ color = COLORS.text }) => (
@@ -688,11 +696,19 @@ const LicenceModal = ({ open, onClose, userLicences, onSave }) => {
 };
 
 // ─── Onboarding drawer ─────────────────────────────────────────────────────────
-const OnboardingDrawer = ({ open, onClose, onSubmit }) => {
-  const [postcode, setPostcode] = useState("");
-  const [currentPay, setCurrentPay] = useState("");
-  const [travel, setTravel] = useState("");
-  const [priorities, setPriorities] = useState(new Set());
+const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
+  const [postcode, setPostcode] = useState(initialValues.postcode || "");
+  const [currentPay, setCurrentPay] = useState(initialValues.currentPay || "");
+  const [travel, setTravel] = useState(initialValues.travel || "");
+  const [priorities, setPriorities] = useState(new Set(initialValues.priorities || []));
+  useEffect(() => {
+    if (open) {
+      setPostcode(initialValues.postcode || "");
+      setCurrentPay(initialValues.currentPay || "");
+      setTravel(initialValues.travel || "");
+      setPriorities(new Set(initialValues.priorities || []));
+    }
+  }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
   const togglePriority = (p) => setPriorities((s) => { const n = new Set(s); n.has(p) ? n.delete(p) : n.add(p); return n; });
 
   const inputStyle = { width: "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1px solid ${COLORS.border}`, ...T.body1, fontFamily: FONT, marginBottom: S.m, background: COLORS.card, color: COLORS.text, outline: "none", boxSizing: "border-box" };
@@ -738,6 +754,159 @@ const OnboardingDrawer = ({ open, onClose, onSubmit }) => {
         <button onClick={onClose} style={{ width: "100%", padding: `${S.s2}px`, background: "none", border: "none", ...T.body2, color: COLORS.muted, cursor: "pointer", marginTop: S.s, fontFamily: FONT }}>
           Not now, I'll keep browsing
         </button>
+      </div>
+    </>
+  );
+};
+
+// ─── Profile hub ───────────────────────────────────────────────────────────────
+const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, currentPay, travel, priorities, userLicences, onSavePrefs, onOpenLicenceModal, onOpenDrawer, hasPersonalisation }) => {
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState(false);
+  const [lPostcode, setLPostcode] = useState(postcode);
+  const [lPay, setLPay] = useState(currentPay);
+  const [lTravel, setLTravel] = useState(travel);
+  const [lPriorities, setLPriorities] = useState(new Set(priorities));
+
+  useEffect(() => {
+    if (open) {
+      setEmail("");
+      setEmailError(false);
+      setLPostcode(postcode);
+      setLPay(currentPay);
+      setLTravel(travel);
+      setLPriorities(new Set(priorities));
+    }
+  }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const toggleP = (p) => setLPriorities(s => { const n = new Set(s); n.has(p) ? n.delete(p) : n.add(p); return n; });
+  const inputStyle = { width: "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1px solid ${COLORS.border}`, ...T.body1, fontFamily: FONT, marginBottom: S.m, background: COLORS.card, color: COLORS.text, outline: "none", boxSizing: "border-box" };
+  const sectionLabel = { ...T.body2Bold, color: COLORS.text, fontFamily: FONT, display: "block", marginBottom: S.s };
+  const licenceLabels = { flt: "FLT / Forklift licence", car: "UK car driving licence (category B)", hgv: "HGV licence (category C)", van: "Van / light goods licence (category B+E)" };
+
+  // Summary row for read-only state
+  const SummaryRow = ({ label, value, onClick }) => !value ? null : (
+    <div onClick={onClick} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: `${S.s}px 0`, borderBottom: `1px solid ${COLORS.border}`, cursor: onClick ? "pointer" : "default" }}>
+      <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{label}</span>
+      <div style={{ display: "flex", alignItems: "center", gap: S.xs }}>
+        <span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT, textAlign: "right", maxWidth: "60%" }}>{value}</span>
+        {onClick && <span style={{ ...T.body2, color: COLORS.accent, fontFamily: FONT }}>›</span>}
+      </div>
+    </div>
+  );
+
+  // State 1: no personalisation, not signed in → sign-up prompt
+  const stateNoPersonalisation = !isSignedIn && !hasPersonalisation;
+  // State 2: has personalisation, not signed in → read-only summary + save CTA
+  const stateHasPersonalisation = !isSignedIn && hasPersonalisation;
+  // State 3: signed in → full editable hub
+
+  return (
+    <>
+      <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity 0.3s", zIndex: 110 }} />
+      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, maxHeight: "90vh", background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 111, overflowY: "auto", boxShadow: "0 -8px 40px rgba(0,0,0,0.15)" }}>
+        <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px` }} />
+        <h3 style={{ ...T.lead1, margin: `0 0 ${S.s}px`, color: COLORS.text, fontFamily: FONT }}>
+          {stateHasPersonalisation ? "Don't lose your preferences" : "Your Breakroom profile"}
+        </h3>
+
+        {/* ── State 1: no personalisation, not signed in ── */}
+        {stateNoPersonalisation && (
+          <>
+            <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m2}px` }}>
+              Create a free account to get personalised job matches, save jobs for later, and see how vacancies compare to your current job.
+            </p>
+            <button onClick={() => { if (!email) { setEmailError(true); } else { onSignIn(email); } }}
+              style={{ width: "100%", padding: S.s2, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT, marginBottom: S.m }}>
+              Create a free account →
+            </button>
+            <button style={{ width: "100%", padding: S.s2, borderRadius: 4, border: `1.5px solid ${COLORS.border}`, background: COLORS.card, ...T.body1Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
+              Sign in
+            </button>
+          </>
+        )}
+
+        {/* ── State 2: has personalisation, not signed in → read-only receipt ── */}
+        {stateHasPersonalisation && (
+          <>
+            <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m2}px` }}>
+              We'll remember what matters to you across every job you look at.
+            </p>
+            <div style={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 8, padding: `0 ${S.m}px`, marginBottom: S.m2 }}>
+              <SummaryRow label="Postcode" value={postcode || null} onClick={() => { onClose(); onOpenDrawer(); }} />
+              <SummaryRow label="Current pay" value={currentPay || null} onClick={() => { onClose(); onOpenDrawer(); }} />
+              <SummaryRow label="Travel" value={travel || null} onClick={() => { onClose(); onOpenDrawer(); }} />
+              <SummaryRow label="Priorities" value={priorities.length > 0 ? priorities.join(", ") : null} onClick={() => { onClose(); onOpenDrawer(); }} />
+              {userLicences.size > 0 && (
+                <SummaryRow label="Licences" value={[...userLicences].map(l => licenceLabels[l] || l).join(", ")} onClick={() => { onClose(); onOpenLicenceModal(); }} />
+              )}
+            </div>
+            <button onClick={() => { if (!email) { setEmailError(true); } else { onSignIn(email); } }}
+              style={{ width: "100%", padding: S.s2, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
+              Save these to a free Breakroom account →
+            </button>
+          </>
+        )}
+
+        {/* ── State 3: signed in → full editable hub ── */}
+        {isSignedIn && (
+          <>
+            <div style={{ display: "flex", alignItems: "center", gap: S.s, ...T.body2, color: COLORS.green, fontFamily: FONT, marginBottom: S.m2, background: COLORS.greenBg, border: `1px solid ${COLORS.green}22`, borderRadius: 6, padding: `${S.s}px ${S.m}px` }}>
+              ✓ Signed in as <strong>{userEmail}</strong>
+            </div>
+
+            {/* Preferences */}
+            <div style={{ marginBottom: S.m2 }}>
+              <div style={{ ...T.lead2, color: COLORS.text, fontFamily: FONT, marginBottom: S.m }}>Job preferences</div>
+              <label style={sectionLabel}>Your postcode (for commute times)</label>
+              <input value={lPostcode} onChange={e => setLPostcode(e.target.value)} placeholder="e.g. TW1 3QS" style={inputStyle} />
+              <label style={sectionLabel}>What do you currently earn? (per hour)</label>
+              <input value={lPay} onChange={e => setLPay(e.target.value)} placeholder="e.g. £12.00" style={inputStyle} />
+              <label style={sectionLabel}>How do you get to work?</label>
+              <div style={{ display: "flex", gap: S.s, marginBottom: S.m, flexWrap: "wrap" }}>
+                {["🚗 Drive", "🚌 Bus", "🚂 Train", "🚲 Cycle", "🚶 Walk"].map(t => (
+                  <button key={t} onClick={() => setLTravel(t)}
+                    style={{ padding: `${S.s}px ${S.m}px`, borderRadius: 100, border: `1px solid ${lTravel === t ? COLORS.accent : COLORS.border}`, background: lTravel === t ? COLORS.accentBg : COLORS.card, ...T.body2, cursor: "pointer", fontFamily: FONT, color: lTravel === t ? COLORS.accent : COLORS.text, fontWeight: lTravel === t ? 700 : 400 }}>
+                    {t}
+                  </button>
+                ))}
+              </div>
+              <label style={sectionLabel}>What matters most to you? (pick up to 3)</label>
+              <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginBottom: S.m2 }}>
+                {["Better pay", "Short commute", "No heavy lifting", "Daytime only", "Paid breaks", "Sick pay", "Friendly team", "Career progression"].map(p => (
+                  <button key={p} onClick={() => { if (lPriorities.has(p) || lPriorities.size < 3) toggleP(p); }}
+                    style={{ padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${lPriorities.has(p) ? COLORS.green : COLORS.border}`, background: lPriorities.has(p) ? COLORS.greenBg : COLORS.card, ...T.body2, cursor: "pointer", fontFamily: FONT, color: lPriorities.has(p) ? COLORS.green : COLORS.muted, fontWeight: lPriorities.has(p) ? 700 : 400 }}>
+                    {p}
+                  </button>
+                ))}
+              </div>
+              <button onClick={() => onSavePrefs({ postcode: lPostcode, currentPay: lPay, travel: lTravel, priorities: [...lPriorities] })}
+                style={{ width: "100%", padding: S.s2, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
+                Save preferences →
+              </button>
+            </div>
+
+            {/* Licences */}
+            <div style={{ borderTop: `1px solid ${COLORS.border}`, paddingTop: S.m2 }}>
+              <div style={{ ...T.lead2, color: COLORS.text, fontFamily: FONT, marginBottom: S.s }}>Your licences</div>
+              {userLicences.size === 0 ? (
+                <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginBottom: S.m }}>No licences added yet.</div>
+              ) : (
+                <div style={{ marginBottom: S.m }}>
+                  {[...userLicences].map(l => (
+                    <div key={l} style={{ ...T.body2, color: COLORS.text, fontFamily: FONT, display: "flex", alignItems: "center", gap: S.s, marginBottom: S.xs }}>
+                      <span style={{ color: COLORS.green }}>✓</span> {licenceLabels[l] || l}
+                    </div>
+                  ))}
+                </div>
+              )}
+              <button onClick={onOpenLicenceModal}
+                style={{ background: "none", border: "none", padding: 0, ...T.body2Bold, color: COLORS.accent, cursor: "pointer", fontFamily: FONT, textDecoration: "underline" }}>
+                {userLicences.size > 0 ? "Edit licences" : "+ Add a licence"}
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </>
   );
@@ -795,9 +964,18 @@ const PersonaliseNudge = ({ personalised, onOpenDrawer }) =>
     </button>
   );
 
+const SaveNudge = ({ show, onOpenProfile }) => !show ? null : (
+  <div style={{ marginTop: S.m, padding: `${S.s2}px ${S.m}px`, borderRadius: 5, border: `1px solid ${COLORS.border}`, background: COLORS.accentBg, display: "flex", alignItems: "center", justifyContent: "space-between", gap: S.s }}>
+    <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>Your preferences aren't saved yet.</span>
+    <button onClick={onOpenProfile} style={{ ...T.body2Bold, color: COLORS.accent, background: "none", border: "none", cursor: "pointer", fontFamily: FONT, textDecoration: "underline", whiteSpace: "nowrap" }}>
+      Save them →
+    </button>
+  </div>
+);
+
 // ─── Desktop sidebar ───────────────────────────────────────────────────────────
 
-const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect }) => (
+const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect, showSaveNudge, onOpenProfile }) => (
   <div style={{ display: "flex", flexDirection: "column", gap: S.l2, paddingTop: S.m2 }}>
     {/* CTA card — sticky below header (70px) + S.m gap */}
     <div style={{ position: "sticky", top: 70 + S.m, zIndex: 10, background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 5, padding: `${S.m}px ${S.m2}px` }}>
@@ -822,6 +1000,8 @@ const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect
     {/* Alternatives — not sticky, scrolls with page */}
     <div>
       <AlternativesList currentJobIdx={currentJobIdx} personalised={personalised} onOpenDrawer={onOpenDrawer} onJobSelect={onJobSelect} />
+      <PersonaliseNudge personalised={personalised} onOpenDrawer={onOpenDrawer} />
+      <SaveNudge show={showSaveNudge} onOpenProfile={onOpenProfile} />
     </div>
   </div>
 );
@@ -968,6 +1148,7 @@ const ALL_FINDINGS = [
 
 export default function JobTriagePage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const [allFindingsModalOpen, setAllFindingsModalOpen] = useState(false);
   const [personalised, setPersonalised] = useState(false);
   const [selectedJobIdx, setSelectedJobIdx] = useState(0);
@@ -975,6 +1156,27 @@ export default function JobTriagePage() {
   const [highlightFinding, setHighlightFinding] = useState(null);
   const [licenceModalOpen, setLicenceModalOpen] = useState(false);
   const [userLicences, setUserLicences] = useState(new Set());
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [profilePostcode, setProfilePostcode] = useState("");
+  const [profileCurrentPay, setProfileCurrentPay] = useState("");
+  const [profileTravel, setProfileTravel] = useState("");
+  const [profilePriorities, setProfilePriorities] = useState([]);
+
+  const hasPersonalisation = personalised || userLicences.size > 0;
+
+  const handleSavePrefs = ({ postcode, currentPay, travel, priorities }) => {
+    setProfilePostcode(postcode);
+    setProfileCurrentPay(currentPay);
+    setProfileTravel(travel);
+    setProfilePriorities(priorities);
+    if (postcode || currentPay || travel || priorities.length > 0) setPersonalised(true);
+  };
+
+  const handleSignIn = (email) => {
+    setIsSignedIn(true);
+    setUserEmail(email);
+  };
   const findingsSectionRef = useRef(null);
   const isDesktop = useIsDesktop();
 
@@ -1215,6 +1417,16 @@ export default function JobTriagePage() {
               <IconSearchNav />
               <span style={{ fontSize: 12, fontWeight: 700, color: COLORS.text, fontFamily: FONT, lineHeight: 1 }}>Search</span>
             </button>
+            {/* .header__btn .header__profile */}
+            <button onClick={() => setProfileOpen(true)} style={{ height: "100%", minWidth: 48, background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", gap: 5, padding: "14px 8px 0", position: "relative" }}>
+              <span style={{ position: "relative", display: "block" }}>
+                <IconUserNav />
+                {hasPersonalisation && !isSignedIn && (
+                  <span style={{ position: "absolute", top: -2, right: -2, width: 8, height: 8, borderRadius: "50%", background: COLORS.accent, border: `2px solid ${COLORS.card}` }} />
+                )}
+              </span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: COLORS.text, fontFamily: FONT, lineHeight: 1 }}>Profile</span>
+            </button>
             {/* .header__btn .header__menu */}
             <button style={{ height: "100%", minWidth: 48, background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", gap: 5, padding: "14px 8px 0" }}>
               <IconMenuNav />
@@ -1230,7 +1442,7 @@ export default function JobTriagePage() {
             {heroBlock}
             {sectionsBlock}
           </div>
-          <DesktopSidebar currentJobIdx={selectedJobIdx} personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} />
+          <DesktopSidebar currentJobIdx={selectedJobIdx} personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} showSaveNudge={hasPersonalisation && !isSignedIn} onOpenProfile={() => setProfileOpen(true)} />
         </div>
       ) : (
         <div style={{ padding: `0 ${S.m}px ${S.xxl}px` }}>
@@ -1239,6 +1451,7 @@ export default function JobTriagePage() {
           <div style={{ marginTop: S.m2, marginBottom: S.s }}>
             <AlternativesList currentJobIdx={selectedJobIdx} personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} />
             <PersonaliseNudge personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} />
+            <SaveNudge show={hasPersonalisation && !isSignedIn} onOpenProfile={() => setProfileOpen(true)} />
           </div>
         </div>
       )}
@@ -1262,10 +1475,19 @@ export default function JobTriagePage() {
       )}
 
       <OnboardingDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)}
-        onSubmit={() => { setPersonalised(true); setDrawerOpen(false); }} />
+        initialValues={{ postcode: profilePostcode, currentPay: profileCurrentPay, travel: profileTravel, priorities: profilePriorities }}
+        onSubmit={(data) => { handleSavePrefs(data); setDrawerOpen(false); }} />
 
       <LicenceModal open={licenceModalOpen} onClose={() => setLicenceModalOpen(false)}
         userLicences={userLicences} onSave={(s) => setUserLicences(s)} />
+
+      <ProfileHub
+        open={profileOpen} onClose={() => setProfileOpen(false)}
+        isSignedIn={isSignedIn} userEmail={userEmail} onSignIn={handleSignIn}
+        postcode={profilePostcode} currentPay={profileCurrentPay} travel={profileTravel} priorities={profilePriorities}
+        userLicences={userLicences} onSavePrefs={(data) => { handleSavePrefs(data); }} onOpenLicenceModal={() => { setProfileOpen(false); setLicenceModalOpen(true); }}
+        hasPersonalisation={hasPersonalisation} onOpenDrawer={() => { setProfileOpen(false); setDrawerOpen(true); }}
+      />
 
       {/* All findings modal */}
       {allFindingsModalOpen && (
