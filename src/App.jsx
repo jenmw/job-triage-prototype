@@ -59,7 +59,7 @@ const JOBS = [
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/56629861",
     altBadge: null,
     altHighlight: null,
-    payBenchmark: { verdict: "below", label: "below average for warehouse work in London", range: "£13.50–£16/hr typical" },
+    payBenchmark: { verdict: "below", label: "below average for warehouse operatives in London", range: "£13.50–£16/hr typical" },
     jd: [
       { label: "Job title", text: "Warehouse Operative" },
       { label: "Employer", text: "The Best Connection (Employment Agency)" },
@@ -88,7 +88,7 @@ const JOBS = [
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/67890",
     altBadge: "↑ £0.67/hr",
     altReason: null,
-    payBenchmark: { verdict: "fair", label: "around average for warehouse work in London", range: "£13.50–£16/hr typical" },
+    payBenchmark: { verdict: "fair", label: "around average for warehouse operatives in London", range: "£13.50–£16/hr typical" },
     findingDiffs: ["More people get sick pay", "Better shift notice"],
     jd: [
       { label: "Job title", text: "Warehouse Operative" },
@@ -118,7 +118,7 @@ const JOBS = [
     listingUrl: "https://www.reed.co.uk/jobs/logistics-operator/11111",
     altBadge: "↑ £1.66/hr",
     altReason: null,
-    payBenchmark: { verdict: "good", label: "above average for warehouse work in London", range: "£13.50–£16/hr typical" },
+    payBenchmark: { verdict: "good", label: "above average for logistics operators in London", range: "£12.50–£15/hr typical" },
     findingDiffs: ["Easier to book holiday", "Fewer last-minute shift changes"],
     jd: [
       { label: "Job title", text: "Logistics Operator" },
@@ -148,7 +148,7 @@ const JOBS = [
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/22222",
     altBadge: "↑ £2.11/hr",
     altReason: { text: "Part time available" },
-    payBenchmark: { verdict: "good", label: "above average for warehouse work in London", range: "£13.50–£16/hr typical" },
+    payBenchmark: { verdict: "good", label: "above average for warehouse operatives in London", range: "£13.50–£16/hr typical" },
     findingDiffs: ["More people get proper breaks", "Less people are stressed"],
     jd: [
       { label: "Job title", text: "Warehouse Operative (Part Time)" },
@@ -208,7 +208,7 @@ const JOBS = [
     listingUrl: "https://www.reed.co.uk/jobs/flt-driver/44444",
     altBadge: "↑ £0.42/hr",
     altReason: { text: "FLT licence required" },
-    payBenchmark: { verdict: "below", label: "slightly below average for warehouse work in London", range: "£13.50–£16/hr typical" },
+    payBenchmark: { verdict: "below", label: "below average for FLT drivers in London", range: "£14–£17/hr typical" },
     findingDiffs: [],
     jd: [
       { label: "Job title", text: "FLT Driver (Counterbalance / Reach)" },
@@ -238,7 +238,7 @@ const JOBS = [
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/55555",
     altBadge: null,
     altReason: null,
-    payBenchmark: { verdict: "below", label: "below average for warehouse work in London", range: "£13.50–£16/hr typical" },
+    payBenchmark: { verdict: "below", label: "below average for warehouse operatives in Hounslow", range: "£13.50–£16/hr typical" },
     findingDiffs: [],
     jd: [
       { label: "Job title", text: "Warehouse Operative" },
