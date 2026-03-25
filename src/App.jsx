@@ -733,9 +733,9 @@ const PersonaliseNudge = ({ personalised, onOpenDrawer }) =>
 // ─── Desktop sidebar ───────────────────────────────────────────────────────────
 
 const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect }) => (
-  <div style={{ display: "flex", flexDirection: "column", gap: S.m }}>
-    {/* CTA card — sticky so apply buttons stay visible while scrolling */}
-    <div style={{ position: "sticky", top: 48, zIndex: 10, background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 5, padding: `${S.m}px ${S.m2}px` }}>
+  <div style={{ display: "flex", flexDirection: "column", gap: S.l2, paddingTop: S.m2 }}>
+    {/* CTA card */}
+    <div style={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 5, padding: `${S.m}px ${S.m2}px` }}>
       <div style={{ padding: `${S.s2}px ${S.s2}px`, background: COLORS.amberBg, border: `1px solid ${COLORS.amberBorder}`, borderRadius: 4, ...T.body2, color: COLORS.amberText, marginBottom: S.m, fontFamily: FONT }}>
         ⚠ <strong>Rated below average by workers.</strong> Pay and working conditions have mixed reviews — read the full picture before applying.
       </div>
@@ -1147,21 +1147,21 @@ export default function JobTriagePage() {
           {/* .header__buttons */}
           <div style={{ display: "flex", alignItems: "center", height: "100%", gap: 4 }}>
             {/* .header__btn .header__search */}
-            <button style={{ height: "100%", minWidth: 48, background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between", padding: "12px 8px 8px" }}>
+            <button style={{ height: "100%", minWidth: 48, background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", gap: 5, padding: "14px 8px 0" }}>
               <IconSearchNav />
-              <span style={{ fontSize: 12, color: COLORS.text, fontFamily: FONT, lineHeight: 1 }}>Search</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: COLORS.text, fontFamily: FONT, lineHeight: 1 }}>Search</span>
             </button>
             {/* .header__btn .header__menu */}
-            <button style={{ height: "100%", minWidth: 48, background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between", padding: "12px 8px 8px" }}>
+            <button style={{ height: "100%", minWidth: 48, background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", gap: 5, padding: "14px 8px 0" }}>
               <IconMenuNav />
-              <span style={{ fontSize: 12, color: COLORS.text, fontFamily: FONT, lineHeight: 1 }}>Menu</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: COLORS.text, fontFamily: FONT, lineHeight: 1 }}>Menu</span>
             </button>
           </div>
         </div>
       </div>
 
       {isDesktop ? (
-        <div style={{ maxWidth: 1160, margin: "0 auto", padding: `0 ${S.l}px ${S.xl}px`, display: "grid", gridTemplateColumns: "1fr 400px", gap: S.xl, alignItems: "start" }}>
+        <div style={{ maxWidth: 1032, margin: "0 auto", padding: `0 ${S.m}px ${S.xl}px`, display: "grid", gridTemplateColumns: "1fr 380px", gap: S.xl, alignItems: "start" }}>
           <div>
             {heroBlock}
             {sectionsBlock}
@@ -1169,7 +1169,7 @@ export default function JobTriagePage() {
           <DesktopSidebar currentJobIdx={selectedJobIdx} personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} />
         </div>
       ) : (
-        <div style={{ maxWidth: 480, margin: "0 auto", padding: `0 ${S.m}px ${S.xxl}px` }}>
+        <div style={{ padding: `0 ${S.m}px ${S.xxl}px` }}>
           {heroBlock}
           {sectionsBlock}
           <div style={{ marginTop: S.m2, marginBottom: S.s }}>
