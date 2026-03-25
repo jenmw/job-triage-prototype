@@ -466,6 +466,13 @@ const IconChevronDown = ({ color = COLORS.muted, rotated = false }) => (
   </svg>
 );
 
+// ─── Heart SVG icon (matches heart-empty--16px-semibold from site) ──────────────
+const IconHeart = ({ color = COLORS.text }) => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "block", flexShrink: 0 }}>
+    <path d="M12.8632 3.67828C12.5822 3.38399 12.2486 3.15053 11.8814 2.99126C11.5142 2.83198 11.1206 2.75 10.7231 2.75C10.3256 2.75 9.93206 2.83198 9.56485 2.99126C9.19765 3.15053 8.86402 3.38399 8.58302 3.67828L7.99985 4.28875L7.41669 3.67828C6.84909 3.08411 6.07927 2.75031 5.27657 2.75031C4.47388 2.75031 3.70406 3.08411 3.13646 3.67828C2.56887 4.27244 2.25 5.07831 2.25 5.91859C2.25 6.75887 2.56887 7.56473 3.13646 8.1589L3.71963 8.76937L7.99985 13.25L12.2801 8.76937L12.8632 8.1589C13.1444 7.86475 13.3674 7.5155 13.5195 7.1311C13.6717 6.7467 13.75 6.33468 13.75 5.91859C13.75 5.5025 13.6717 5.09048 13.5195 4.70608C13.3674 4.32168 13.1444 3.97243 12.8632 3.67828V3.67828Z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 // ─── Thumbs-up SVG icon (matches thumbs-up--16px-bold--green from site) ─────────
 const IconThumbsUp = () => (
   <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "inline-block", verticalAlign: "middle", flexShrink: 0 }}>
@@ -478,7 +485,7 @@ const VacancyHighlight = ({ label, onClick }) => (
   <span
     onClick={onClick}
     style={{
-      ...T.body1Bold, borderRadius: 20, border: `2px solid ${COLORS.green}`,
+      ...T.body2Bold, borderRadius: 20, border: `2px solid ${COLORS.green}`,
       color: COLORS.greenText, background: COLORS.card,
       display: "inline-flex", alignItems: "center", gap: 5,
       padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT,
@@ -1043,7 +1050,7 @@ const DesktopSidebar = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawer,
       </button>
       <div style={{ display: "flex", gap: S.s }}>
         <button style={{ flex: 1, padding: S.s2, borderRadius: 4, border: `2px solid #323232`, background: COLORS.card, ...T.body1Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
-          ☆ Save for later
+          <span style={{ display: "inline-flex", alignItems: "center", gap: S.xs }}><IconHeart /> Save for later</span>
         </button>
         <button onClick={onOpenDrawer} style={{ flex: 1, padding: S.s2, borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, ...T.body1Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.accent }}>
           Match me
@@ -1355,10 +1362,10 @@ export default function JobTriagePage() {
         </div>
       </div>
 
-      <Section title="What's it really like here?" badgeEl={<span style={{ display: "inline-flex", alignItems: "center", gap: S.xs }}><TinyRatingDial score={rating} /><span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{rating.toFixed(1)}/10</span></span>} forceOpen={findingsForceOpen} sectionRef={findingsSectionRef}>
+      <Section title="What's it really like here?" badgeEl={<span style={{ display: "inline-flex", alignItems: "center", gap: S.xs }}><TinyRatingDial score={rating} /><span style={{ fontFamily: FONT }}><span style={{ ...T.body1Bold, color: COLORS.text }}>{rating.toFixed(1)}</span><span style={{ ...T.body1, color: COLORS.muted }}> out of 10</span></span></span>} forceOpen={findingsForceOpen} sectionRef={findingsSectionRef}>
         {/* Red flags group — .finding-group */}
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0`, marginBottom: S.m }}>
-        <div style={{ ...T.smallcaps, color: COLORS.text, display: "inline-block", textTransform: "uppercase", marginBottom: S.xs, fontFamily: FONT }}>Needs improving</div>
+        <div style={{ ...T.smallcaps, color: COLORS.text, textTransform: "uppercase", fontFamily: FONT }}>Needs improving</div>
         <div>
           {[
             {
@@ -1397,7 +1404,7 @@ export default function JobTriagePage() {
 
         {/* Good things group — .finding-group */}
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0` }}>
-        <div style={{ ...T.smallcaps, color: COLORS.text, display: "inline-block", textTransform: "uppercase", marginTop: S.m, marginBottom: S.xs, fontFamily: FONT }}>Good</div>
+        <div style={{ ...T.smallcaps, color: COLORS.text, textTransform: "uppercase", marginTop: S.m, fontFamily: FONT }}>Good</div>
         <div>
           {[
             {
@@ -1452,12 +1459,14 @@ export default function JobTriagePage() {
       </Section>
 
       <Section title={`Job description from ${job.company}`}>
-        <div style={{ ...T.body1, color: COLORS.muted, lineHeight: 1.7, fontFamily: FONT }}>
-          {job.jd.map(({ label, text }, i) => (
-            <p key={i} style={{ margin: `0 0 ${S.m}px` }}>
-              <strong style={{ color: COLORS.text }}>{label}:</strong> {text}
-            </p>
-          ))}
+        <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.m}px ${S.m}px ${S.xs}px` }}>
+          <div style={{ ...T.body1, color: COLORS.muted, lineHeight: 1.7, fontFamily: FONT }}>
+            {job.jd.map(({ label, text }, i) => (
+              <p key={i} style={{ margin: `0 0 ${S.m}px` }}>
+                <strong style={{ color: COLORS.text }}>{label}:</strong> {text}
+              </p>
+            ))}
+          </div>
         </div>
       </Section>
     </>
