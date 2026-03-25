@@ -1275,7 +1275,7 @@ export default function JobTriagePage() {
       <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", borderBottom: "1px solid rgba(50,50,50,0.1)", marginTop: S.m, marginBottom: S.m, paddingTop: S.m, paddingBottom: S.s, maxWidth: 500 }}>
         {[
           { icon: <IconPay />, text: job.pay, benchmark: job.payBenchmark },
-          { icon: <IconLocation />, text: job.location },
+          { icon: <IconLocation />, text: job.location, sublabel: <span onClick={() => setDrawerOpen(true)} style={{ ...T.body1, color: COLORS.accent, cursor: "pointer", fontFamily: FONT }}>{profilePostcode ? `Check commute from ${profilePostcode} →` : "Check your commute →"}</span> },
           { icon: <IconClock />, text: `${job.hours}${job.hoursSub ? ` (${job.hoursSub})` : ""}` },
           { icon: <IconClock />, text: job.shifts },
         ].map((f, i) => (
@@ -1289,6 +1289,7 @@ export default function JobTriagePage() {
                 const arrow = verdict === "below" ? "↓" : verdict === "good" ? "↑" : "→";
                 return <div style={{ ...T.body1, color, fontFamily: FONT, marginTop: 2 }}>{arrow} {label} · {range}</div>;
               })()}
+              {f.sublabel && <div style={{ marginTop: 2 }}>{f.sublabel}</div>}
             </div>
           </div>
         ))}
@@ -1334,10 +1335,6 @@ export default function JobTriagePage() {
               <Signal status="warning" label="Pay: below the London Living Wage"
                 detail="At £13/hr this is below the London Living Wage of £14.80/hr."
                 subtext="Based on ONS earnings data and Breakroom member reports" />
-              <Signal status="warning" label="Commute: Hounslow"
-                detail="Day shifts, Monday–Friday. Check transport links to Hounslow from your area."
-                subtext="Tap to check commute from your postcode →"
-                subtextClick={() => setDrawerOpen(true)} />
               <Signal status="warning" label="Minimum 1 year FLT experience required"
                 detail="The listing asks for at least 1 year operating a counterbalance forklift."
                 isLast={true} />
@@ -1347,10 +1344,6 @@ export default function JobTriagePage() {
               <Signal status="warning" label="Pay is below the London Living Wage and most people don't get sick pay"
                 detail="At £12.58/hr this is below the London Living Wage of £14.80/hr. 86% of workers say they wouldn't get paid if they were sick but scheduled to work."
                 subtext={`Based on ${job.quizCount} Breakroom Quiz responses`} />
-              <Signal status="warning" label="Commute: Hounslow (near Heathrow)"
-                detail="Shift times are 6am, 8am, or 10am starts — check early-morning transport from your area."
-                subtext="Tap to check commute from your postcode →"
-                subtextClick={() => setDrawerOpen(true)} />
               <Signal status="warning" label="Requirements: 5-year background check + DBS"
                 detail="You'll need 5 years of address history and references. CAA security clearance required (they pay for it). Must have valid photo ID."
                 subtext="Heavy lifting up to 30kg required" />
