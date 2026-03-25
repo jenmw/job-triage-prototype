@@ -588,7 +588,7 @@ const Signal = ({ status, label, detail, subtext, subtextClick, isLast }) => {
           <div>{label}</div>
           {detail && <div style={{ ...T.body1, color: COLORS.muted, marginTop: S.xs, fontWeight: 400 }}>{detail}</div>}
           {subtext && (
-            <div onClick={subtextClick} style={{ ...T.body1, color: subtextClick ? COLORS.accent : COLORS.muted, marginTop: S.xs, fontWeight: 400, cursor: subtextClick ? "pointer" : "default" }}>
+            <div onClick={subtextClick} style={{ ...T.body1, color: subtextClick ? COLORS.accent : COLORS.muted, marginTop: S.xs, fontWeight: subtextClick ? 700 : 400, cursor: subtextClick ? "pointer" : "default" }}>
               {subtext}
             </div>
           )}
@@ -991,7 +991,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
                 </div>
               )}
               <button onClick={onOpenLicenceModal}
-                style={{ background: "none", border: "none", padding: 0, ...T.body1Bold, color: COLORS.accent, cursor: "pointer", fontFamily: FONT, textDecoration: "underline" }}>
+                style={{ background: "none", border: "none", padding: 0, ...T.body1Bold, color: COLORS.accent, cursor: "pointer", fontFamily: FONT }}>
                 {userLicences.size > 0 ? "Edit licences" : "+ Add a licence"}
               </button>
             </div>
@@ -1283,7 +1283,7 @@ export default function JobTriagePage() {
       <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", borderBottom: "1px solid rgba(50,50,50,0.1)", marginTop: S.m, marginBottom: S.m, paddingTop: S.m, paddingBottom: S.s, maxWidth: 500 }}>
         {[
           { icon: <IconPay />, text: job.pay, benchmark: job.payBenchmark },
-          { icon: <IconLocation />, text: job.location, sublabel: profilePostcode ? `Check commute from ${profilePostcode} →` : "Check your commute →" },
+          { icon: <IconLocation />, text: job.location, sublabel: profilePostcode ? `Is this commutable from ${profilePostcode}? →` : "Is this commutable for you? →" },
           { icon: <IconClock />, text: `${job.hours}${job.hoursSub ? ` (${job.hoursSub})` : ""}` },
           { icon: <IconClock />, text: job.shifts },
         ].map((f, i) => (
@@ -1298,7 +1298,7 @@ export default function JobTriagePage() {
                 return <div style={{ ...T.body1, color, fontFamily: FONT, marginTop: 2 }}>{arrow} {label} · {range}</div>;
               })()}
               {f.sublabel && (
-                <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2, color: COLORS.accent, fontFamily: FONT, marginTop: 2, cursor: "pointer", textDecoration: "underline" }}>
+                <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2Bold, color: COLORS.accent, fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>
                   {f.sublabel}
                 </div>
               )}
