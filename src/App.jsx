@@ -116,7 +116,7 @@ const JOBS = [
     listingUrl: "https://www.reed.co.uk/jobs/logistics-operator/11111",
     altBadge: "↑ £1.66/hr",
     altReason: null,
-    findingDiffs: ["Easy to book holiday", "Shifts don't get changed at short notice"],
+    findingDiffs: ["Easier to book holiday", "Fewer last-minute shift changes"],
     jd: [
       { label: "Job title", text: "Logistics Operator" },
       { label: "Employer", text: "Shorterm Group (Employment Agency)" },
@@ -145,7 +145,7 @@ const JOBS = [
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operative/22222",
     altBadge: "↑ £2.11/hr",
     altReason: { text: "Part time available" },
-    findingDiffs: ["Most people get proper breaks", "Less people are stressed"],
+    findingDiffs: ["More people get proper breaks", "Less people are stressed"],
     jd: [
       { label: "Job title", text: "Warehouse Operative (Part Time)" },
       { label: "Employer", text: "Gi Group (Employment Agency)" },
@@ -174,7 +174,7 @@ const JOBS = [
     listingUrl: "https://www.reed.co.uk/jobs/warehouse-operator/33333",
     altBadge: "Better rated",
     altReason: null,
-    findingDiffs: ["Less people are stressed", "Most people feel treated with respect"],
+    findingDiffs: ["Less people are stressed", "More people feel respected at work"],
     jd: [
       { label: "Job title", text: "Warehouse Operator (Night Shift)" },
       { label: "Employer", text: "DSV UK Ltd (Direct Employer)" },
