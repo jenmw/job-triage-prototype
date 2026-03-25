@@ -1044,15 +1044,14 @@ const DesktopSidebar = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawer,
       <div style={{ padding: `${S.s2}px ${S.s2}px`, background: COLORS.amberBg, border: `1px solid ${COLORS.amberBorder}`, borderRadius: 4, ...T.body1, color: COLORS.amberText, marginBottom: S.m, fontFamily: FONT }}>
         ⚠ <strong>Rated below average by workers.</strong> Pay and working conditions have mixed reviews — read the full picture before applying.
       </div>
-      <button style={{ width: "100%", padding: S.s2, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT, marginBottom: S.s }}
-        onMouseEnter={(e) => e.target.style.opacity = "0.85"} onMouseLeave={(e) => e.target.style.opacity = "1"}>
-        Apply on external site →
+      <button style={{ width: "100%", padding: "16px 28px", borderRadius: 4, border: "2px solid transparent", background: COLORS.accent, color: "#fff", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, marginBottom: S.s, transition: "background-color 0.25s ease" }}>
+        Apply on external site
       </button>
       <div style={{ display: "flex", gap: S.s }}>
-        <button style={{ flex: 1, padding: S.s2, borderRadius: 4, border: `2px solid #323232`, background: COLORS.card, ...T.body1Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: S.xs }}><IconHeart /> Save for later</span>
+        <button style={{ flex: 1, padding: "16px 28px", borderRadius: 4, border: `2px solid ${COLORS.text}`, background: "transparent", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
+          Save for later
         </button>
-        <button onClick={onOpenDrawer} style={{ flex: 1, padding: S.s2, borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, ...T.body1Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.accent }}>
+        <button onClick={onOpenDrawer} style={{ flex: 1, padding: "16px 28px", borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.accent }}>
           Match me
         </button>
       </div>
@@ -1358,7 +1357,7 @@ export default function JobTriagePage() {
       <Section title="What's it really like here?" badgeEl={<span style={{ display: "inline-flex", alignItems: "center", gap: S.xs }}><TinyRatingDial score={rating} /><span style={{ fontFamily: FONT }}><span style={{ ...T.body1Bold, color: COLORS.text }}>{rating.toFixed(1)}</span><span style={{ ...T.body1, color: COLORS.muted }}> out of 10</span></span></span>} forceOpen={findingsForceOpen} sectionRef={findingsSectionRef}>
         {/* Red flags group — .finding-group */}
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0`, marginBottom: S.m }}>
-        <div style={{ ...T.smallcaps, color: COLORS.text, textTransform: "uppercase", fontFamily: FONT }}>Needs improving</div>
+        <div style={{ ...T.smallcaps, color: COLORS.text, display: "inline-block", textTransform: "uppercase", fontFamily: FONT }}>Needs improving</div>
         <div>
           {[
             {
@@ -1397,7 +1396,7 @@ export default function JobTriagePage() {
 
         {/* Good things group — .finding-group */}
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0` }}>
-        <div style={{ ...T.smallcaps, color: COLORS.text, textTransform: "uppercase", marginTop: S.m, fontFamily: FONT }}>Good</div>
+        <div style={{ ...T.smallcaps, color: COLORS.text, display: "inline-block", textTransform: "uppercase", marginTop: S.m, fontFamily: FONT }}>Good</div>
         <div>
           {[
             {
