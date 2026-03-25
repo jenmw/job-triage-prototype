@@ -1287,8 +1287,8 @@ export default function JobTriagePage() {
             </>
           ) : (
             <>
-              <Signal status="warning" label="Most people feel the pay doesn't reflect the work"
-                detail={`62% of workers at ${job.company} say their pay doesn't reflect what the job involves. Workers report that shift premiums and overtime can be inconsistent.`}
+              <Signal status="warning" label="Pay is below the London Living Wage and most people don't get sick pay"
+                detail="At £12.58/hr this is below the London Living Wage of £14.80/hr. 86% of workers say they wouldn't get paid if they were sick but scheduled to work."
                 subtext={`Based on ${job.quizCount} Breakroom Quiz responses`} />
               <Signal status="warning" label="Commute: Hounslow (near Heathrow)"
                 detail="Shift times are 6am, 8am, or 10am starts — check early-morning transport from your area."
