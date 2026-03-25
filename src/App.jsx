@@ -1049,7 +1049,7 @@ const DesktopSidebar = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawer,
     <div style={{ position: "sticky", top: 70 + S.m, zIndex: 10 }}>
       <div style={{ position: "absolute", top: -32, left: 0, right: 0, height: 32, background: `linear-gradient(to bottom, transparent, ${COLORS.bg})`, pointerEvents: "none" }} />
       <div style={{ position: "absolute", bottom: -32, left: 0, right: 0, height: 32, background: `linear-gradient(to top, transparent, ${COLORS.bg})`, pointerEvents: "none" }} />
-    <div style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 8px rgba(0,0,0,0.1)", padding: `${S.m}px ${S.m2}px` }}>
+    <div style={{ position: "relative", background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: `${S.m}px ${S.m2}px` }}>
       <div style={{ padding: `${S.s2}px ${S.s2}px`, background: COLORS.amberBg, border: `1px solid ${COLORS.amberBorder}`, borderRadius: 4, ...T.body1, color: COLORS.amberText, marginBottom: S.m, fontFamily: FONT }}>
         ⚠ <strong>Rated below average by workers.</strong> Pay and working conditions have mixed reviews — read the full picture before applying.
       </div>
@@ -1353,8 +1353,8 @@ export default function JobTriagePage() {
             </>
           ) : (
             <>
-              <Signal status="warning" label="Pay is below the London Living Wage and most people don't get sick pay"
-                detail="At £12.58/hr this is below the London Living Wage of £14.80/hr. 86% of workers say they wouldn't get paid if they were sick but scheduled to work."
+              <Signal status="warning" label="Most people here don't get sick pay"
+                detail="86% of workers say they wouldn't get paid if they were sick but scheduled to work."
                 subtext={`Based on ${job.quizCount} Breakroom Quiz responses`} />
               <Signal status="warning" label="Requirements: 5-year background check + DBS"
                 detail="You'll need 5 years of address history and references. CAA security clearance required (they pay for it). Must have valid photo ID."
@@ -1409,7 +1409,7 @@ export default function JobTriagePage() {
 
         {/* Good things group — .finding-group */}
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0` }}>
-        <div style={{ ...T.smallcaps, color: COLORS.text, display: "inline-block", textTransform: "uppercase", marginTop: S.m, fontFamily: FONT }}>Good</div>
+        <div style={{ ...T.smallcaps, color: COLORS.text, display: "inline-block", textTransform: "uppercase", fontFamily: FONT }}>Good</div>
         <div>
           {[
             {
