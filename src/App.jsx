@@ -565,6 +565,53 @@ const AltJob = ({ job, onClick }) => {
   );
 };
 
+// ─── Licence modal — bottom sheet for declaring driving/forklift licences ──────
+const LICENCE_OPTIONS = [
+  { id: "flt",  label: "FLT / Forklift licence",    sub: "RTITB or ITSSAR (counterbalance, reach, etc.)" },
+  { id: "car",  label: "Full UK driving licence",    sub: "Category B — car and light van" },
+  { id: "c1",   label: "C1 licence",                 sub: "Minibus or vehicle up to 7.5 tonnes" },
+  { id: "c",    label: "Cat C / HGV licence",        sub: "Large goods vehicle" },
+  { id: "ce",   label: "Cat C+E / HGV with trailer", sub: "Articulated lorry" },
+];
+
+const LicenceModal = ({ open, onClose, userLicences, onSave }) => {
+  const [selected, setSelected] = useState(() => new Set(userLicences));
+  useEffect(() => { if (open) setSelected(new Set(userLicences)); }, [open]);
+  const toggle = (id) => setSelected((s) => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
+  return (
+    <>
+      <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity 0.3s", zIndex: 100 }} />
+      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, maxHeight: "85vh", background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, overflowY: "auto", boxShadow: "0 -8px 40px rgba(0,0,0,0.15)" }}>
+        <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px` }} />
+        <h3 style={{ ...T.lead1, margin: 0, color: COLORS.text, fontFamily: FONT, marginBottom: S.s }}>Do you hold a UK driving or forklift licence?</h3>
+        <p style={{ ...T.body2, color: COLORS.muted, margin: `0 0 ${S.m2}px`, fontFamily: FONT }}>We'll use this to show you which jobs you're eligible for — including future listings.</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: S.s, marginBottom: S.m2 }}>
+          {LICENCE_OPTIONS.map(({ id, label, sub }) => {
+            const on = selected.has(id);
+            return (
+              <button key={id} onClick={() => toggle(id)} style={{ display: "flex", alignItems: "center", gap: S.m, padding: `${S.s2}px ${S.m}px`, borderRadius: 8, border: `1.5px solid ${on ? COLORS.green : COLORS.border}`, background: on ? COLORS.greenBg : COLORS.card, cursor: "pointer", textAlign: "left", fontFamily: FONT, width: "100%" }}>
+                <span style={{ width: 20, height: 20, borderRadius: "50%", border: `2px solid ${on ? COLORS.green : COLORS.border}`, background: on ? COLORS.green : "transparent", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  {on && <span style={{ color: "#fff", fontSize: 12, lineHeight: 1 }}>✓</span>}
+                </span>
+                <div>
+                  <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{label}</div>
+                  <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{sub}</div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+        <button onClick={() => { onSave(selected); onClose(); }} style={{ width: "100%", padding: S.m, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
+          Save →
+        </button>
+        <button onClick={onClose} style={{ width: "100%", padding: `${S.s2}px`, background: "none", border: "none", ...T.body2, color: COLORS.muted, cursor: "pointer", marginTop: S.s, fontFamily: FONT }}>
+          Not now
+        </button>
+      </div>
+    </>
+  );
+};
+
 // ─── Onboarding drawer ─────────────────────────────────────────────────────────
 const OnboardingDrawer = ({ open, onClose, onSubmit }) => {
   const [postcode, setPostcode] = useState("");
@@ -840,6 +887,8 @@ export default function JobTriagePage() {
   const [selectedJobIdx, setSelectedJobIdx] = useState(0);
   const [findingsForceOpen, setFindingsForceOpen] = useState(false);
   const [highlightFinding, setHighlightFinding] = useState(null);
+  const [licenceModalOpen, setLicenceModalOpen] = useState(false);
+  const [userLicences, setUserLicences] = useState(new Set());
   const findingsSectionRef = useRef(null);
   const isDesktop = useIsDesktop();
 
@@ -916,19 +965,43 @@ export default function JobTriagePage() {
       <div style={{ borderBottom: `1px solid ${COLORS.border}`, paddingBottom: S.m }}>
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, padding: `${S.m}px 0` }}>Can you do this job?</div>
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `0 ${S.m}px` }}>
-          <Signal status="warning" label="Pay: below average for warehouse work in London"
-            detail={`${job.pay} — warehouse operatives in London typically earn £13.50–£16.00/hr. This role pays below the median and below the London Living Wage of £14.80/hr.`}
-            subtext="Based on ONS earnings data and Breakroom member reports" />
-          <Signal status="warning" label="Commute: Hounslow (near Heathrow)"
-            detail="Shift times are 6am, 8am, or 10am starts — check early-morning transport from your area."
-            subtext="Tap to check commute from your postcode →"
-            subtextClick={() => setDrawerOpen(true)} />
-          <Signal status="warning" label="Requirements: 5-year background check + DBS"
-            detail="You'll need 5 years of address history and references. CAA security clearance required (they pay for it). Must have valid photo ID."
-            subtext="Heavy lifting up to 30kg required" />
-          <Signal status="good" label="No prior warehouse experience mentioned"
-            detail="The listing doesn't require previous warehouse experience — just that you're reliable and comfortable with physical work."
-            isLast={true} />
+          {job.id === 5 ? (
+            <>
+              <Signal
+                status={userLicences.has("flt") ? "good" : "bad"}
+                label={userLicences.has("flt") ? "Forklift licence: you have the required licence" : "Forklift licence required (RTITB or ITSSAR)"}
+                detail="A valid counterbalance forklift licence is required. Reach truck licence is desirable."
+                subtext={userLicences.has("flt") ? "✓ You told us you have an FLT licence" : "Tell us if you have a forklift licence →"}
+                subtextClick={userLicences.has("flt") ? null : () => setLicenceModalOpen(true)}
+              />
+              <Signal status="warning" label="Pay: below the London Living Wage"
+                detail="At £13/hr this is below the London Living Wage of £14.80/hr."
+                subtext="Based on ONS earnings data and Breakroom member reports" />
+              <Signal status="warning" label="Commute: Hounslow"
+                detail="Day shifts, Monday–Friday. Check transport links to Hounslow from your area."
+                subtext="Tap to check commute from your postcode →"
+                subtextClick={() => setDrawerOpen(true)} />
+              <Signal status="warning" label="Minimum 1 year FLT experience required"
+                detail="The listing asks for at least 1 year operating a counterbalance forklift."
+                isLast={true} />
+            </>
+          ) : (
+            <>
+              <Signal status="warning" label="Pay: below average for warehouse work in London"
+                detail={`${job.pay} — warehouse operatives in London typically earn £13.50–£16.00/hr. This role pays below the median and below the London Living Wage of £14.80/hr.`}
+                subtext="Based on ONS earnings data and Breakroom member reports" />
+              <Signal status="warning" label="Commute: Hounslow (near Heathrow)"
+                detail="Shift times are 6am, 8am, or 10am starts — check early-morning transport from your area."
+                subtext="Tap to check commute from your postcode →"
+                subtextClick={() => setDrawerOpen(true)} />
+              <Signal status="warning" label="Requirements: 5-year background check + DBS"
+                detail="You'll need 5 years of address history and references. CAA security clearance required (they pay for it). Must have valid photo ID."
+                subtext="Heavy lifting up to 30kg required" />
+              <Signal status="good" label="No prior warehouse experience mentioned"
+                detail="The listing doesn't require previous warehouse experience — just that you're reliable and comfortable with physical work."
+                isLast={true} />
+            </>
+          )}
         </div>
       </div>
 
@@ -1011,7 +1084,7 @@ export default function JobTriagePage() {
         </div>
         </div>
 
-        <div onClick={() => setAllFindingsModalOpen(true)} style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "center", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.xs }}>
+        <div onClick={() => setAllFindingsModalOpen(true)} style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "left", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.xs }}>
           See all findings from workers →
         </div>
       </Section>
@@ -1025,7 +1098,7 @@ export default function JobTriagePage() {
           best="Good training when you start, friendly team"
           worst="Long shifts and no overtime pay after 12 hours"
           score={6.5} role="Branch manager" date="Jun 2024" />
-        <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "center", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.s }}>See all {job.quizCount} reviews →</div>
+        <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "left", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.s }}>See all {job.quizCount} reviews →</div>
       </Section>
 
       <Section title="Job description">
@@ -1087,6 +1160,9 @@ export default function JobTriagePage() {
 
       <OnboardingDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)}
         onSubmit={() => { setPersonalised(true); setDrawerOpen(false); }} />
+
+      <LicenceModal open={licenceModalOpen} onClose={() => setLicenceModalOpen(false)}
+        userLicences={userLicences} onSave={(s) => setUserLicences(s)} />
 
       {/* All findings modal */}
       {allFindingsModalOpen && (
