@@ -466,6 +466,15 @@ const IconChevronDown = ({ color = COLORS.muted, rotated = false }) => (
   </svg>
 );
 
+// ─── Car SVG icon (matches car--16px-semibold from site) ────────────────────────
+const IconCar = ({ color = COLORS.text }) => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "block", flexShrink: 0 }}>
+    <circle cx="4.01685" cy="10.8831" r="1.35" stroke={color} strokeWidth="1.3"/>
+    <circle cx="12" cy="10.8831" r="1.35" stroke={color} strokeWidth="1.3"/>
+    <path d="M11.5001 6.636C13.9977 6.636 14.5 8.73602 14.5 10.3852H13.5344M11.5001 6.636L10 3.11694H6.50925M11.5001 6.636H6.50924M2.60003 10.3852H1.50005C1.50005 9.56301 1.30944 6.636 3.49592 6.636M5.4386 10.3852H10.5615M3.49592 6.636L3.99839 3.11694H6.50925M3.49592 6.636H6.50924M6.50925 3.11694L6.50924 6.636" stroke={color} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 // ─── Heart SVG icon (matches heart-empty--16px-semibold from site) ──────────────
 const IconHeart = ({ color = COLORS.text }) => (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "block", flexShrink: 0 }}>
@@ -1044,14 +1053,14 @@ const DesktopSidebar = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawer,
       <div style={{ padding: `${S.s2}px ${S.s2}px`, background: COLORS.amberBg, border: `1px solid ${COLORS.amberBorder}`, borderRadius: 4, ...T.body1, color: COLORS.amberText, marginBottom: S.m, fontFamily: FONT }}>
         ⚠ <strong>Rated below average by workers.</strong> Pay and working conditions have mixed reviews — read the full picture before applying.
       </div>
-      <button style={{ width: "100%", padding: "16px 28px", borderRadius: 4, border: "2px solid transparent", background: COLORS.accent, color: "#fff", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, marginBottom: S.s, transition: "background-color 0.25s ease" }}>
+      <button style={{ width: "100%", padding: "6px 22px", borderRadius: 4, border: "2px solid transparent", background: COLORS.accent, color: "#fff", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, marginBottom: S.s, transition: "background-color 0.25s ease" }}>
         Apply on external site
       </button>
       <div style={{ display: "flex", gap: S.s }}>
-        <button style={{ flex: 1, padding: "16px 28px", borderRadius: 4, border: `2px solid ${COLORS.text}`, background: "transparent", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
+        <button style={{ flex: 1, padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.text}`, background: "transparent", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
           Save for later
         </button>
-        <button onClick={onOpenDrawer} style={{ flex: 1, padding: "16px 28px", borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.accent }}>
+        <button onClick={onOpenDrawer} style={{ flex: 1, padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.accent }}>
           Match me
         </button>
       </div>
@@ -1274,21 +1283,21 @@ export default function JobTriagePage() {
       <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", borderBottom: "1px solid rgba(50,50,50,0.1)", marginTop: S.m, marginBottom: S.m, paddingTop: S.m, paddingBottom: S.s, maxWidth: 500 }}>
         {[
           { icon: <IconPay />, text: job.pay, benchmark: job.payBenchmark },
-          { icon: <IconLocation />, text: job.location, sublabel: <span onClick={() => setDrawerOpen(true)} style={{ ...T.body1, color: COLORS.accent, cursor: "pointer", fontFamily: FONT }}>{profilePostcode ? `Check commute from ${profilePostcode} →` : "Check your commute →"}</span> },
+          { icon: <IconLocation />, text: job.location },
+          { icon: <IconCar color={COLORS.accent} />, text: profilePostcode ? `Check commute from ${profilePostcode} →` : "Check your commute →", onClick: () => setDrawerOpen(true) },
           { icon: <IconClock />, text: `${job.hours}${job.hoursSub ? ` (${job.hoursSub})` : ""}` },
           { icon: <IconClock />, text: job.shifts },
         ].map((f, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "flex-start", marginBottom: S.s }}>
+          <div key={i} onClick={f.onClick} style={{ display: "flex", alignItems: "flex-start", marginBottom: S.s, cursor: f.onClick ? "pointer" : "default" }}>
             <span style={{ marginRight: S.s, marginTop: S.xs, flexShrink: 0, display: "flex" }}>{f.icon}</span>
             <div>
-              <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, lineHeight: 1.5 }}>{f.text}</span>
+              <span style={{ ...T.body1, color: f.onClick ? COLORS.accent : COLORS.text, fontFamily: FONT, lineHeight: 1.5 }}>{f.text}</span>
               {f.benchmark && (() => {
                 const { verdict, label, range } = f.benchmark;
                 const color = verdict === "below" ? COLORS.red : verdict === "good" ? COLORS.green : COLORS.amberText;
                 const arrow = verdict === "below" ? "↓" : verdict === "good" ? "↑" : "→";
                 return <div style={{ ...T.body1, color, fontFamily: FONT, marginTop: 2 }}>{arrow} {label} · {range}</div>;
               })()}
-              {f.sublabel && <div style={{ marginTop: 2 }}>{f.sublabel}</div>}
             </div>
           </div>
         ))}
@@ -1519,14 +1528,13 @@ export default function JobTriagePage() {
       {!isDesktop && (
         <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 40, background: "rgba(250,248,244,0.95)", backdropFilter: "blur(12px)", borderTop: `1px solid ${COLORS.border}`, padding: `${S.s2}px ${S.m}px` }}>
           <div style={{ maxWidth: 480, margin: "0 auto", display: "flex", gap: S.s2 }}>
-            <button style={{ flex: 1, padding: S.s2, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}
-              onMouseEnter={(e) => e.target.style.opacity = "0.85"} onMouseLeave={(e) => e.target.style.opacity = "1"}>
-              Apply →
+            <button style={{ flex: 1, padding: "6px 22px", borderRadius: 4, border: "2px solid transparent", background: COLORS.accent, color: "#fff", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT }}>
+              Apply
             </button>
-            <button style={{ padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1.5px solid ${COLORS.border}`, background: COLORS.card, ...T.body1Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
-              ☆ Save
+            <button style={{ padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.text}`, background: "transparent", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
+              Save
             </button>
-            <button onClick={() => setDrawerOpen(true)} style={{ padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1.5px solid ${COLORS.accent}`, background: COLORS.accentBg, ...T.body1Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.accent, whiteSpace: "nowrap" }}>
+            <button onClick={() => setDrawerOpen(true)} style={{ padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.accent }}>
               Match me
             </button>
           </div>
