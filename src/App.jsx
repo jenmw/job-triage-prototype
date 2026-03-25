@@ -1049,7 +1049,7 @@ const DesktopSidebar = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawer,
     <div style={{ position: "sticky", top: 70 + S.m, zIndex: 10 }}>
       <div style={{ position: "absolute", top: -32, left: 0, right: 0, height: 32, background: `linear-gradient(to bottom, transparent, ${COLORS.bg})`, pointerEvents: "none" }} />
       <div style={{ position: "absolute", bottom: -32, left: 0, right: 0, height: 32, background: `linear-gradient(to top, transparent, ${COLORS.bg})`, pointerEvents: "none" }} />
-    <div style={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 5, padding: `${S.m}px ${S.m2}px` }}>
+    <div style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: `${S.m}px ${S.m2}px` }}>
       <div style={{ padding: `${S.s2}px ${S.s2}px`, background: COLORS.amberBg, border: `1px solid ${COLORS.amberBorder}`, borderRadius: 4, ...T.body1, color: COLORS.amberText, marginBottom: S.m, fontFamily: FONT }}>
         ⚠ <strong>Rated below average by workers.</strong> Pay and working conditions have mixed reviews — read the full picture before applying.
       </div>
@@ -1283,21 +1283,25 @@ export default function JobTriagePage() {
       <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", borderBottom: "1px solid rgba(50,50,50,0.1)", marginTop: S.m, marginBottom: S.m, paddingTop: S.m, paddingBottom: S.s, maxWidth: 500 }}>
         {[
           { icon: <IconPay />, text: job.pay, benchmark: job.payBenchmark },
-          { icon: <IconLocation />, text: job.location },
-          { icon: <IconCar color={COLORS.accent} />, text: profilePostcode ? `Check commute from ${profilePostcode} →` : "Check your commute →", onClick: () => setDrawerOpen(true) },
+          { icon: <IconLocation />, text: job.location, sublabel: profilePostcode ? `Check commute from ${profilePostcode} →` : "Check your commute →" },
           { icon: <IconClock />, text: `${job.hours}${job.hoursSub ? ` (${job.hoursSub})` : ""}` },
           { icon: <IconClock />, text: job.shifts },
         ].map((f, i) => (
-          <div key={i} onClick={f.onClick} style={{ display: "flex", alignItems: "flex-start", marginBottom: S.s, cursor: f.onClick ? "pointer" : "default" }}>
+          <div key={i} style={{ display: "flex", alignItems: "flex-start", marginBottom: S.s }}>
             <span style={{ marginRight: S.s, marginTop: S.xs, flexShrink: 0, display: "flex" }}>{f.icon}</span>
             <div>
-              <span style={{ ...T.body1, color: f.onClick ? COLORS.accent : COLORS.text, fontFamily: FONT, lineHeight: 1.5 }}>{f.text}</span>
+              <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, lineHeight: 1.5 }}>{f.text}</span>
               {f.benchmark && (() => {
                 const { verdict, label, range } = f.benchmark;
                 const color = verdict === "below" ? COLORS.red : verdict === "good" ? COLORS.green : COLORS.amberText;
                 const arrow = verdict === "below" ? "↓" : verdict === "good" ? "↑" : "→";
                 return <div style={{ ...T.body1, color, fontFamily: FONT, marginTop: 2 }}>{arrow} {label} · {range}</div>;
               })()}
+              {f.sublabel && (
+                <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2, color: COLORS.accent, fontFamily: FONT, marginTop: 2, cursor: "pointer", textDecoration: "underline" }}>
+                  {f.sublabel}
+                </div>
+              )}
             </div>
           </div>
         ))}
