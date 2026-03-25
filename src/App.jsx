@@ -38,7 +38,7 @@ const T = {
   body1Bold: { fontSize: 16, lineHeight: "22px", fontWeight: 700 },
   body2:     { fontSize: 14, lineHeight: "20px", fontWeight: 400 },
   body2Bold: { fontSize: 14, lineHeight: "20px", fontWeight: 700 },
-  smallcaps: { fontSize: 11, lineHeight: "16px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" },
+  smallcaps: { fontSize: 16, lineHeight: "22px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" },
 };
 
 // Jobs data — the current listing plus the five alternatives
@@ -478,7 +478,7 @@ const VacancyHighlight = ({ label, onClick }) => (
   <span
     onClick={onClick}
     style={{
-      ...T.body2Bold, borderRadius: 20, border: `2px solid ${COLORS.green}`,
+      ...T.body1Bold, borderRadius: 20, border: `2px solid ${COLORS.green}`,
       color: COLORS.greenText, background: COLORS.card,
       display: "inline-flex", alignItems: "center", gap: 5,
       padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT,
@@ -551,9 +551,9 @@ const FindingTile = ({ pct, label, heading, primary, secondary, why, variant, li
         <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", margin: `${S.m}px 0 ${S.m2}px`, padding: S.m, background: expandBg }}>
           <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>{primary}</div>
           <div style={{ ...T.smallcaps, color: COLORS.muted, fontFamily: FONT, margin: `${S.s}px 0 ${S.xs}px` }}>How we know this</div>
-          <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginBottom: S.s }}>{secondary}</div>
+          <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, marginBottom: S.s }}>{secondary}</div>
           <div style={{ ...T.smallcaps, color: COLORS.muted, fontFamily: FONT, marginBottom: S.xs }}>Why this matters</div>
-          <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, fontStyle: "italic", lineHeight: 1.5 }}>{why}</div>
+          <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, fontStyle: "italic", lineHeight: 1.5 }}>{why}</div>
         </div>
       </div>
     </div>
@@ -570,9 +570,9 @@ const Signal = ({ status, label, detail, subtext, subtextClick, isLast }) => {
         <span style={{ width: 15, height: 15, borderRadius: "50%", background: dot, border: "2px solid #fff", flexShrink: 0, marginTop: 3 }} />
         <div style={{ flex: 1, fontFamily: FONT }}>
           <div>{label}</div>
-          {detail && <div style={{ ...T.body2, color: COLORS.muted, marginTop: S.xs, fontWeight: 400 }}>{detail}</div>}
+          {detail && <div style={{ ...T.body1, color: COLORS.muted, marginTop: S.xs, fontWeight: 400 }}>{detail}</div>}
           {subtext && (
-            <div onClick={subtextClick} style={{ ...T.body2, color: subtextClick ? COLORS.accent : COLORS.muted, marginTop: S.xs, fontWeight: 400, cursor: subtextClick ? "pointer" : "default" }}>
+            <div onClick={subtextClick} style={{ ...T.body1, color: subtextClick ? COLORS.accent : COLORS.muted, marginTop: S.xs, fontWeight: 400, cursor: subtextClick ? "pointer" : "default" }}>
               {subtext}
             </div>
           )}
@@ -630,7 +630,7 @@ const ReviewCard = ({ best, worst, score, role, date }) => (
     </div>
     {/* .job-info — outside the card, inline-block, rgba(black,0.05) bg, border-radius 20, padding 10 16 8 */}
     <div style={{ marginTop: S.m }}>
-      <span style={{ ...T.body2, display: "inline-block", background: "rgba(50,50,50,0.05)", borderRadius: 20, padding: "10px 16px 8px", color: COLORS.muted, fontFamily: FONT }}>
+      <span style={{ ...T.body1, display: "inline-block", background: "rgba(50,50,50,0.05)", borderRadius: 20, padding: "10px 16px 8px", color: COLORS.muted, fontFamily: FONT }}>
         {role} · {date}
       </span>
     </div>
@@ -657,16 +657,16 @@ const AltJob = ({ job, onClick, betterRated }) => {
     >
       {/* Title row with badge(s) top-right */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: S.s, marginBottom: S.xs }}>
-        <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{title}</div>
+        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{title}</div>
         {(showPayBadge || showRatingBadge) && (
           <div style={{ display: "flex", gap: S.xs, flexShrink: 0, flexWrap: "wrap", justifyContent: "flex-end" }}>
             {showPayBadge && (
-              <span style={{ ...T.body2Bold, border: `2px solid ${COLORS.green}`, color: COLORS.greenText, background: COLORS.card, borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT }}>
+              <span style={{ ...T.body1Bold, border: `2px solid ${COLORS.green}`, color: COLORS.greenText, background: COLORS.card, borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT }}>
                 {altBadge}
               </span>
             )}
             {showRatingBadge && (
-              <span style={{ ...T.body2Bold, border: `2px solid ${COLORS.amberBorder}`, color: COLORS.amberText, background: COLORS.card, borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT }}>
+              <span style={{ ...T.body1Bold, border: `2px solid ${COLORS.amberBorder}`, color: COLORS.amberText, background: COLORS.card, borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT }}>
                 ↑ Better rated
               </span>
             )}
@@ -676,23 +676,23 @@ const AltJob = ({ job, onClick, betterRated }) => {
       {/* .vacancy-card-list__rating-container — dial + score + employer name */}
       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: S.xs }}>
         <TinyRatingDial score={rating} />
-        <span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{rating.toFixed(1)}</span>
-        <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{company}</span>
+        <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{rating.toFixed(1)}</span>
+        <span style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>{company}</span>
       </div>
       {/* Pay + location */}
-      <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>
+      <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>
         {pay} · {location}
       </div>
       {/* Reason row: all items as uniform chips */}
       {(hasDiffs || hasReason) && (
         <div style={{ marginTop: S.s, display: "flex", flexWrap: "wrap", alignItems: "center", gap: S.xs }}>
           {findingDiffs?.map((diff, i) => (
-            <span key={i} style={{ fontSize: 12, fontWeight: 500, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT, whiteSpace: "nowrap" }}>
+            <span key={i} style={{ ...T.body1Bold, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT, whiteSpace: "nowrap" }}>
               {diff}
             </span>
           ))}
           {hasReason && (
-            <span style={{ fontSize: 12, fontWeight: 500, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT, whiteSpace: "nowrap" }}>
+            <span style={{ ...T.body1Bold, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT, whiteSpace: "nowrap" }}>
               {reason.text}
             </span>
           )}
@@ -721,7 +721,7 @@ const LicenceModal = ({ open, onClose, userLicences, onSave }) => {
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, maxHeight: "85vh", background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, overflowY: "auto", boxShadow: "0 -8px 40px rgba(0,0,0,0.15)" }}>
         <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px` }} />
         <h3 style={{ ...T.lead1, margin: 0, color: COLORS.text, fontFamily: FONT, marginBottom: S.s }}>Do you hold a UK driving or forklift licence?</h3>
-        <p style={{ ...T.body2, color: COLORS.muted, margin: `0 0 ${S.m2}px`, fontFamily: FONT }}>We'll use this to show you which jobs you're eligible for — including future listings.</p>
+        <p style={{ ...T.body1, color: COLORS.muted, margin: `0 0 ${S.m2}px`, fontFamily: FONT }}>We'll use this to show you which jobs you're eligible for — including future listings.</p>
         <div style={{ display: "flex", flexDirection: "column", gap: S.s, marginBottom: S.m2 }}>
           {LICENCE_OPTIONS.map(({ id, label, sub }) => {
             const on = selected.has(id);
@@ -732,7 +732,7 @@ const LicenceModal = ({ open, onClose, userLicences, onSave }) => {
                 </span>
                 <div>
                   <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{label}</div>
-                  <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{sub}</div>
+                  <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>{sub}</div>
                 </div>
               </button>
             );
@@ -741,7 +741,7 @@ const LicenceModal = ({ open, onClose, userLicences, onSave }) => {
         <button onClick={() => { onSave(selected); onClose(); }} style={{ width: "100%", padding: S.m, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
           Save →
         </button>
-        <button onClick={onClose} style={{ width: "100%", padding: `${S.s2}px`, background: "none", border: "none", ...T.body2, color: COLORS.muted, cursor: "pointer", marginTop: S.s, fontFamily: FONT }}>
+        <button onClick={onClose} style={{ width: "100%", padding: `${S.s2}px`, background: "none", border: "none", ...T.body1, color: COLORS.muted, cursor: "pointer", marginTop: S.s, fontFamily: FONT }}>
           Not now
         </button>
       </div>
@@ -773,29 +773,29 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, maxHeight: "85vh", background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, overflowY: "auto", boxShadow: "0 -8px 40px rgba(0,0,0,0.15)" }}>
         <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px` }} />
         <h3 style={{ ...T.lead1, margin: 0, color: COLORS.text, fontFamily: FONT, marginBottom: S.s }}>Help us find you better jobs</h3>
-        <p style={{ ...T.body2, color: COLORS.muted, margin: `0 0 ${S.m2}px`, fontFamily: FONT }}>Answer a few quick ones and we'll show you jobs that actually fit your life. Takes 30 seconds.</p>
+        <p style={{ ...T.body1, color: COLORS.muted, margin: `0 0 ${S.m2}px`, fontFamily: FONT }}>Answer a few quick ones and we'll show you jobs that actually fit your life. Takes 30 seconds.</p>
 
-        <label style={{ ...T.body2Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>Your postcode (for commute times)</label>
+        <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>Your postcode (for commute times)</label>
         <input value={postcode} onChange={(e) => setPostcode(e.target.value)} placeholder="e.g. TW1 3QS" style={inputStyle} />
 
-        <label style={{ ...T.body2Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>What do you currently earn? (per hour)</label>
+        <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>What do you currently earn? (per hour)</label>
         <input value={currentPay} onChange={(e) => setCurrentPay(e.target.value)} placeholder="e.g. £12.00" style={inputStyle} />
 
-        <label style={{ ...T.body2Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>How do you get to work?</label>
+        <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>How do you get to work?</label>
         <div style={{ display: "flex", gap: S.s, marginBottom: S.m, flexWrap: "wrap" }}>
           {["🚗 Drive", "🚌 Bus", "🚂 Train", "🚲 Cycle", "🚶 Walk"].map((t) => (
             <button key={t} onClick={() => setTravel(t)}
-              style={{ padding: `${S.s}px ${S.m}px`, borderRadius: 100, border: `1px solid ${travel === t ? COLORS.accent : COLORS.border}`, background: travel === t ? COLORS.accentBg : COLORS.card, ...T.body2, cursor: "pointer", fontFamily: FONT, color: travel === t ? COLORS.accent : COLORS.text, fontWeight: travel === t ? 700 : 400 }}>
+              style={{ padding: `${S.s}px ${S.m}px`, borderRadius: 100, border: `1px solid ${travel === t ? COLORS.accent : COLORS.border}`, background: travel === t ? COLORS.accentBg : COLORS.card, ...T.body1, cursor: "pointer", fontFamily: FONT, color: travel === t ? COLORS.accent : COLORS.text, fontWeight: travel === t ? 700 : 400 }}>
               {t}
             </button>
           ))}
         </div>
 
-        <label style={{ ...T.body2Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>What matters most to you? (pick up to 3)</label>
+        <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>What matters most to you? (pick up to 3)</label>
         <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginBottom: S.m2 }}>
           {["Better pay", "Short commute", "No heavy lifting", "Daytime only", "Paid breaks", "Sick pay", "Friendly team", "Career progression"].map((p) => (
             <button key={p} onClick={() => { if (priorities.has(p) || priorities.size < 3) togglePriority(p); }}
-              style={{ padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${priorities.has(p) ? COLORS.green : COLORS.border}`, background: priorities.has(p) ? COLORS.greenBg : COLORS.card, ...T.body2, cursor: "pointer", fontFamily: FONT, color: priorities.has(p) ? COLORS.green : COLORS.muted, fontWeight: priorities.has(p) ? 700 : 400 }}>
+              style={{ padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${priorities.has(p) ? COLORS.green : COLORS.border}`, background: priorities.has(p) ? COLORS.greenBg : COLORS.card, ...T.body1, cursor: "pointer", fontFamily: FONT, color: priorities.has(p) ? COLORS.green : COLORS.muted, fontWeight: priorities.has(p) ? 700 : 400 }}>
               {p}
             </button>
           ))}
@@ -805,7 +805,7 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
           style={{ width: "100%", padding: S.m, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
           Show me better matches →
         </button>
-        <button onClick={onClose} style={{ width: "100%", padding: `${S.s2}px`, background: "none", border: "none", ...T.body2, color: COLORS.muted, cursor: "pointer", marginTop: S.s, fontFamily: FONT }}>
+        <button onClick={onClose} style={{ width: "100%", padding: `${S.s2}px`, background: "none", border: "none", ...T.body1, color: COLORS.muted, cursor: "pointer", marginTop: S.s, fontFamily: FONT }}>
           Not now, I'll keep browsing
         </button>
       </div>
@@ -835,15 +835,15 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
 
   const toggleP = (p) => setLPriorities(s => { const n = new Set(s); n.has(p) ? n.delete(p) : n.add(p); return n; });
   const inputStyle = { width: "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1px solid ${COLORS.border}`, ...T.body1, fontFamily: FONT, marginBottom: S.m, background: COLORS.card, color: COLORS.text, outline: "none", boxSizing: "border-box" };
-  const sectionLabel = { ...T.body2Bold, color: COLORS.text, fontFamily: FONT, display: "block", marginBottom: S.s };
+  const sectionLabel = { ...T.body1Bold, color: COLORS.text, fontFamily: FONT, display: "block", marginBottom: S.s };
   const licenceLabels = { flt: "FLT / Forklift licence", car: "UK car driving licence (category B)", hgv: "HGV licence (category C)", van: "Van / light goods licence (category B+E)" };
 
   // Summary row for read-only state
   const SummaryRow = ({ label, value, onClick, isLast }) => !value ? null : (
     <div onClick={onClick} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: `${S.s}px 0`, borderBottom: isLast ? "none" : `1px solid ${COLORS.border}`, cursor: onClick ? "pointer" : "default" }}>
-      <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{label}</span>
+      <span style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>{label}</span>
       <div style={{ display: "flex", alignItems: "center", gap: S.s, flexShrink: 0 }}>
-        <span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT, textAlign: "right" }}>{value}</span>
+        <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, textAlign: "right" }}>{value}</span>
         {onClick && <IconChevronDown color={COLORS.accent} rotated={false} style={{ transform: "rotate(-90deg)" }} />}
       </div>
     </div>
@@ -867,7 +867,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
         {/* ── State 1: no personalisation, not signed in ── */}
         {stateNoPersonalisation && (
           <>
-            <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m2}px` }}>
+            <p style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m2}px` }}>
               Create a free account to get personalised job matches, save jobs for later, and see how vacancies compare to your current job.
             </p>
             <button onClick={() => { if (!email) { setEmailError(true); } else { onSignIn(email); } }}
@@ -883,7 +883,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
         {/* ── State 2: has personalisation, not signed in → read-only receipt ── */}
         {stateHasPersonalisation && (
           <>
-            <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m2}px` }}>
+            <p style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m2}px` }}>
               We'll remember what matters to you across every job you look at.
             </p>
             {(() => {
@@ -908,10 +908,10 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
               placeholder="Your email address"
               value={email}
               onChange={e => { setEmail(e.target.value); setEmailError(false); }}
-              style={{ width: "100%", padding: S.s2, borderRadius: 4, border: `1px solid ${emailError ? "#e53e3e" : COLORS.border}`, ...T.body2, fontFamily: FONT, marginBottom: emailError ? S.s : S.s2, boxSizing: "border-box", outline: "none" }}
+              style={{ width: "100%", padding: S.s2, borderRadius: 4, border: `1px solid ${emailError ? "#e53e3e" : COLORS.border}`, ...T.body1, fontFamily: FONT, marginBottom: emailError ? S.s : S.s2, boxSizing: "border-box", outline: "none" }}
             />
             {emailError && (
-              <p style={{ ...T.body2, color: "#e53e3e", fontFamily: FONT, margin: `0 0 ${S.s2}px` }}>
+              <p style={{ ...T.body1, color: "#e53e3e", fontFamily: FONT, margin: `0 0 ${S.s2}px` }}>
                 Please enter your email address.
               </p>
             )}
@@ -925,7 +925,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
         {/* ── State 3: signed in → full editable hub ── */}
         {isSignedIn && (
           <>
-            <div style={{ display: "flex", alignItems: "center", gap: S.s, ...T.body2, color: COLORS.green, fontFamily: FONT, marginBottom: S.m2, background: COLORS.greenBg, border: `1px solid ${COLORS.green}22`, borderRadius: 6, padding: `${S.s}px ${S.m}px` }}>
+            <div style={{ display: "flex", alignItems: "center", gap: S.s, ...T.body1, color: COLORS.green, fontFamily: FONT, marginBottom: S.m2, background: COLORS.greenBg, border: `1px solid ${COLORS.green}22`, borderRadius: 6, padding: `${S.s}px ${S.m}px` }}>
               ✓ Signed in as <strong>{userEmail}</strong>
             </div>
 
@@ -940,7 +940,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
               <div style={{ display: "flex", gap: S.s, marginBottom: S.m, flexWrap: "wrap" }}>
                 {["🚗 Drive", "🚌 Bus", "🚂 Train", "🚲 Cycle", "🚶 Walk"].map(t => (
                   <button key={t} onClick={() => setLTravel(t)}
-                    style={{ padding: `${S.s}px ${S.m}px`, borderRadius: 100, border: `1px solid ${lTravel === t ? COLORS.accent : COLORS.border}`, background: lTravel === t ? COLORS.accentBg : COLORS.card, ...T.body2, cursor: "pointer", fontFamily: FONT, color: lTravel === t ? COLORS.accent : COLORS.text, fontWeight: lTravel === t ? 700 : 400 }}>
+                    style={{ padding: `${S.s}px ${S.m}px`, borderRadius: 100, border: `1px solid ${lTravel === t ? COLORS.accent : COLORS.border}`, background: lTravel === t ? COLORS.accentBg : COLORS.card, ...T.body1, cursor: "pointer", fontFamily: FONT, color: lTravel === t ? COLORS.accent : COLORS.text, fontWeight: lTravel === t ? 700 : 400 }}>
                     {t}
                   </button>
                 ))}
@@ -949,7 +949,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
               <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginBottom: S.m2 }}>
                 {["Better pay", "Short commute", "No heavy lifting", "Daytime only", "Paid breaks", "Sick pay", "Friendly team", "Career progression"].map(p => (
                   <button key={p} onClick={() => { if (lPriorities.has(p) || lPriorities.size < 3) toggleP(p); }}
-                    style={{ padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${lPriorities.has(p) ? COLORS.green : COLORS.border}`, background: lPriorities.has(p) ? COLORS.greenBg : COLORS.card, ...T.body2, cursor: "pointer", fontFamily: FONT, color: lPriorities.has(p) ? COLORS.green : COLORS.muted, fontWeight: lPriorities.has(p) ? 700 : 400 }}>
+                    style={{ padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${lPriorities.has(p) ? COLORS.green : COLORS.border}`, background: lPriorities.has(p) ? COLORS.greenBg : COLORS.card, ...T.body1, cursor: "pointer", fontFamily: FONT, color: lPriorities.has(p) ? COLORS.green : COLORS.muted, fontWeight: lPriorities.has(p) ? 700 : 400 }}>
                     {p}
                   </button>
                 ))}
@@ -964,18 +964,18 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
             <div style={{ borderTop: `1px solid ${COLORS.border}`, paddingTop: S.m2 }}>
               <div style={{ ...T.lead2, color: COLORS.text, fontFamily: FONT, marginBottom: S.s }}>Your licences</div>
               {userLicences.size === 0 ? (
-                <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginBottom: S.m }}>No licences added yet.</div>
+                <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, marginBottom: S.m }}>No licences added yet.</div>
               ) : (
                 <div style={{ marginBottom: S.m }}>
                   {[...userLicences].map(l => (
-                    <div key={l} style={{ ...T.body2, color: COLORS.text, fontFamily: FONT, display: "flex", alignItems: "center", gap: S.s, marginBottom: S.xs }}>
+                    <div key={l} style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, display: "flex", alignItems: "center", gap: S.s, marginBottom: S.xs }}>
                       <span style={{ color: COLORS.green }}>✓</span> {licenceLabels[l] || l}
                     </div>
                   ))}
                 </div>
               )}
               <button onClick={onOpenLicenceModal}
-                style={{ background: "none", border: "none", padding: 0, ...T.body2Bold, color: COLORS.accent, cursor: "pointer", fontFamily: FONT, textDecoration: "underline" }}>
+                style={{ background: "none", border: "none", padding: 0, ...T.body1Bold, color: COLORS.accent, cursor: "pointer", fontFamily: FONT, textDecoration: "underline" }}>
                 {userLicences.size > 0 ? "Edit licences" : "+ Add a licence"}
               </button>
             </div>
@@ -996,7 +996,7 @@ const AlternativesList = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawe
     <div>
       <h2 style={{ ...T.lead1, margin: `0 0 ${S.s}px`, fontFamily: FONT, color: COLORS.text }}>Similar jobs nearby</h2>
       {personalised && (
-        <p style={{ ...T.body2, color: COLORS.muted, margin: `0 0 ${S.m}px`, fontFamily: FONT }}>
+        <p style={{ ...T.body1, color: COLORS.muted, margin: `0 0 ${S.m}px`, fontFamily: FONT }}>
           ✓ Personalised for you
           {sep}
           <span onClick={onOpenDrawer} style={{ textDecoration: "underline", cursor: "pointer", color: COLORS.accent }}>Edit</span>
@@ -1011,8 +1011,8 @@ const AlternativesList = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawe
             display: "flex", justifyContent: "space-between", alignItems: "center",
           }}>
             <div>
-              <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>What matters most to you?</div>
-              <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>Set your priorities to see better-matched jobs</div>
+              <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>What matters most to you?</div>
+              <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>Set your priorities to see better-matched jobs</div>
             </div>
             <span style={{ ...T.body1Bold, color: COLORS.accent, fontFamily: FONT, flexShrink: 0, paddingLeft: S.m }}>→</span>
           </button>
@@ -1034,7 +1034,7 @@ const DesktopSidebar = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawer,
       <div style={{ position: "absolute", top: -32, left: 0, right: 0, height: 32, background: `linear-gradient(to bottom, transparent, ${COLORS.bg})`, pointerEvents: "none" }} />
       <div style={{ position: "absolute", bottom: -32, left: 0, right: 0, height: 32, background: `linear-gradient(to top, transparent, ${COLORS.bg})`, pointerEvents: "none" }} />
     <div style={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 5, padding: `${S.m}px ${S.m2}px` }}>
-      <div style={{ padding: `${S.s2}px ${S.s2}px`, background: COLORS.amberBg, border: `1px solid ${COLORS.amberBorder}`, borderRadius: 4, ...T.body2, color: COLORS.amberText, marginBottom: S.m, fontFamily: FONT }}>
+      <div style={{ padding: `${S.s2}px ${S.s2}px`, background: COLORS.amberBg, border: `1px solid ${COLORS.amberBorder}`, borderRadius: 4, ...T.body1, color: COLORS.amberText, marginBottom: S.m, fontFamily: FONT }}>
         ⚠ <strong>Rated below average by workers.</strong> Pay and working conditions have mixed reviews — read the full picture before applying.
       </div>
       <button style={{ width: "100%", padding: S.s2, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT, marginBottom: S.s }}
@@ -1042,10 +1042,10 @@ const DesktopSidebar = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawer,
         Apply on external site →
       </button>
       <div style={{ display: "flex", gap: S.s }}>
-        <button style={{ flex: 1, padding: S.s2, borderRadius: 4, border: `2px solid #323232`, background: COLORS.card, ...T.body2Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
+        <button style={{ flex: 1, padding: S.s2, borderRadius: 4, border: `2px solid #323232`, background: COLORS.card, ...T.body1Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
           ☆ Save for later
         </button>
-        <button onClick={onOpenDrawer} style={{ flex: 1, padding: S.s2, borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, ...T.body2Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.accent }}>
+        <button onClick={onOpenDrawer} style={{ flex: 1, padding: S.s2, borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, ...T.body1Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.accent }}>
           Match me
         </button>
       </div>
@@ -1258,7 +1258,7 @@ export default function JobTriagePage() {
 
   const heroBlock = (
     <div style={{ paddingTop: S.m2, paddingBottom: S.m }}>
-      <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>
+      <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>
         {job.company}
       </div>
 
@@ -1280,7 +1280,7 @@ export default function JobTriagePage() {
                 const { verdict, label, range } = f.benchmark;
                 const color = verdict === "below" ? COLORS.red : verdict === "good" ? COLORS.green : COLORS.amberText;
                 const arrow = verdict === "below" ? "↓" : verdict === "good" ? "↑" : "→";
-                return <div style={{ ...T.body2, color, fontFamily: FONT, marginTop: 2 }}>{arrow} {label} · {range}</div>;
+                return <div style={{ ...T.body1, color, fontFamily: FONT, marginTop: 2 }}>{arrow} {label} · {range}</div>;
               })()}
             </div>
           </div>
@@ -1294,10 +1294,10 @@ export default function JobTriagePage() {
           <AnimatedRatingDial score={rating} />
           <span style={{ fontFamily: FONT }}>
             <span style={{ ...T.body1Bold, color: COLORS.text }}>{rating.toFixed(1)}</span>
-            <span style={{ ...T.body2, color: COLORS.muted }}> out of 10</span>
+            <span style={{ ...T.body1, color: COLORS.muted }}> out of 10</span>
           </span>
         </div>
-        <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>
+        <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>
           Rating based on {job.quizCount} employees who took the Breakroom Quiz
         </div>
       </div>
@@ -1355,7 +1355,7 @@ export default function JobTriagePage() {
         </div>
       </div>
 
-      <Section title="What's it really like here?" badgeEl={<span style={{ display: "inline-flex", alignItems: "center", gap: S.xs }}><TinyRatingDial score={rating} /><span style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT }}>{rating.toFixed(1)}/10</span></span>} forceOpen={findingsForceOpen} sectionRef={findingsSectionRef}>
+      <Section title="What's it really like here?" badgeEl={<span style={{ display: "inline-flex", alignItems: "center", gap: S.xs }}><TinyRatingDial score={rating} /><span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{rating.toFixed(1)}/10</span></span>} forceOpen={findingsForceOpen} sectionRef={findingsSectionRef}>
         {/* Red flags group — .finding-group */}
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0`, marginBottom: S.m }}>
         <div style={{ ...T.smallcaps, color: COLORS.text, display: "inline-block", textTransform: "uppercase", marginBottom: S.xs, fontFamily: FONT }}>Needs improving</div>
@@ -1434,7 +1434,7 @@ export default function JobTriagePage() {
         </div>
         </div>
 
-        <div onClick={() => setAllFindingsModalOpen(true)} style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "left", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.xs }}>
+        <div onClick={() => setAllFindingsModalOpen(true)} style={{ ...T.body1Bold, color: COLORS.accent, cursor: "pointer", textAlign: "left", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.xs }}>
           See all findings from workers →
         </div>
       </Section>
@@ -1448,7 +1448,7 @@ export default function JobTriagePage() {
           best="Good training when you start, friendly team"
           worst="Long shifts and no overtime pay after 12 hours"
           score={6.5} role="Branch manager" date="Jun 2024" />
-        <div style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", textAlign: "left", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.s }}>See all {job.quizCount} reviews →</div>
+        <div style={{ ...T.body1Bold, color: COLORS.accent, cursor: "pointer", textAlign: "left", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.s }}>See all {job.quizCount} reviews →</div>
       </Section>
 
       <Section title={`Job description from ${job.company}`}>
@@ -1522,10 +1522,10 @@ export default function JobTriagePage() {
               onMouseEnter={(e) => e.target.style.opacity = "0.85"} onMouseLeave={(e) => e.target.style.opacity = "1"}>
               Apply →
             </button>
-            <button style={{ padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1.5px solid ${COLORS.border}`, background: COLORS.card, ...T.body2Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
+            <button style={{ padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1.5px solid ${COLORS.border}`, background: COLORS.card, ...T.body1Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
               ☆ Save
             </button>
-            <button onClick={() => setDrawerOpen(true)} style={{ padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1.5px solid ${COLORS.accent}`, background: COLORS.accentBg, ...T.body2Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.accent, whiteSpace: "nowrap" }}>
+            <button onClick={() => setDrawerOpen(true)} style={{ padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1.5px solid ${COLORS.accent}`, background: COLORS.accentBg, ...T.body1Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.accent, whiteSpace: "nowrap" }}>
               Match me
             </button>
           </div>
@@ -1554,7 +1554,7 @@ export default function JobTriagePage() {
           <div style={{ position: "fixed", inset: 0, zIndex: 101, overflow: "auto", padding: `${S.l}px ${S.m}px` }}>
             <div style={{ background: COLORS.bg, borderRadius: 5, maxWidth: 640, margin: "0 auto", padding: S.l, position: "relative" }}>
               <button onClick={() => setAllFindingsModalOpen(false)}
-                style={{ position: "absolute", top: S.m, right: S.m, background: "none", border: "none", cursor: "pointer", ...T.body2Bold, color: COLORS.muted, fontFamily: FONT }}>
+                style={{ position: "absolute", top: S.m, right: S.m, background: "none", border: "none", cursor: "pointer", ...T.body1Bold, color: COLORS.muted, fontFamily: FONT }}>
                 ✕ Close
               </button>
               <h2 style={{ ...T.heading2, margin: `0 0 ${S.m2}px`, fontFamily: FONT, color: COLORS.text }}>All findings from workers</h2>
