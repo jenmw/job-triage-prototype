@@ -130,6 +130,7 @@ const JOBS = [
   {
     id: 0,
     title: "Warehouse Operative",
+    occupationDesc: "Warehouse operatives take delivery of goods, and pick, pack and dispatch products.",
     company: "GXO Logistics",
     companyType: "Employer",
     pay: "£25,958/yr",
@@ -1737,7 +1738,9 @@ export default function JobTriagePage() {
         {job.company}
       </div>
 
-      <h1 style={{ ...(isDesktop ? T.heading2Lg : T.heading2), margin: `0 0 ${S.s2}px`, fontFamily: FONT, color: COLORS.text }}>{job.title}</h1>
+      <h1 style={{ ...(isDesktop ? T.heading2Lg : T.heading2), margin: `0 0 ${S.xs}px`, fontFamily: FONT, color: COLORS.text }}>{job.title}</h1>
+
+      {job.occupationDesc && <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.s2}px` }}>{job.occupationDesc}</p>}
 
       {/* .vacancy-card__divider + .vacancy__details */}
       <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", borderBottom: "1px solid rgba(50,50,50,0.1)", marginTop: S.m, marginBottom: S.m, paddingTop: S.m, paddingBottom: S.s, maxWidth: 500 }}>
