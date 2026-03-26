@@ -1673,11 +1673,11 @@ function computePayVerdict(payStr, payType, benchmark) {
   const { rangeLow, rangeHigh, roleLabel } = benchmark;
   const range = formatPayRange(rangeLow, rangeHigh, payType);
   if (pay < rangeLow) {
-    return { verdict: "below", label: `Below the typical range for ${roleLabel}`, range, arrow: "↓" };
+    return { verdict: "below", label: `Underpays for ${roleLabel}`, range, arrow: "↓" };
   } else if (pay > rangeHigh) {
-    return { verdict: "above", label: `Above the typical range for ${roleLabel}`, range, arrow: "↑" };
+    return { verdict: "above", label: `Pays well for ${roleLabel}`, range, arrow: "↑" };
   } else {
-    return { verdict: "fair", label: `Within the typical range for ${roleLabel}`, range, arrow: "→" };
+    return { verdict: "fair", label: `Pays fairly for ${roleLabel}`, range, arrow: "→" };
   }
 }
 
@@ -1791,7 +1791,7 @@ export default function JobTriagePage() {
                 const computed = computePayVerdict(job.pay, job.payType, f.benchmark);
                 if (!computed) return null;
                 const { verdict, label, range, arrow } = computed;
-                const color = verdict === "below" ? COLORS.red : verdict === "above" ? COLORS.greenText : COLORS.muted;
+                const color = verdict === "below" ? COLORS.red : COLORS.greenText;
                 return <div style={{ ...T.body2, fontWeight: 500, color, fontFamily: FONT, marginTop: 2 }}>{arrow} {label} · {range}</div>;
               })()}
               {f.commuteRow && (() => {
