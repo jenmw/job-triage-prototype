@@ -700,6 +700,14 @@ const JOBS = [
 // Build allFindings for each job from their findings.bad + findings.good
 JOBS.forEach(job => { job.allFindings = buildAllFindings(job.findings.bad, job.findings.good); });
 
+// Synthesises rating tier into a dot colour + plain-text verdict
+const ratingVerdict = (score) =>
+  score >= 7.0
+    ? { dotColor: COLORS.green,     text: "Well rated by workers — good conditions across pay, hours, and the workplace." }
+    : score >= 5.5
+    ? { dotColor: COLORS.amber,     text: "Workers have mixed views here — some concerns about pay, hours, or conditions to know." }
+    : {  dotColor: COLORS.red,      text: "Poorly rated by workers — significant concerns about pay, hours, and working conditions." };
+
 // Returns badge colours matching the rating dial thresholds
 const ratingBadge = (score) =>
   score >= 7.0
@@ -1724,14 +1732,12 @@ const AlternativesList = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawe
 
 // ─── Desktop sidebar ───────────────────────────────────────────────────────────
 
-const DesktopSidebar = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawer, onJobSelect, onOpenProfile }) => (
+const DesktopSidebar = ({ currentJobIdx, rating, personalised, isSignedIn, onOpenDrawer, onJobSelect, onOpenProfile }) => (
   <div style={{ display: "flex", flexDirection: "column", gap: S.l2, paddingTop: S.m2 }}>
     {/* CTA card — sticky below header (70px) + S.m gap */}
     <div style={{ position: "sticky", top: 70 + S.m, zIndex: 10 }}>
 <div style={{ position: "relative", background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: `${S.m}px ${S.m2}px` }}>
-      <div style={{ padding: `${S.s2}px ${S.s2}px`, background: COLORS.amberBg, border: `1px solid ${COLORS.amberBorder}`, borderRadius: 4, ...T.body1, color: COLORS.amberText, marginBottom: S.m, fontFamily: FONT }}>
-        ⚠ <strong>Rated below average by workers.</strong> Pay and working conditions have mixed reviews — read the full picture before applying.
-      </div>
+      <div style={{ background: COLORS.border, borderRadius: 4, padding: `${S.s}px ${S.m}px`, marginBottom: S.m, textAlign: "center", ...T.body2, color: COLORS.muted, fontFamily: FONT }}>Placeholder</div>
       <button style={{ width: "100%", padding: "6px 22px", borderRadius: 4, border: "2px solid transparent", background: COLORS.accent, color: "#fff", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, marginBottom: S.s, transition: "background-color 0.25s ease" }}>
         Apply on external site
       </button>
@@ -2200,7 +2206,7 @@ export default function JobTriagePage() {
             {heroBlock}
             {sectionsBlock}
           </div>
-          <DesktopSidebar currentJobIdx={selectedJobIdx} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} onOpenProfile={() => setProfileOpen(true)} />
+          <DesktopSidebar currentJobIdx={selectedJobIdx} rating={JOBS[selectedJobIdx].rating} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} onOpenProfile={() => setProfileOpen(true)} />
         </div>
       ) : (
         <div style={{ padding: `0 ${S.m}px ${S.xxl}px` }}>
