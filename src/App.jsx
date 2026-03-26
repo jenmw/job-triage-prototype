@@ -188,6 +188,7 @@ const JOBS = [
     id: 1,
     title: "Warehouse Associate",
     company: "Amazon",
+    companyUrl: "https://www.breakroom.cc/companies/amazon",
     companyType: "Employer",
     pay: "£13.00/hr",
     payType: "hourly",
@@ -242,6 +243,7 @@ const JOBS = [
     id: 2,
     title: "Warehouse Operative",
     company: "DHL Supply Chain",
+    companyUrl: "https://www.breakroom.cc/companies/dhl-supply-chain",
     companyType: "Employer",
     pay: "£12.75/hr",
     payType: "hourly",
@@ -296,6 +298,7 @@ const JOBS = [
     id: 3,
     title: "Warehouse Operative",
     company: "Wincanton",
+    companyUrl: "https://www.breakroom.cc/companies/wincanton",
     companyType: "Employer",
     pay: "£12.00/hr",
     payType: "hourly",
@@ -354,6 +357,7 @@ const JOBS = [
     id: 4,
     title: "FLT Driver",
     company: "XPO Logistics",
+    companyUrl: "https://www.breakroom.cc/companies/xpo-logistics",
     companyType: "Employer",
     pay: "£14.50/hr",
     payType: "hourly",
@@ -411,6 +415,7 @@ const JOBS = [
     id: 5,
     title: "Warehouse Team Leader",
     company: "Amazon",
+    companyUrl: "https://www.breakroom.cc/companies/amazon",
     companyType: "Employer",
     pay: "£34,320/yr",
     payType: "annual",
@@ -465,6 +470,7 @@ const JOBS = [
     id: 6,
     title: "Production Operative",
     company: "Greencore",
+    companyUrl: "https://www.breakroom.cc/companies/greencore",
     companyType: "Employer",
     pay: "£13.25/hr",
     payType: "hourly",
@@ -520,6 +526,7 @@ const JOBS = [
     id: 7,
     title: "Parcel Sorter",
     company: "Royal Mail",
+    companyUrl: "https://www.breakroom.cc/companies/royal-mail",
     companyType: "Employer",
     pay: "£13.15/hr",
     payType: "hourly",
@@ -573,6 +580,7 @@ const JOBS = [
     id: 8,
     title: "Parcel Hub Operative",
     company: "Evri",
+    companyUrl: "https://www.breakroom.cc/companies/evri",
     companyType: "Employer",
     pay: "£11.85/hr",
     payType: "hourly",
@@ -634,6 +642,7 @@ const JOBS = [
     id: 9,
     title: "Pick & Pack Operative",
     company: "Clipper Logistics",
+    companyUrl: "https://www.breakroom.cc/companies/clipper-logistics",
     companyType: "Employer",
     pay: "£12.10/hr",
     payType: "hourly",
@@ -1719,9 +1728,7 @@ const DesktopSidebar = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawer,
   <div style={{ display: "flex", flexDirection: "column", gap: S.l2, paddingTop: S.m2 }}>
     {/* CTA card — sticky below header (70px) + S.m gap */}
     <div style={{ position: "sticky", top: 70 + S.m, zIndex: 10 }}>
-      <div style={{ position: "absolute", top: -32, left: 0, right: 0, height: 32, background: `linear-gradient(to bottom, transparent, ${COLORS.bg})`, pointerEvents: "none" }} />
-      <div style={{ position: "absolute", bottom: -32, left: 0, right: 0, height: 32, background: `linear-gradient(to top, transparent, ${COLORS.bg})`, pointerEvents: "none" }} />
-    <div style={{ position: "relative", background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: `${S.m}px ${S.m2}px` }}>
+<div style={{ position: "relative", background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: `${S.m}px ${S.m2}px` }}>
       <div style={{ padding: `${S.s2}px ${S.s2}px`, background: COLORS.amberBg, border: `1px solid ${COLORS.amberBorder}`, borderRadius: 4, ...T.body1, color: COLORS.amberText, marginBottom: S.m, fontFamily: FONT }}>
         ⚠ <strong>Rated below average by workers.</strong> Pay and working conditions have mixed reviews — read the full picture before applying.
       </div>
@@ -1806,7 +1813,7 @@ export default function JobTriagePage() {
 
   // Lock body scroll when any drawer or modal is open
   useEffect(() => {
-    const anyOpen = drawerOpen || backgroundDrawerOpen || profileOpen || licenceModalOpen;
+    const anyOpen = drawerOpen || backgroundDrawerOpen || profileOpen || licenceModalOpen || allFindingsModalOpen;
     document.body.style.overflow = anyOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [drawerOpen, backgroundDrawerOpen, profileOpen, licenceModalOpen]);
@@ -2102,7 +2109,7 @@ export default function JobTriagePage() {
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0`, marginBottom: S.m }}>
         <div style={{ ...T.smallcaps, color: COLORS.text, display: "inline-block", textTransform: "uppercase", fontFamily: FONT }}>Needs improving</div>
         <div>
-          {job.findings.bad.map((v, i, arr) => (
+          {job.findings.bad.slice(0, 3).map((v, i, arr) => (
             <FindingTile key={v.label} {...v} variant="red" lit={highlightFinding === v.label} forceOpen={highlightFinding === v.label} isLast={i === arr.length - 1} />
           ))}
         </div>
@@ -2112,7 +2119,7 @@ export default function JobTriagePage() {
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0` }}>
         <div style={{ ...T.smallcaps, color: COLORS.text, display: "inline-block", textTransform: "uppercase", fontFamily: FONT }}>Good</div>
         <div>
-          {job.findings.good.map((v, i, arr) => (
+          {job.findings.good.slice(0, 3).map((v, i, arr) => (
             <FindingTile key={v.label} {...v} variant="green" lit={highlightFinding === v.label} forceOpen={highlightFinding === v.label} isLast={i === arr.length - 1} />
           ))}
         </div>
@@ -2215,7 +2222,7 @@ export default function JobTriagePage() {
             <button style={{ padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `2px solid #323232`, background: COLORS.card, ...T.body2Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
               Save
             </button>
-            <button onClick={() => setDrawerOpen(true)} style={{ padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `2px solid #323232`, background: COLORS.accentBg, ...T.body2Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.text, whiteSpace: "nowrap" }}>
+            <button onClick={() => setDrawerOpen(true)} style={{ padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.accent, whiteSpace: "nowrap" }}>
               Match me
             </button>
           </div>
