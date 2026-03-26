@@ -2035,17 +2035,26 @@ export default function JobTriagePage() {
             const wsCard = hasWorkStyle ? (() => {
               const ws = job.workStyle || {};
               const issues = [];
-              if (workStylePrefs.activity === "sitting" && ws.activity === "active") issues.push("Very physical role — lifting and moving for the full shift");
-              else if (workStylePrefs.activity === "active" && ws.activity === "sitting") issues.push("Mainly desk-based work");
-              if (workStylePrefs.teamwork === "solo" && ws.teamwork === "team") issues.push("Team-based work — you'll work closely with others all shift");
-              if (workStylePrefs.public === "no" && ws.public === true) issues.push("Customer-facing role");
-              if (workStylePrefs.outdoors === "outdoors" && ws.outdoors === false) issues.push("Mainly indoor work");
-              else if (workStylePrefs.outdoors === "indoors" && ws.outdoors === true) issues.push("Mainly outdoor work");
-              if (workStylePrefs.children === "no" && ws.children === true) issues.push("Involves working with children");
+              if (workStylePrefs.activity === "sitting" && ws.activity === "active")
+                issues.push({ label: "Very physical role — lifting and moving for the full shift", detail: "You said you prefer desk-based work" });
+              else if (workStylePrefs.activity === "active" && ws.activity === "sitting")
+                issues.push({ label: "Mainly desk-based work", detail: "You said you prefer very active work" });
+              else if (workStylePrefs.activity === "feet" && ws.activity === "active")
+                issues.push({ label: "Very physically demanding role", detail: "You said you prefer to be on your feet — this goes further than that" });
+              if (workStylePrefs.teamwork === "solo" && ws.teamwork === "team")
+                issues.push({ label: "Team-based work — you'll work closely with others all shift", detail: "You said you prefer working on your own" });
+              if (workStylePrefs.public === "no" && ws.public === true)
+                issues.push({ label: "Customer-facing role", detail: "You said you'd prefer not to work with the public" });
+              if (workStylePrefs.outdoors === "outdoors" && ws.outdoors === false)
+                issues.push({ label: "Mainly indoor work", detail: "You said you prefer working outdoors" });
+              else if (workStylePrefs.outdoors === "indoors" && ws.outdoors === true)
+                issues.push({ label: "Mainly outdoor work", detail: "You said you prefer working indoors" });
+              if (workStylePrefs.children === "no" && ws.children === true)
+                issues.push({ label: "Involves working with children", detail: "You said you'd rather not work with children" });
 
               const wsSignal = issues.length === 0
                 ? { status: "good", label: "The day-to-day work suits your preferences", detail: null }
-                : { status: "warning", label: issues[0], detail: issues.length > 1 ? `Plus ${issues.length - 1} other thing${issues.length > 2 ? "s" : ""} worth checking` : null };
+                : { status: "warning", label: issues[0].label, detail: issues[0].detail + (issues.length > 1 ? ` · plus ${issues.length - 1} other thing${issues.length > 2 ? "s" : ""} to consider` : "") };
 
               return <Signal status={wsSignal.status} label={wsSignal.label} detail={wsSignal.detail} subtext="Update work style" subtextClick={() => setWorkStyleDrawerOpen(true)} isLast={false} />;
             })() : (
