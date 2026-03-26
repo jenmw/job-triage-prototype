@@ -1446,7 +1446,7 @@ const WorkStyleDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
 };
 
 // ─── Profile hub ───────────────────────────────────────────────────────────────
-const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, currentPay, currentPayType = "hourly", travel, priorities, rolePrefs: initialRolePrefs = {}, userLicences, onSavePrefs, onOpenLicenceModal, onOpenDrawer, hasPersonalisation }) => {
+const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, currentPay, currentPayType = "hourly", travel, priorities, rolePrefs: initialRolePrefs = {}, userLicences, onSavePrefs, onOpenLicenceModal, onOpenDrawer, onOpenBackgroundDrawer, onOpenWorkStyleDrawer, background = {}, workStyle = {}, hasPersonalisation }) => {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState(false);
   const [lPostcode, setLPostcode] = useState(postcode);
@@ -1529,7 +1529,29 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
               const hasLicences = userLicences.size > 0;
               const hasPriorities = priorities.length > 0;
               const hasTravel = Array.isArray(travel) ? travel.length > 0 : !!travel;
-              const lastField = hasLicences ? "licences" : hasPriorities ? "priorities" : hasTravel ? "travel" : currentPay ? "pay" : "postcode";
+              const hasBackground = Object.keys(background).length > 0;
+              const hasWorkStyle = Object.keys(workStyle).length > 0;
+
+              // Format background for receipt
+              const expLabels = { none: "No experience", some: "1–2 years' experience", lots: "Several years' experience" };
+              const firstJobTitle = (background.prevJobs || []).find(j => j.title)?.title;
+              const backgroundDisplay = hasBackground ? [
+                firstJobTitle,
+                background.experience ? expLabels[background.experience] : null,
+                (background.qualifications || []).length > 0 ? `${background.qualifications.length} qualification${background.qualifications.length > 1 ? "s" : ""}` : null,
+              ].filter(Boolean).join(" · ") || "Added" : null;
+
+              // Format work style for receipt
+              const activityLabels = { sitting: "Desk-based", feet: "On my feet", active: "Very active" };
+              const teamLabels = { team: "Team", solo: "Solo", either: "Flexible" };
+              const envLabels = { indoors: "Indoors", outdoors: "Outdoors", either: "Either" };
+              const workStyleDisplay = hasWorkStyle ? [
+                workStyle.activity ? activityLabels[workStyle.activity] : null,
+                workStyle.teamwork ? teamLabels[workStyle.teamwork] : null,
+                workStyle.outdoors ? envLabels[workStyle.outdoors] : null,
+              ].filter(Boolean).join(" · ") || "Added" : null;
+
+              const lastField = hasWorkStyle ? "workstyle" : hasBackground ? "background" : hasLicences ? "licences" : hasPriorities ? "priorities" : hasTravel ? "travel" : currentPay ? "pay" : "postcode";
               const travelDisplay = Array.isArray(travel) ? travel.map(id => TRANSPORT_MODES.find(m => m.id === id)?.label ?? id).join(", ") || null : travel || null;
               return (
                 <div style={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 8, padding: `0 ${S.m}px`, marginBottom: S.m2 }}>
@@ -1537,9 +1559,9 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
                   <SummaryRow label="Current pay" value={formatPay(currentPay)} onClick={() => { onClose(); onOpenDrawer(); }} isLast={lastField === "pay"} />
                   <SummaryRow label="Travel" value={travelDisplay} onClick={() => { onClose(); onOpenDrawer(); }} isLast={lastField === "travel"} />
                   <SummaryRow label="Priorities" value={hasPriorities ? priorities.join(", ") : null} onClick={() => { onClose(); onOpenDrawer(); }} isLast={lastField === "priorities"} />
-                  {hasLicences && (
-                    <SummaryRow label="Licences" value={[...userLicences].map(l => licenceLabels[l] || l).join(", ")} onClick={() => { onClose(); onOpenLicenceModal(); }} isLast />
-                  )}
+                  {hasLicences && <SummaryRow label="Licences" value={[...userLicences].map(l => licenceLabels[l] || l).join(", ")} onClick={() => { onClose(); onOpenLicenceModal(); }} isLast={lastField === "licences"} />}
+                  {hasBackground && <SummaryRow label="Background" value={backgroundDisplay} onClick={() => { onClose(); onOpenBackgroundDrawer(); }} isLast={lastField === "background"} />}
+                  {hasWorkStyle && <SummaryRow label="Work style" value={workStyleDisplay} onClick={() => { onClose(); onOpenWorkStyleDrawer(); }} isLast={lastField === "workstyle"} />}
                 </div>
               );
             })()}
@@ -1780,7 +1802,7 @@ export default function JobTriagePage() {
   const [profilePriorities, setProfilePriorities] = useState([]);
   const [profileRolePrefs, setProfileRolePrefs] = useState({});
 
-  const hasPersonalisation = personalised || userLicences.size > 0;
+  const hasPersonalisation = personalised || userLicences.size > 0 || Object.keys(profileBackground).length > 0 || Object.keys(workStylePrefs).length > 0;
 
   // Lock body scroll when any drawer or modal is open
   useEffect(() => {
@@ -2138,7 +2160,7 @@ export default function JobTriagePage() {
             <button onClick={() => setProfileOpen(true)} style={{ height: "100%", minWidth: 48, background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", gap: 5, padding: "14px 8px 0", position: "relative" }}>
               <IconUserNav />
               {hasPersonalisation && !isSignedIn && (() => {
-                const count = [profilePostcode, profileCurrentPay, profileTravel, profilePriorities.length > 0, userLicences.size > 0].filter(Boolean).length;
+                const count = [profilePostcode, profileCurrentPay, profileTravel, profilePriorities.length > 0, userLicences.size > 0, Object.keys(profileBackground).length > 0, Object.keys(workStylePrefs).length > 0].filter(Boolean).length;
                 return (
                   <span style={{ position: "absolute", top: 8, right: 2, minWidth: 16, height: 16, borderRadius: 8, background: COLORS.accent, border: `2px solid ${COLORS.card}`, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 3px", boxSizing: "border-box" }}>
                     <span style={{ fontSize: 10, fontWeight: 700, color: "#fff", fontFamily: FONT, lineHeight: 1 }}>{count}</span>
@@ -2211,6 +2233,9 @@ export default function JobTriagePage() {
         isSignedIn={isSignedIn} userEmail={userEmail} onSignIn={handleSignIn}
         postcode={profilePostcode} currentPay={profileCurrentPay} currentPayType={profilePayType} travel={profileTravel} priorities={profilePriorities} rolePrefs={profileRolePrefs}
         userLicences={userLicences} onSavePrefs={(data) => { handleSavePrefs(data); }} onOpenLicenceModal={() => { setProfileOpen(false); setLicenceModalOpen(true); }}
+        background={profileBackground} workStyle={workStylePrefs}
+        onOpenBackgroundDrawer={() => { setProfileOpen(false); setBackgroundDrawerOpen(true); }}
+        onOpenWorkStyleDrawer={() => { setProfileOpen(false); setWorkStyleDrawerOpen(true); }}
         hasPersonalisation={hasPersonalisation} onOpenDrawer={() => { setProfileOpen(false); setDrawerOpen(true); }}
       />
 
