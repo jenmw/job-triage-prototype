@@ -1065,7 +1065,12 @@ const ReviewCard = ({ best, worst, score, role, date }) => (
 const AltJob = ({ job, onClick }) => {
   const { title, company, pay, rating, location, altBadge, altReason: reason, findingDiffs } = job;
   const showPayBadge = altBadge && altBadge !== "Better rated";
-  const visibleDiffs = (findingDiffs ?? []).filter(d => !d.toLowerCase().includes("better rated"));
+  const visibleDiffs = (findingDiffs ?? []).filter(d => {
+    const l = d.toLowerCase();
+    if (l.includes("better rated")) return false;
+    if (showPayBadge && (l.includes("pay") || l.includes("wage") || l.includes("salary"))) return false;
+    return true;
+  });
   const hasDiffs = visibleDiffs.length > 0;
   const hasReason = !!reason;
   const badgeStyle = { ...T.body2Bold, border: `2px solid ${COLORS.green}`, color: COLORS.greenText, background: COLORS.card, borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT };
@@ -1631,18 +1636,18 @@ export default function JobTriagePage() {
               })()}
               {f.commuteRow && (() => {
                 if (!profilePostcode) {
-                  return <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>Is this commutable for you?</div>;
+                  return <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>Check your commute</div>;
                 }
                 if (profileCoords === null) {
                   return <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginTop: 2 }}>Checking distance from {profilePostcode}…</div>;
                 }
                 if (profileCoords === false) {
-                  return <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>Is this commutable from {profilePostcode}?</div>;
+                  return <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>Check your commute</div>;
                 }
                 const distKm = haversineKm(profileCoords[0], profileCoords[1], job.coords[0], job.coords[1]);
                 const distMi = (distKm * 0.621371).toFixed(1);
                 if (!profileTravel || profileTravel.length === 0) {
-                  return <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>{distMi} miles · How do you travel there?</div>;
+                  return <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>{distMi} miles · Add your travel mode</div>;
                 }
                 return (
                   <div style={{ display: "flex", flexWrap: "wrap", gap: S.xs, marginTop: 4 }}>
