@@ -1817,9 +1817,9 @@ export default function JobTriagePage() {
 
   const sectionsBlock = (
     <>
-      {/* "Need to know" — always visible, no accordion */}
+      {/* "What you need to know" — always visible, no accordion */}
       <div style={{ borderBottom: `1px solid ${COLORS.border}`, paddingBottom: S.m }}>
-        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, padding: `${S.m}px 0` }}>Need to know</div>
+        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, padding: `${S.m}px 0` }}>What you need to know</div>
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `0 ${S.m}px` }}>
           {(() => {
             const hasBackground = Object.keys(profileBackground).length > 0;
