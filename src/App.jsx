@@ -460,7 +460,7 @@ const JOBS = [
     highlights: ["No last-minute shift changes", "Hours security", "Proper breaks"],
     listingUrl: "https://www.greencore.com/careers",
     altBadge: "Better rated",
-    altReason: { text: "Food production role" },
+    altReason: null,
     payBenchmark: { verdict: "good", label: "above average for production operatives in Northamptonshire", range: "£12–£15/hr typical" },
     findingDiffs: ["Better rated employer", "Above average pay"],
     requiresFltLicence: false,
@@ -480,8 +480,7 @@ const JOBS = [
       ],
     },
     signals: [
-      { status: "warning", label: "Food production environment — different to general warehouse work", detail: "This is a production line role in a food factory, not a pick/pack warehouse. You'll work in a temperature-controlled environment with strict hygiene requirements.", subtext: null, findingLabel: null },
-      { status: "good", label: "No prior food production experience required — full training provided", detail: "Greencore train you on food safety and production processes from day one. A Level 2 Food Hygiene certificate is preferred but Greencore can support you to get it.", subtext: null, findingLabel: null },
+      { status: "good", label: "No experience required — full training provided from day one", detail: "Greencore train you on food safety and production processes from day one. A Level 2 Food Hygiene certificate is preferred but Greencore can support you to get it.", subtext: null, findingLabel: null },
       { status: "good", label: "75% of Greencore workers earn above average for their role", detail: "Pay is genuinely competitive for production work in this area — one of Greencore's strongest Breakroom findings.", subtext: "Based on 320 Breakroom Quiz responses", findingLabel: null },
     ],
     jd: [
@@ -1441,7 +1440,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
                 </div>
               )}
               <button onClick={onOpenLicenceModal}
-                style={{ background: "none", border: "none", padding: 0, ...T.body1Bold, color: COLORS.accent, cursor: "pointer", fontFamily: FONT }}>
+                style={{ background: "none", border: "none", padding: 0, ...T.body1, color: COLORS.text, textDecoration: "underline", cursor: "pointer", fontFamily: FONT }}>
                 {userLicences.size > 0 ? "Edit licences" : "+ Add a licence"}
               </button>
             </div>
@@ -1533,6 +1532,7 @@ export default function JobTriagePage() {
   const [selectedJobIdx, setSelectedJobIdx] = useState(0);
   const [findingsForceOpen, setFindingsForceOpen] = useState(false);
   const [highlightFinding, setHighlightFinding] = useState(null);
+  const [benchmarkPopoverOpen, setBenchmarkPopoverOpen] = useState(false);
   const [licenceModalOpen, setLicenceModalOpen] = useState(false);
   const [userLicences, setUserLicences] = useState(new Set());
   const [isSignedIn, setIsSignedIn] = useState(false);
@@ -1614,8 +1614,7 @@ export default function JobTriagePage() {
         {[
           { icon: <IconPay />, text: job.pay, textAlt: job.payAlt || null, benchmark: job.payBenchmark },
           { icon: <IconLocation />, text: job.location, commuteRow: true },
-          { icon: <IconClock />, text: `${job.hours}${job.hoursSub ? ` (${job.hoursSub})` : ""}` },
-          { icon: <IconClock />, text: job.shifts },
+          { icon: <IconClock />, text: [job.hours, job.hoursSub ? `(${job.hoursSub})` : null, job.shifts].filter(Boolean).join(" · ") },
         ].map((f, i) => (
           <div key={i} style={{ display: "flex", alignItems: "flex-start", marginBottom: S.s }}>
             <span style={{ marginRight: S.s, marginTop: S.xs, flexShrink: 0, display: "flex" }}>{f.icon}</span>
@@ -1625,28 +1624,26 @@ export default function JobTriagePage() {
                 {f.textAlt && <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginLeft: S.s }}>{f.textAlt}</span>}
               </div>
               {f.benchmark && (() => {
-                const { verdict, range } = f.benchmark;
+                const { verdict, label, range } = f.benchmark;
                 const color = verdict === "below" ? COLORS.red : COLORS.greenText;
                 const arrow = verdict === "below" ? "↓" : verdict === "good" ? "↑" : "→";
-                const label = verdict === "below" ? "Underpays for warehouse work in London"
-                  : verdict === "good" ? "Pays well for warehouse work in London"
-                  : "Pays fairly for warehouse workers in London";
-                return <div style={{ ...T.body2, color, fontFamily: FONT, marginTop: 2 }}>{arrow} {label} · {range}</div>;
+                const displayLabel = label.charAt(0).toUpperCase() + label.slice(1);
+                return <div style={{ ...T.body2, fontWeight: 500, color, fontFamily: FONT, marginTop: 2 }}>{arrow} {displayLabel} · {range}</div>;
               })()}
               {f.commuteRow && (() => {
                 if (!profilePostcode) {
-                  return <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2Bold, color: COLORS.accent, fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>Is this commutable for you? →</div>;
+                  return <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>Is this commutable for you?</div>;
                 }
                 if (profileCoords === null) {
                   return <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginTop: 2 }}>Checking distance from {profilePostcode}…</div>;
                 }
                 if (profileCoords === false) {
-                  return <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2Bold, color: COLORS.accent, fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>Is this commutable from {profilePostcode}? →</div>;
+                  return <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>Is this commutable from {profilePostcode}?</div>;
                 }
                 const distKm = haversineKm(profileCoords[0], profileCoords[1], job.coords[0], job.coords[1]);
                 const distMi = (distKm * 0.621371).toFixed(1);
                 if (!profileTravel || profileTravel.length === 0) {
-                  return <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2Bold, color: COLORS.accent, fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>{distMi} miles · How do you get there? →</div>;
+                  return <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>{distMi} miles · How do you travel there?</div>;
                 }
                 return (
                   <div style={{ display: "flex", flexWrap: "wrap", gap: S.xs, marginTop: 4 }}>
@@ -1678,7 +1675,7 @@ export default function JobTriagePage() {
           </span>
         </div>
         <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>
-          Rating based on {job.quizCount} employees who took the Breakroom Quiz
+          Rating based on {job.quizCount} employees who took The Breakroom Quiz
         </div>
       </div>
 
@@ -1743,8 +1740,8 @@ export default function JobTriagePage() {
         </div>
         </div>
 
-        <div onClick={() => setAllFindingsModalOpen(true)} style={{ ...T.body1Bold, color: COLORS.accent, cursor: "pointer", textAlign: "left", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.xs }}>
-          See all findings from workers →
+        <div onClick={() => setAllFindingsModalOpen(true)} style={{ ...T.body1, color: COLORS.text, textDecoration: "underline", cursor: "pointer", textAlign: "left", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.xs }}>
+          See all findings from workers
         </div>
       </Section>
 
@@ -1757,7 +1754,7 @@ export default function JobTriagePage() {
           best="Good training when you start, friendly team"
           worst="Long shifts and no overtime pay after 12 hours"
           score={6.5} role="Branch manager" date="Jun 2024" />
-        <div style={{ ...T.body1Bold, color: COLORS.accent, cursor: "pointer", textAlign: "left", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.s }}>See all {job.quizCount} reviews →</div>
+        <div style={{ ...T.body1, color: COLORS.text, textDecoration: "underline", cursor: "pointer", textAlign: "left", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.s }}>See all {job.quizCount} reviews</div>
       </Section>
 
       <Section title={`Job description from ${job.company}`}>
