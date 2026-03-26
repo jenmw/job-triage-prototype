@@ -76,14 +76,13 @@ const IconBicycle = ({ color = COLORS.text }) => (
   </svg>
 );
 
-// Role preference dimensions — based on Breakroom Quiz questions
-const ROLE_PREFS = [
-  { id: "activity", label: "Physical activity", options: [["sitting", "Desk-based"], ["feet", "On my feet"], ["active", "Very active"]] },
-  { id: "teamwork", label: "Working style",     options: [["team", "In a team"], ["solo", "On my own"]] },
-  { id: "public",   label: "Customer-facing",   options: [["yes", "Yes"], ["no", "No"]] },
-  { id: "outdoors", label: "Working outdoors",  options: [["yes", "Yes"], ["no", "No"]] },
-  { id: "children", label: "With children",     options: [["yes", "Yes"], ["no", "No"]] },
-  { id: "caring",   label: "Caring / support",  options: [["yes", "Yes"], ["no", "No"]] },
+// Work style preference questions — paged quiz in the work style drawer
+const WORK_STYLE_QUESTIONS = [
+  { id: "activity", question: "How active do you want to be at work?", options: [["sitting", "Mostly sitting down"], ["feet", "On my feet"], ["active", "Very physically active"]] },
+  { id: "teamwork", question: "Do you prefer working in a team or on your own?", options: [["team", "In a team"], ["solo", "On my own"], ["either", "Either is fine"]] },
+  { id: "public",   question: "Are you happy working with customers or the public?", options: [["yes", "Yes, I enjoy it"], ["no", "Prefer not to"], ["either", "Don't mind"]] },
+  { id: "outdoors", question: "Do you prefer working indoors or outdoors?", options: [["indoors", "Indoors"], ["outdoors", "Outdoors"], ["either", "Either is fine"]] },
+  { id: "children", question: "Are you comfortable working with children or young people?", options: [["yes", "Yes"], ["no", "Prefer not to"], ["na", "Not applicable"]] },
 ];
 
 const PRIORITIES = ["No heavy lifting", "Daytime only", "Paid breaks", "Sick pay", "Friendly team", "Career progression", "Good shift notice"];
@@ -151,6 +150,7 @@ const JOBS = [
     payBenchmark: { rangeLow: 27000, rangeHigh: 32000, roleLabel: "warehouse operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
         { pct: 70, label: "No sick pay", heading: "Most people don't get sick pay", primary: "No. Most people don't get proper sick pay.", secondary: "70% of people say they wouldn't get paid if they were sick but scheduled to work.", why: "Everyone gets sick sometimes. You should be able to take time off without worrying. At a good job you should still get paid if you're scheduled to work but can't due to sickness." },
@@ -206,6 +206,7 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse associates in Northamptonshire" },
     findingDiffs: ["No experience required", "Better rated employer"],
     requiresFltLicence: false,
+    workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
         { pct: 86, label: "No sick pay", heading: "Most people don't get sick pay", primary: "No. Most people don't get proper sick pay.", secondary: "86% of people say they wouldn't get paid if they were sick but scheduled to work.", why: "Everyone gets sick sometimes. You should be able to take time off without worrying. At a good job you should still get paid if you're scheduled to work but can't due to sickness." },
@@ -259,6 +260,7 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse operatives in Northamptonshire" },
     findingDiffs: ["Better sick pay cover", "Less unpaid overtime"],
     requiresFltLicence: false,
+    workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
         { pct: 69, label: "No paid breaks", heading: "Most people don't get paid breaks", primary: "No. Most people don't get paid breaks.", secondary: "69% of people say they don't get paid breaks.", why: "A good job should have paid breaks. You should be paid for all your time at work, whether you're on a break or not." },
@@ -312,6 +314,7 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
         { pct: 59, label: "Short shift notice", heading: "Less than 4 weeks notice of shifts", primary: "Most people don't get 4 weeks notice.", secondary: "59% of people with changing schedules report getting one week notice or less.", why: "At a good job, you get plenty of notice about when you're working. This makes it easy for you to plan the rest of life, as well as your finances, because you know how much you'll be working and when." },
@@ -369,6 +372,7 @@ const JOBS = [
     payBenchmark: { rangeLow: 14, rangeHigh: 17, roleLabel: "FLT drivers in Northamptonshire" },
     findingDiffs: ["Higher pay rate"],
     requiresFltLicence: true,
+    workStyle: { activity: "active", teamwork: "solo", public: false, outdoors: false, children: false },
     findings: {
       bad: [
         { pct: 75, label: "No paid breaks", heading: "Most people don't get paid breaks", primary: "No. Most people don't get paid breaks.", secondary: "75% of people say they don't get paid breaks.", why: "A good job should have paid breaks. You should be paid for all your time at work, whether you're on a break or not." },
@@ -425,6 +429,7 @@ const JOBS = [
     payBenchmark: { rangeLow: 30000, rangeHigh: 38000, roleLabel: "warehouse team leaders in Northamptonshire" },
     findingDiffs: ["Higher pay", "Better rated employer"],
     requiresFltLicence: false,
+    workStyle: { activity: "feet", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
         { pct: 86, label: "No sick pay", heading: "Most people don't get sick pay", primary: "No. Most people don't get proper sick pay.", secondary: "86% of people say they wouldn't get paid if they were sick but scheduled to work.", why: "Everyone gets sick sometimes. You should be able to take time off without worrying. At a good job you should still get paid if you're scheduled to work but can't due to sickness." },
@@ -478,6 +483,7 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 15, roleLabel: "production operatives in Northamptonshire" },
     findingDiffs: ["Better rated employer", "Above average pay"],
     requiresFltLicence: false,
+    workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
         { pct: 79, label: "No sick pay", heading: "Most people don't get sick pay", primary: "No. Most people don't get proper sick pay.", secondary: "79% of people say they wouldn't get paid if they were sick but scheduled to work.", why: "Everyone gets sick sometimes. You should be able to take time off without worrying. At a good job you should still get paid if you're scheduled to work but can't due to sickness." },
@@ -532,6 +538,7 @@ const JOBS = [
     payBenchmark: { rangeLow: 11.5, rangeHigh: 14, roleLabel: "parcel sorters in Northamptonshire" },
     findingDiffs: ["Better sick pay cover"],
     requiresFltLicence: false,
+    workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
         { pct: 68, label: "Short shift notice", heading: "Less than 4 weeks notice of shifts", primary: "Most people don't get 4 weeks notice of when they're working.", secondary: "68% of people with changing schedules report getting one week notice or less.", why: "At a good job, you get plenty of notice about when you're working. This makes it easy for you to plan the rest of life, as well as your finances, because you know how much you'll be working and when." },
@@ -584,6 +591,7 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "parcel hub operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
         { pct: 82, label: "No paid breaks", heading: "Most people don't get paid breaks", primary: "No. Most people don't get paid breaks.", secondary: "82% of people say they don't get paid breaks.", why: "A good job should have paid breaks. You should be paid for all your time at work, whether you're on a break or not." },
@@ -644,6 +652,7 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "pick & pack operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
         { pct: 69, label: "Below average pay", heading: "Most people are paid below market rates", primary: "Most people are paid less than average for their job.", secondary: "69% of people are paid below average for the type of work they do.", why: "Pay can vary a lot between types of job. Employers should be ensuring that the rates their staff are paid are in line with similar roles elsewhere." },
@@ -1372,6 +1381,70 @@ const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
   );
 };
 
+// ─── Work Style Drawer ─────────────────────────────────────────────────────────
+const WorkStyleDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
+  const [step, setStep] = useState(0);
+  const [answers, setAnswers] = useState(initialValues);
+
+  useEffect(() => {
+    if (open) { setStep(0); setAnswers(initialValues); }
+  }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const q = WORK_STYLE_QUESTIONS[step];
+  const isLast = step === WORK_STYLE_QUESTIONS.length - 1;
+  const current = answers[q.id] || null;
+
+  const select = (val) => setAnswers(a => ({ ...a, [q.id]: val }));
+  const next = () => isLast ? onSubmit(answers) : setStep(s => s + 1);
+  const skip = () => isLast ? onSubmit(answers) : setStep(s => s + 1);
+
+  return (
+    <>
+      <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity 0.3s", zIndex: 100 }} />
+      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, boxShadow: "0 -8px 40px rgba(0,0,0,0.15)" }}>
+        <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px` }} />
+
+        {/* Progress dots */}
+        <div style={{ display: "flex", justifyContent: "center", gap: S.xs, marginBottom: S.m2 }}>
+          {WORK_STYLE_QUESTIONS.map((_, i) => (
+            <span key={i} style={{ width: 6, height: 6, borderRadius: "50%", background: i === step ? COLORS.text : COLORS.border, transition: "background 0.2s" }} />
+          ))}
+        </div>
+
+        {/* Question */}
+        <div style={{ ...T.lead1, color: COLORS.text, fontFamily: FONT, marginBottom: S.m2, minHeight: 60 }}>{q.question}</div>
+
+        {/* Options */}
+        <div style={{ display: "flex", flexDirection: "column", gap: S.s, marginBottom: S.m2 }}>
+          {q.options.map(([val, label]) => {
+            const sel = current === val;
+            return (
+              <button key={val} onClick={() => select(val)}
+                style={{ padding: `${S.s2}px ${S.m}px`, borderRadius: 8, border: `2px solid ${sel ? COLORS.green : COLORS.border}`, background: sel ? COLORS.greenBg : COLORS.card, color: sel ? COLORS.green : COLORS.text, ...T.body1, fontWeight: sel ? 700 : 400, cursor: "pointer", fontFamily: FONT, textAlign: "left", transition: "all 0.15s" }}>
+                {label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Navigation */}
+        <button onClick={next} disabled={!current}
+          style={{ width: "100%", padding: S.m, borderRadius: 4, border: "none", background: current ? COLORS.accent : COLORS.border, color: "#fff", ...T.body1Bold, cursor: current ? "pointer" : "default", fontFamily: FONT, marginBottom: S.s, transition: "background 0.2s" }}>
+          {isLast ? "Save →" : "Next →"}
+        </button>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          {step > 0
+            ? <span onClick={() => setStep(s => s - 1)} style={{ ...T.body2, color: COLORS.muted, textDecoration: "underline", cursor: "pointer", fontFamily: FONT }}>← Back</span>
+            : <span />}
+          <span onClick={skip} style={{ ...T.body2, color: COLORS.muted, textDecoration: "underline", cursor: "pointer", fontFamily: FONT }}>
+            {isLast ? "Save without answering" : "Skip"}
+          </span>
+        </div>
+      </div>
+    </>
+  );
+};
+
 // ─── Profile hub ───────────────────────────────────────────────────────────────
 const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, currentPay, currentPayType = "hourly", travel, priorities, rolePrefs: initialRolePrefs = {}, userLicences, onSavePrefs, onOpenLicenceModal, onOpenDrawer, hasPersonalisation }) => {
   const [email, setEmail] = useState("");
@@ -1686,6 +1759,8 @@ export default function JobTriagePage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [backgroundDrawerOpen, setBackgroundDrawerOpen] = useState(false);
   const [profileBackground, setProfileBackground] = useState({});
+  const [workStyleDrawerOpen, setWorkStyleDrawerOpen] = useState(false);
+  const [workStylePrefs, setWorkStylePrefs] = useState({});
   const [profileOpen, setProfileOpen] = useState(false);
   const [allFindingsModalOpen, setAllFindingsModalOpen] = useState(false);
   const [personalised, setPersonalised] = useState(false);
@@ -1864,37 +1939,39 @@ export default function JobTriagePage() {
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `0 ${S.m}px` }}>
           {(() => {
             const hasBackground = Object.keys(profileBackground).length > 0;
-            // Filter out background/experience signals — the background card handles these
-            const nonBackgroundSignals = job.signals.filter(s => !s.isBackgroundSignal);
-            // Always show background card first, then 2 remaining job signals (max 3 total)
-            const visibleJobSignals = nonBackgroundSignals.slice(0, 2);
+            const hasWorkStyle = Object.keys(workStylePrefs).length > 0;
 
-            const renderJobSignal = (sig, i, isLast) => {
+            // Filter out background signals — handled by the background card
+            const findingSignal = job.signals.find(s => !s.isBackgroundSignal);
+
+            // ── Render a single job finding signal ──────────────────────────────
+            const renderFindingSignal = (sig) => {
+              if (!sig) return null;
               if (sig.isFltLicenceSignal) {
                 return (
-                  <Signal key={i}
+                  <Signal
                     status={userLicences.has("flt") ? "good" : "bad"}
                     label={userLicences.has("flt") ? "Forklift licence: you have the required licence" : "Forklift licence required (RTITB or ITSSAR)"}
                     detail="A valid counterbalance forklift licence is required. Reach truck licence is desirable."
                     subtext={userLicences.has("flt") ? "✓ You told us you have an FLT licence" : "Tell us if you have a forklift licence"}
                     subtextClick={userLicences.has("flt") ? null : () => setLicenceModalOpen(true)}
-                    isLast={isLast}
+                    isLast={true}
                   />
                 );
               }
               return (
-                <Signal key={i}
+                <Signal
                   status={sig.status}
                   label={sig.label}
                   detail={sig.detail}
                   subtext={sig.subtext}
                   labelClick={sig.findingLabel ? () => handlePillClick(sig.findingLabel) : null}
-                  isLast={isLast}
+                  isLast={true}
                 />
               );
             };
 
-            // Background card — empty state or personalised
+            // ── Card 1: Experience & qualifications ─────────────────────────────
             const bgCard = hasBackground ? (() => {
               let bgSignal = { status: "good", label: "Your background suits this role", detail: "Based on what you've told us, this looks like a good fit." };
               if ((profileBackground.qualifications || []).includes("food-hygiene")) bgSignal = { status: "good", label: "Your food hygiene certificate is relevant here", detail: "Level 2 food hygiene certificates are valued in this type of role." };
@@ -1911,13 +1988,12 @@ export default function JobTriagePage() {
                   <div style={{ flex: 1, fontFamily: FONT }}>
                     <div>Are you suited for this role?</div>
                     <div style={{ ...T.body1, color: COLORS.muted, marginTop: S.xs, fontWeight: 400 }}>
-                      Tell us about your experience and qualifications — we'll show how well you fit every job you look at.
+                      Tell us about your experience and qualifications — we'll flag your fit on every vacancy.
                     </div>
                     <div style={{ margin: `${S.s}px 0` }}>
                       {[
                         "Your experience level vs. what's required",
                         "Whether your qualifications are relevant",
-                        "How the working conditions suit you",
                       ].map((text, j) => (
                         <div key={j} style={{ display: "flex", alignItems: "flex-start", gap: S.s, padding: `${S.xs}px 0` }}>
                           <span style={{ width: 10, height: 10, borderRadius: "50%", background: COLORS.border, flexShrink: 0, marginTop: 3 }} />
@@ -1933,11 +2009,58 @@ export default function JobTriagePage() {
               </div>
             );
 
+            // ── Card 2: Work style ──────────────────────────────────────────────
+            const wsCard = hasWorkStyle ? (() => {
+              const ws = job.workStyle || {};
+              const issues = [];
+              if (workStylePrefs.activity === "sitting" && ws.activity === "active") issues.push("Very physical role — lifting and moving for the full shift");
+              else if (workStylePrefs.activity === "active" && ws.activity === "sitting") issues.push("Mainly desk-based work");
+              if (workStylePrefs.teamwork === "solo" && ws.teamwork === "team") issues.push("Team-based work — you'll work closely with others all shift");
+              if (workStylePrefs.public === "no" && ws.public === true) issues.push("Customer-facing role");
+              if (workStylePrefs.outdoors === "outdoors" && ws.outdoors === false) issues.push("Mainly indoor work");
+              else if (workStylePrefs.outdoors === "indoors" && ws.outdoors === true) issues.push("Mainly outdoor work");
+              if (workStylePrefs.children === "no" && ws.children === true) issues.push("Involves working with children");
+
+              const wsSignal = issues.length === 0
+                ? { status: "good", label: "The day-to-day work suits your preferences", detail: null }
+                : { status: "warning", label: issues[0], detail: issues.length > 1 ? `Plus ${issues.length - 1} other thing${issues.length > 2 ? "s" : ""} worth checking` : null };
+
+              return <Signal status={wsSignal.status} label={wsSignal.label} detail={wsSignal.detail} subtext="Update work style" subtextClick={() => setWorkStyleDrawerOpen(true)} isLast={false} />;
+            })() : (
+              <div style={{ fontSize: 16, lineHeight: "22px", fontWeight: 500, color: COLORS.text, padding: `${S.m}px 0`, borderBottom: `1px solid rgba(50,50,50,0.1)` }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: S.s }}>
+                  <span style={{ width: 15, height: 15, borderRadius: "50%", background: COLORS.border, border: "2px solid #fff", flexShrink: 0, marginTop: 3 }} />
+                  <div style={{ flex: 1, fontFamily: FONT }}>
+                    <div>Does the day-to-day work suit you?</div>
+                    <div style={{ ...T.body1, color: COLORS.muted, marginTop: S.xs, fontWeight: 400 }}>
+                      Tell us your preferences and we'll flag them on every vacancy.
+                    </div>
+                    <div style={{ margin: `${S.s}px 0` }}>
+                      {[
+                        "Activity level (desk-based to very active)",
+                        "Working style (team, solo, or customer-facing)",
+                        "Environment (indoors, outdoors)",
+                      ].map((text, j) => (
+                        <div key={j} style={{ display: "flex", alignItems: "flex-start", gap: S.s, padding: `${S.xs}px 0` }}>
+                          <span style={{ width: 10, height: 10, borderRadius: "50%", background: COLORS.border, flexShrink: 0, marginTop: 3 }} />
+                          <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{text}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div onClick={() => setWorkStyleDrawerOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", cursor: "pointer", fontFamily: FONT, marginTop: S.xs }}>
+                      Tell us your work style
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+
             return (
               <>
                 {bgCard}
-                {visibleJobSignals.map((sig, i) => renderJobSignal(sig, i, i === visibleJobSignals.length - 1))}
-              </>
+                {wsCard}
+                {renderFindingSignal(findingSignal)}
+</>
             );
           })()}
         </div>
@@ -2075,6 +2198,10 @@ export default function JobTriagePage() {
       <BackgroundDrawer open={backgroundDrawerOpen} onClose={() => setBackgroundDrawerOpen(false)}
         initialValues={profileBackground}
         onSubmit={(data) => { setProfileBackground(data); setBackgroundDrawerOpen(false); }} />
+
+      <WorkStyleDrawer open={workStyleDrawerOpen} onClose={() => setWorkStyleDrawerOpen(false)}
+        initialValues={workStylePrefs}
+        onSubmit={(data) => { setWorkStylePrefs(data); setWorkStyleDrawerOpen(false); }} />
 
       <LicenceModal open={licenceModalOpen} onClose={() => setLicenceModalOpen(false)}
         userLicences={userLicences} onSave={(s) => setUserLicences(s)} />
