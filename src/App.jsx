@@ -1736,9 +1736,11 @@ const DesktopSidebar = ({ currentJobIdx, rating, personalised, isSignedIn, onOpe
   <div style={{ display: "flex", flexDirection: "column", gap: S.l2, paddingTop: S.m2 }}>
     {/* CTA card — sticky below header (70px) + S.m gap */}
     <div style={{ position: "sticky", top: 70 + S.m, zIndex: 10 }}>
-      {/* Fade gradient below card so scrolling alt-jobs dissolve under it */}
-      <div style={{ position: "absolute", bottom: -32, left: 0, right: 0, height: 32, background: `linear-gradient(to bottom, ${COLORS.bg}, transparent)`, pointerEvents: "none", zIndex: 1 }} />
-<div style={{ position: "relative", background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: `${S.m}px ${S.m2}px` }}>
+      {/* Fade above — reaches full opacity before the header boundary so the whole gap is solidly masked */}
+      <div style={{ position: "absolute", bottom: "100%", left: 0, right: 0, height: 48, background: `linear-gradient(to bottom, transparent, ${COLORS.bg} ${S.m}px)`, pointerEvents: "none" }} />
+      {/* Fade below — at zIndex 1 so the card's box-shadow (at zIndex 2) paints on top of it cleanly */}
+      <div style={{ position: "absolute", top: "100%", left: 0, right: 0, height: 40, background: `linear-gradient(to bottom, ${COLORS.bg}, transparent)`, pointerEvents: "none", zIndex: 1 }} />
+<div style={{ position: "relative", zIndex: 2, background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: `${S.m}px ${S.m2}px` }}>
       <div style={{ background: COLORS.border, borderRadius: 4, padding: `${S.s}px ${S.m}px`, marginBottom: S.m, textAlign: "center", ...T.body2, color: COLORS.muted, fontFamily: FONT }}>Placeholder</div>
       <button style={{ width: "100%", padding: "6px 22px", borderRadius: 4, border: "2px solid transparent", background: COLORS.accent, color: "#fff", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, marginBottom: S.s, transition: "background-color 0.25s ease" }}>
         Apply on external site
