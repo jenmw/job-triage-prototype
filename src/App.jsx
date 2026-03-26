@@ -44,6 +44,20 @@ const T = {
 // ─── Utility ────────────────────────────────────────────────────────────────
 const toHourly = (pay, type) => (type === "annual" ? pay / 2080 : pay);
 
+const haversineKm = (lat1, lon1, lat2, lon2) => {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+};
+
+const TRAVEL_MODES = ["🚗 Drive", "🚌 Bus", "🚂 Train", "🚲 Cycle", "🚶 Walk"];
+// Assumed average speed including urban congestion/stops/etc.
+const TRAVEL_SPEED_KPH = { "🚗 Drive": 48, "🚌 Bus": 20, "🚂 Train": 65, "🚲 Cycle": 16, "🚶 Walk": 5 };
+const commuteMin = (km, mode) => Math.round(km / TRAVEL_SPEED_KPH[mode] * 60);
+const modeEmoji = (mode) => mode.split(" ")[0];
+
 // Groups bad+good findings into Pay / Hours / Workplace sections for the modal
 const PAY_LABELS = new Set(["No sick pay","Some sick pay","No paid breaks","No unpaid overtime","Living wage","Above average pay","Below average pay"]);
 const HOURS_LABELS = new Set(["Short shift notice","Hours security","No choice of shifts","No last-minute shift changes","Easy holiday booking"]);
@@ -74,6 +88,7 @@ const JOBS = [
     payType: "annual",
     payAlt: "≈ £12.48/hr",
     location: "Corby, NN18",
+    coords: [52.490, -0.684],
     hours: "Full time",
     hoursSub: null,
     shifts: "Rotating day shifts",
@@ -128,6 +143,7 @@ const JOBS = [
     payType: "hourly",
     payAlt: "≈ £27,040/yr",
     location: "Corby, NN18",
+    coords: [52.490, -0.684],
     hours: "Full time",
     hoursSub: null,
     shifts: "Various shifts",
@@ -180,6 +196,7 @@ const JOBS = [
     payType: "hourly",
     payAlt: "≈ £26,520/yr",
     location: "Northampton, NN4",
+    coords: [52.232, -0.907],
     hours: "Full time",
     hoursSub: null,
     shifts: "Day shifts",
@@ -232,6 +249,7 @@ const JOBS = [
     payType: "hourly",
     payAlt: null,
     location: "Kettering, NN16",
+    coords: [52.397, -0.727],
     hours: "Full time",
     hoursSub: null,
     shifts: "Mixed shifts",
@@ -288,6 +306,7 @@ const JOBS = [
     payType: "hourly",
     payAlt: "≈ £30,160/yr",
     location: "Northampton, NN4",
+    coords: [52.232, -0.907],
     hours: "Full time",
     hoursSub: null,
     shifts: "Day shifts",
@@ -343,6 +362,7 @@ const JOBS = [
     payType: "annual",
     payAlt: "≈ £16.50/hr",
     location: "Corby, NN18",
+    coords: [52.490, -0.684],
     hours: "Full time",
     hoursSub: null,
     shifts: "Various shifts",
@@ -395,6 +415,7 @@ const JOBS = [
     payType: "hourly",
     payAlt: "≈ £27,560/yr",
     location: "Corby, NN17",
+    coords: [52.475, -0.697],
     hours: "Full time",
     hoursSub: null,
     shifts: "Rotating shifts",
@@ -449,6 +470,7 @@ const JOBS = [
     payType: "hourly",
     payAlt: "≈ £27,352/yr",
     location: "Wellingborough, NN8",
+    coords: [52.297, -0.691],
     hours: "Full time",
     hoursSub: null,
     shifts: "Early mornings",
@@ -500,6 +522,7 @@ const JOBS = [
     payType: "hourly",
     payAlt: null,
     location: "Corby, NN18",
+    coords: [52.490, -0.684],
     hours: "Various",
     hoursSub: null,
     shifts: "Various shifts",
@@ -559,6 +582,7 @@ const JOBS = [
     payType: "hourly",
     payAlt: null,
     location: "Corby, NN17",
+    coords: [52.475, -0.697],
     hours: "Full time",
     hoursSub: null,
     shifts: "Day shifts",
@@ -1118,18 +1142,19 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
   const [postcode, setPostcode] = useState(initialValues.postcode || "");
   const [currentPay, setCurrentPay] = useState(initialValues.currentPay || "");
   const [payType, setPayType] = useState(initialValues.payType || "hourly");
-  const [travel, setTravel] = useState(initialValues.travel || "");
+  const [travel, setTravel] = useState(Array.isArray(initialValues.travel) ? initialValues.travel : []);
   const [priorities, setPriorities] = useState(new Set(initialValues.priorities || []));
   useEffect(() => {
     if (open) {
       setPostcode(initialValues.postcode || "");
       setCurrentPay(initialValues.currentPay || "");
       setPayType(initialValues.payType || "hourly");
-      setTravel(initialValues.travel || "");
+      setTravel(Array.isArray(initialValues.travel) ? initialValues.travel : []);
       setPriorities(new Set(initialValues.priorities || []));
     }
   }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
   const togglePriority = (p) => setPriorities((s) => { const n = new Set(s); n.has(p) ? n.delete(p) : n.add(p); return n; });
+  const toggleTravel = (m) => setTravel(t => t.includes(m) ? t.filter(x => x !== m) : [...t, m]);
 
   const inputStyle = { width: "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1px solid ${COLORS.border}`, ...T.body1, fontFamily: FONT, marginBottom: S.m, background: COLORS.card, color: COLORS.text, outline: "none", boxSizing: "border-box" };
 
@@ -1141,8 +1166,30 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
         <h3 style={{ ...T.lead1, margin: 0, color: COLORS.text, fontFamily: FONT, marginBottom: S.s }}>Help us find you better jobs</h3>
         <p style={{ ...T.body1, color: COLORS.muted, margin: `0 0 ${S.m2}px`, fontFamily: FONT }}>Answer a few quick ones and we'll show you jobs that actually fit your life. Takes 30 seconds.</p>
 
-        <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>Your postcode (for commute times)</label>
-        <input value={postcode} onChange={(e) => setPostcode(e.target.value)} placeholder="e.g. TW1 3QS" style={inputStyle} />
+        {/* Commute section — 2-up on wider viewports */}
+        <div style={{ display: "flex", gap: S.m, flexWrap: "wrap", marginBottom: S.s, alignItems: "flex-start" }}>
+          <div style={{ flex: "1 1 160px" }}>
+            <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>Your postcode</label>
+            <input value={postcode} onChange={(e) => setPostcode(e.target.value)} placeholder="e.g. NN18 8ET" style={{ ...inputStyle, marginBottom: 0 }} />
+          </div>
+          <div style={{ flex: "2 1 220px" }}>
+            <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>How do you get there? <span style={{ fontWeight: 400, color: COLORS.muted }}>(pick all that apply)</span></label>
+            <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap" }}>
+              {TRAVEL_MODES.map((t) => (
+                <button key={t} onClick={() => toggleTravel(t)}
+                  style={{ padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${travel.includes(t) ? COLORS.accent : COLORS.border}`, background: travel.includes(t) ? COLORS.accentBg : COLORS.card, ...T.body1, cursor: "pointer", fontFamily: FONT, color: travel.includes(t) ? COLORS.accent : COLORS.text, fontWeight: travel.includes(t) ? 700 : 400 }}>
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+        {(!postcode || travel.length === 0) && (
+          <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m}px` }}>
+            {!postcode && travel.length === 0 ? "Fill in your postcode and travel mode to see commute times on listings." : !postcode ? "Add your postcode to see commute times." : "Pick a travel mode to see commute times."}
+          </p>
+        )}
+        {postcode && travel.length > 0 && <div style={{ marginBottom: S.m }} />}
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: S.s }}>
           <label style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>What do you currently earn?</label>
@@ -1157,16 +1204,6 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
         </div>
         <input value={currentPay} onChange={(e) => setCurrentPay(e.target.value)} placeholder={payType === "hourly" ? "e.g. £12.50" : "e.g. £26,000"} style={inputStyle} />
 
-        <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>How do you get to work?</label>
-        <div style={{ display: "flex", gap: S.s, marginBottom: S.m, flexWrap: "wrap" }}>
-          {["🚗 Drive", "🚌 Bus", "🚂 Train", "🚲 Cycle", "🚶 Walk"].map((t) => (
-            <button key={t} onClick={() => setTravel(t)}
-              style={{ padding: `${S.s}px ${S.m}px`, borderRadius: 100, border: `1px solid ${travel === t ? COLORS.accent : COLORS.border}`, background: travel === t ? COLORS.accentBg : COLORS.card, ...T.body1, cursor: "pointer", fontFamily: FONT, color: travel === t ? COLORS.accent : COLORS.text, fontWeight: travel === t ? 700 : 400 }}>
-              {t}
-            </button>
-          ))}
-        </div>
-
         <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>What matters most to you? (pick up to 3)</label>
         <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginBottom: S.m2 }}>
           {["Better pay", "Short commute", "No heavy lifting", "Daytime only", "Paid breaks", "Sick pay", "Friendly team", "Career progression"].map((p) => (
@@ -1177,7 +1214,7 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
           ))}
         </div>
 
-        <button onClick={() => onSubmit({ postcode, currentPay, payType, travel, priorities: [...priorities] })}
+        <button onClick={() => onSubmit({ postcode, currentPay, payType, travel: [...travel], priorities: [...priorities] })}
           style={{ width: "100%", padding: S.m, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
           Show me better matches →
         </button>
@@ -1196,8 +1233,9 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
   const [lPostcode, setLPostcode] = useState(postcode);
   const [lPay, setLPay] = useState(currentPay);
   const [lPayType, setLPayType] = useState(currentPayType);
-  const [lTravel, setLTravel] = useState(travel);
+  const [lTravel, setLTravel] = useState(Array.isArray(travel) ? travel : []);
   const [lPriorities, setLPriorities] = useState(new Set(priorities));
+  const toggleLTravel = (m) => setLTravel(t => t.includes(m) ? t.filter(x => x !== m) : [...t, m]);
 
   useEffect(() => {
     if (open) {
@@ -1206,7 +1244,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
       setLPostcode(postcode);
       setLPay(currentPay);
       setLPayType(currentPayType);
-      setLTravel(travel);
+      setLTravel(Array.isArray(travel) ? travel : []);
       setLPriorities(new Set(priorities));
     }
   }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -1268,12 +1306,14 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
               const formatPay = (v) => { if (!v) return null; const n = parseFloat(String(v).replace(/[^0-9.]/g, "")); if (isNaN(n)) return v; return currentPayType === "annual" ? `£${Math.round(n).toLocaleString()}/yr` : `£${n.toFixed(2)}/hr`; };
               const hasLicences = userLicences.size > 0;
               const hasPriorities = priorities.length > 0;
-              const lastField = hasLicences ? "licences" : hasPriorities ? "priorities" : travel ? "travel" : currentPay ? "pay" : "postcode";
+              const hasTravel = Array.isArray(travel) ? travel.length > 0 : !!travel;
+              const lastField = hasLicences ? "licences" : hasPriorities ? "priorities" : hasTravel ? "travel" : currentPay ? "pay" : "postcode";
+              const travelDisplay = Array.isArray(travel) ? travel.map(modeEmoji).join(" ") || null : travel || null;
               return (
                 <div style={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 8, padding: `0 ${S.m}px`, marginBottom: S.m2 }}>
                   <SummaryRow label="Postcode" value={postcode || null} onClick={() => { onClose(); onOpenDrawer(); }} isLast={lastField === "postcode"} />
                   <SummaryRow label="Current pay" value={formatPay(currentPay)} onClick={() => { onClose(); onOpenDrawer(); }} isLast={lastField === "pay"} />
-                  <SummaryRow label="Travel" value={travel || null} onClick={() => { onClose(); onOpenDrawer(); }} isLast={lastField === "travel"} />
+                  <SummaryRow label="Travel" value={travelDisplay} onClick={() => { onClose(); onOpenDrawer(); }} isLast={lastField === "travel"} />
                   <SummaryRow label="Priorities" value={hasPriorities ? priorities.join(", ") : null} onClick={() => { onClose(); onOpenDrawer(); }} isLast={lastField === "priorities"} />
                   {hasLicences && (
                     <SummaryRow label="Licences" value={[...userLicences].map(l => licenceLabels[l] || l).join(", ")} onClick={() => { onClose(); onOpenLicenceModal(); }} isLast />
@@ -1310,8 +1350,30 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
             {/* Preferences */}
             <div style={{ marginBottom: S.m2 }}>
               <div style={{ ...T.lead2, color: COLORS.text, fontFamily: FONT, marginBottom: S.m }}>Job preferences</div>
-              <label style={sectionLabel}>Your postcode (for commute times)</label>
-              <input value={lPostcode} onChange={e => setLPostcode(e.target.value)} placeholder="e.g. TW1 3QS" style={inputStyle} />
+              {/* Commute — 2-up on wider viewports */}
+              <div style={{ display: "flex", gap: S.m, flexWrap: "wrap", marginBottom: S.s, alignItems: "flex-start" }}>
+                <div style={{ flex: "1 1 160px" }}>
+                  <label style={sectionLabel}>Your postcode</label>
+                  <input value={lPostcode} onChange={e => setLPostcode(e.target.value)} placeholder="e.g. NN18 8ET" style={{ ...inputStyle, marginBottom: 0 }} />
+                </div>
+                <div style={{ flex: "2 1 220px" }}>
+                  <label style={sectionLabel}>How do you get there? <span style={{ fontWeight: 400, color: COLORS.muted }}>(pick all that apply)</span></label>
+                  <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap" }}>
+                    {TRAVEL_MODES.map(t => (
+                      <button key={t} onClick={() => toggleLTravel(t)}
+                        style={{ padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${lTravel.includes(t) ? COLORS.accent : COLORS.border}`, background: lTravel.includes(t) ? COLORS.accentBg : COLORS.card, ...T.body1, cursor: "pointer", fontFamily: FONT, color: lTravel.includes(t) ? COLORS.accent : COLORS.text, fontWeight: lTravel.includes(t) ? 700 : 400 }}>
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              {(!lPostcode || lTravel.length === 0) && (
+                <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m}px` }}>
+                  {!lPostcode && lTravel.length === 0 ? "Fill in your postcode and travel mode to see commute times on listings." : !lPostcode ? "Add your postcode to see commute times." : "Pick a travel mode to see commute times."}
+                </p>
+              )}
+              {lPostcode && lTravel.length > 0 && <div style={{ marginBottom: S.m }} />}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: S.s }}>
                 <label style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>What do you currently earn?</label>
                 <div style={{ display: "flex", gap: S.xs }}>
@@ -1324,15 +1386,6 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
                 </div>
               </div>
               <input value={lPay} onChange={e => setLPay(e.target.value)} placeholder={lPayType === "hourly" ? "e.g. £12.50" : "e.g. £26,000"} style={inputStyle} />
-              <label style={sectionLabel}>How do you get to work?</label>
-              <div style={{ display: "flex", gap: S.s, marginBottom: S.m, flexWrap: "wrap" }}>
-                {["🚗 Drive", "🚌 Bus", "🚂 Train", "🚲 Cycle", "🚶 Walk"].map(t => (
-                  <button key={t} onClick={() => setLTravel(t)}
-                    style={{ padding: `${S.s}px ${S.m}px`, borderRadius: 100, border: `1px solid ${lTravel === t ? COLORS.accent : COLORS.border}`, background: lTravel === t ? COLORS.accentBg : COLORS.card, ...T.body1, cursor: "pointer", fontFamily: FONT, color: lTravel === t ? COLORS.accent : COLORS.text, fontWeight: lTravel === t ? 700 : 400 }}>
-                    {t}
-                  </button>
-                ))}
-              </div>
               <label style={sectionLabel}>What matters most to you? (pick up to 3)</label>
               <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginBottom: S.m2 }}>
                 {["Better pay", "Short commute", "No heavy lifting", "Daytime only", "Paid breaks", "Sick pay", "Friendly team", "Career progression"].map(p => (
@@ -1342,7 +1395,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
                   </button>
                 ))}
               </div>
-              <button onClick={() => onSavePrefs({ postcode: lPostcode, currentPay: lPay, payType: lPayType, travel: lTravel, priorities: [...lPriorities] })}
+              <button onClick={() => onSavePrefs({ postcode: lPostcode, currentPay: lPay, payType: lPayType, travel: [...lTravel], priorities: [...lPriorities] })}
                 style={{ width: "100%", padding: S.s2, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
                 Save preferences →
               </button>
@@ -1460,20 +1513,35 @@ export default function JobTriagePage() {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [profilePostcode, setProfilePostcode] = useState("");
+  const [profileCoords, setProfileCoords] = useState(null);
   const [profileCurrentPay, setProfileCurrentPay] = useState("");
   const [profilePayType, setProfilePayType] = useState("hourly");
-  const [profileTravel, setProfileTravel] = useState("");
+  const [profileTravel, setProfileTravel] = useState([]);
   const [profilePriorities, setProfilePriorities] = useState([]);
 
   const hasPersonalisation = personalised || userLicences.size > 0;
+
+  useEffect(() => {
+    if (!profilePostcode) { setProfileCoords(null); return; }
+    const clean = profilePostcode.trim().replace(/\s+/g, "");
+    fetch(`https://api.postcodes.io/postcodes/${clean}`)
+      .then(r => r.json())
+      .then(d => {
+        const coords = d.result?.latitude ? [d.result.latitude, d.result.longitude]
+          : d.terminated?.latitude ? [d.terminated.latitude, d.terminated.longitude]
+          : false; // geocoding failed
+        setProfileCoords(coords);
+      })
+      .catch(() => setProfileCoords(false));
+  }, [profilePostcode]);
 
   const handleSavePrefs = ({ postcode, currentPay, payType = "hourly", travel, priorities }) => {
     setProfilePostcode(postcode);
     setProfileCurrentPay(currentPay);
     setProfilePayType(payType);
-    setProfileTravel(travel);
+    setProfileTravel(Array.isArray(travel) ? travel : travel ? [travel] : []);
     setProfilePriorities(priorities);
-    if (postcode || currentPay || travel || priorities.length > 0) setPersonalised(true);
+    if (postcode || currentPay || travel?.length > 0 || priorities.length > 0) setPersonalised(true);
   };
 
   const handleSignIn = (email) => {
@@ -1520,7 +1588,7 @@ export default function JobTriagePage() {
       <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", borderBottom: "1px solid rgba(50,50,50,0.1)", marginTop: S.m, marginBottom: S.m, paddingTop: S.m, paddingBottom: S.s, maxWidth: 500 }}>
         {[
           { icon: <IconPay />, text: job.pay, textAlt: job.payAlt || null, benchmark: job.payBenchmark },
-          { icon: <IconLocation />, text: job.location, sublabel: profilePostcode ? `Is this commutable from ${profilePostcode}? →` : "Is this commutable for you? →" },
+          { icon: <IconLocation />, text: job.location, commuteRow: true },
           { icon: <IconClock />, text: `${job.hours}${job.hoursSub ? ` (${job.hoursSub})` : ""}` },
           { icon: <IconClock />, text: job.shifts },
         ].map((f, i) => (
@@ -1540,11 +1608,31 @@ export default function JobTriagePage() {
                   : "Pays fairly for warehouse workers in London";
                 return <div style={{ ...T.body2, color, fontFamily: FONT, marginTop: 2 }}>{arrow} {label} · {range}</div>;
               })()}
-              {f.sublabel && (
-                <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2Bold, color: COLORS.accent, fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>
-                  {f.sublabel}
-                </div>
-              )}
+              {f.commuteRow && (() => {
+                if (!profilePostcode) {
+                  return <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2Bold, color: COLORS.accent, fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>Is this commutable for you? →</div>;
+                }
+                if (profileCoords === null) {
+                  return <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginTop: 2 }}>Checking distance from {profilePostcode}…</div>;
+                }
+                if (profileCoords === false) {
+                  return <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2Bold, color: COLORS.accent, fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>Is this commutable from {profilePostcode}? →</div>;
+                }
+                const distKm = haversineKm(profileCoords[0], profileCoords[1], job.coords[0], job.coords[1]);
+                const distMi = (distKm * 0.621371).toFixed(1);
+                if (!profileTravel || profileTravel.length === 0) {
+                  return <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2Bold, color: COLORS.accent, fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>{distMi} miles · How do you get there? →</div>;
+                }
+                return (
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: S.xs, marginTop: 4 }}>
+                    {profileTravel.map(mode => (
+                      <span key={mode} style={{ ...T.body2Bold, color: COLORS.greenText, fontFamily: FONT }}>
+                        {modeEmoji(mode)} ~{commuteMin(distKm, mode)} min
+                      </span>
+                    )).reduce((acc, el, i) => i === 0 ? [el] : [...acc, <span key={`sep${i}`} style={{ ...T.body2, color: COLORS.border, fontFamily: FONT }}>·</span>, el], [])}
+                  </div>
+                );
+              })()}
             </div>
           </div>
         ))}
