@@ -132,6 +132,7 @@ const JOBS = [
     title: "Warehouse Operative",
     occupationDesc: "Warehouse operatives take delivery of goods, and pick, pack and dispatch products.",
     company: "GXO Logistics",
+    companyUrl: "https://www.breakroom.cc/companies/gxo-logistics",
     companyType: "Employer",
     pay: "£25,958/yr",
     payType: "annual",
@@ -1735,7 +1736,7 @@ export default function JobTriagePage() {
   const heroBlock = (
     <div style={{ paddingTop: S.m2, paddingBottom: S.m }}>
       <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>
-        {job.company}
+        {job.companyUrl ? <a href={job.companyUrl} style={{ color: "inherit", fontWeight: "inherit", textDecoration: "none", borderBottom: `1px solid ${COLORS.border}` }}>{job.company}</a> : job.company}
       </div>
 
       <h1 style={{ ...(isDesktop ? T.heading2Lg : T.heading2), margin: `0 0 ${S.xs}px`, fontFamily: FONT, color: COLORS.text }}>{job.title}</h1>
@@ -1743,7 +1744,7 @@ export default function JobTriagePage() {
       {job.occupationDesc && <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.s2}px` }}>{job.occupationDesc}</p>}
 
       {/* .vacancy-card__divider + .vacancy__details */}
-      <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", borderBottom: "1px solid rgba(50,50,50,0.1)", marginTop: S.m, marginBottom: S.m, paddingTop: S.m, paddingBottom: S.s, maxWidth: 500 }}>
+      <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", borderBottom: "1px solid rgba(50,50,50,0.1)", marginTop: S.m, marginBottom: S.m, paddingTop: S.m, paddingBottom: S.s }}>
         {[
           { icon: <IconPay />, text: job.pay, benchmark: job.payBenchmark },
           { icon: <IconLocation />, text: job.location, commuteRow: true },
