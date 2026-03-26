@@ -1007,7 +1007,7 @@ const Signal = ({ status, label, detail, subtext, subtextClick, labelClick, isLa
       <div style={{ display: "flex", alignItems: "flex-start", gap: S.s }}>
         <span style={{ width: 15, height: 15, borderRadius: "50%", background: dot, border: "2px solid #fff", flexShrink: 0, marginTop: 3 }} />
         <div style={{ flex: 1, fontFamily: FONT }}>
-          <div onClick={labelClick} style={labelClick ? { cursor: "pointer", color: COLORS.accent, fontWeight: 700 } : {}}>{label}{labelClick && " →"}</div>
+          <div onClick={labelClick} style={labelClick ? { cursor: "pointer", color: COLORS.accent, fontWeight: 700 } : {}}>{label}</div>
           {detail && <div style={{ ...T.body1, color: COLORS.muted, marginTop: S.xs, fontWeight: 400 }}>{detail}</div>}
           {subtext && (
             <div onClick={subtextClick} style={{ ...T.body2Bold, color: subtextClick ? COLORS.accent : COLORS.muted, marginTop: S.xs, cursor: subtextClick ? "pointer" : "default" }}>
@@ -1170,7 +1170,7 @@ const LicenceModal = ({ open, onClose, userLicences, onSave }) => {
           })}
         </div>
         <button onClick={() => { onSave(selected); onClose(); }} style={{ width: "100%", padding: S.m, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
-          Save →
+          Save
         </button>
         <button onClick={onClose} style={{ width: "100%", padding: `${S.s2}px`, background: "none", border: "none", ...T.body1, color: COLORS.muted, cursor: "pointer", marginTop: S.s, fontFamily: FONT }}>
           Not now
@@ -1259,7 +1259,7 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
 
         <button onClick={() => onSubmit({ postcode, currentPay, payType, travel: [...travel], priorities: [...priorities] })}
           style={{ width: "100%", padding: S.m, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
-          Show me better matches →
+          Show me better matches
         </button>
         <button onClick={onClose} style={{ width: "100%", padding: `${S.s2}px`, background: "none", border: "none", ...T.body1, color: COLORS.muted, cursor: "pointer", marginTop: S.s, fontFamily: FONT }}>
           Not now, I'll keep browsing
@@ -1362,7 +1362,7 @@ const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
 
         <button onClick={() => onSubmit({ prevJobs, experience, qualifications: [...qualifications] })}
           style={{ width: "100%", padding: S.m, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
-          Save →
+          Save
         </button>
         <button onClick={onClose} style={{ width: "100%", padding: S.s2, background: "none", border: "none", ...T.body1, color: COLORS.muted, cursor: "pointer", marginTop: S.s, fontFamily: FONT }}>
           Not now
@@ -1437,7 +1437,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
             </p>
             <button onClick={() => { if (!email) { setEmailError(true); } else { onSignIn(email); } }}
               style={{ width: "100%", padding: S.s2, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT, marginBottom: S.m }}>
-              Create a free account →
+              Create a free account
             </button>
             <button style={{ width: "100%", padding: S.s2, borderRadius: 4, border: `2px solid #323232`, background: COLORS.card, ...T.body1Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
               Sign in
@@ -1549,7 +1549,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
               </div>
               <button onClick={() => onSavePrefs({ postcode: lPostcode, currentPay: lPay, payType: lPayType, travel: [...lTravel], priorities: [...lPriorities] })}
                 style={{ width: "100%", padding: S.s2, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
-                Save preferences →
+                Save preferences
               </button>
             </div>
 
@@ -1608,7 +1608,6 @@ const AlternativesList = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawe
               <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>What matters most to you?</div>
               <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>Set your priorities to see better-matched jobs</div>
             </div>
-            <span style={{ ...T.body1Bold, color: COLORS.accent, fontFamily: FONT, flexShrink: 0, paddingLeft: S.m }}>→</span>
           </button>
         )}
         {altJobs.map((j) => (
@@ -1877,7 +1876,7 @@ export default function JobTriagePage() {
                     status={userLicences.has("flt") ? "good" : "bad"}
                     label={userLicences.has("flt") ? "Forklift licence: you have the required licence" : "Forklift licence required (RTITB or ITSSAR)"}
                     detail="A valid counterbalance forklift licence is required. Reach truck licence is desirable."
-                    subtext={userLicences.has("flt") ? "✓ You told us you have an FLT licence" : "Tell us if you have a forklift licence →"}
+                    subtext={userLicences.has("flt") ? "✓ You told us you have an FLT licence" : "Tell us if you have a forklift licence"}
                     subtextClick={userLicences.has("flt") ? null : () => setLicenceModalOpen(true)}
                     isLast={isLast}
                   />
