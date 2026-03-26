@@ -1013,10 +1013,13 @@ const ReviewCard = ({ best, worst, score, role, date }) => (
 // ─── Alternative job card ──────────────────────────────────────────────────────
 const AltJob = ({ job, onClick, betterRated }) => {
   const { title, company, pay, rating, location, altBadge, altReason: reason, findingDiffs } = job;
-  const hasDiffs = findingDiffs?.length > 0;
-  const hasReason = !!reason;
   const showPayBadge = altBadge && altBadge !== "Better rated";
   const showRatingBadge = betterRated;
+  const visibleDiffs = showRatingBadge
+    ? (findingDiffs ?? []).filter(d => !d.toLowerCase().includes("better rated"))
+    : (findingDiffs ?? []);
+  const hasDiffs = visibleDiffs.length > 0;
+  const hasReason = !!reason;
   return (
     <div
       onClick={onClick}
@@ -1059,7 +1062,7 @@ const AltJob = ({ job, onClick, betterRated }) => {
       {/* Reason row: all items as uniform chips */}
       {(hasDiffs || hasReason) && (
         <div style={{ marginTop: S.s, display: "flex", flexWrap: "wrap", alignItems: "center", gap: S.xs }}>
-          {findingDiffs?.map((diff, i) => (
+          {visibleDiffs.map((diff, i) => (
             <span key={i} style={{ ...T.body2Bold, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT, whiteSpace: "nowrap" }}>
               {diff}
             </span>
