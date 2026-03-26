@@ -148,7 +148,7 @@ const JOBS = [
     listingUrl: "https://www.breakroom.cc/en-gb/jobs/listing/89531552-gxo-logistics-warehouse-operative-corby-northamptonshire",
     altBadge: null,
     altReason: null,
-    payBenchmark: { verdict: "below", label: "below average for warehouse operatives in Northamptonshire", range: "£27,000–£32,000/yr typical" },
+    payBenchmark: { rangeLow: 27000, rangeHigh: 32000, roleLabel: "warehouse operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
     findings: {
@@ -203,7 +203,7 @@ const JOBS = [
     listingUrl: "https://www.amazon.jobs/en-gb",
     altBadge: "Better rated",
     altReason: null,
-    payBenchmark: { verdict: "good", label: "above average for warehouse associates in Northamptonshire", range: "£12–£14/hr typical" },
+    payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse associates in Northamptonshire" },
     findingDiffs: ["No experience required", "Better rated employer"],
     requiresFltLicence: false,
     findings: {
@@ -256,7 +256,7 @@ const JOBS = [
     listingUrl: "https://www.dhl.com/gb-en/home/careers.html",
     altBadge: "↑ £0.27/hr",
     altReason: null,
-    payBenchmark: { verdict: "fair", label: "around average for warehouse operatives in Northamptonshire", range: "£12–£14/hr typical" },
+    payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse operatives in Northamptonshire" },
     findingDiffs: ["Better sick pay cover", "Less unpaid overtime"],
     requiresFltLicence: false,
     findings: {
@@ -309,7 +309,7 @@ const JOBS = [
     listingUrl: "https://www.wincanton.co.uk/careers",
     altBadge: null,
     altReason: null,
-    payBenchmark: { verdict: "below", label: "below average for warehouse operatives in Northamptonshire", range: "£12–£14/hr typical" },
+    payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
     findings: {
@@ -366,7 +366,7 @@ const JOBS = [
     listingUrl: "https://www.xpo.com/en-gb/careers",
     altBadge: "↑ £2.02/hr",
     altReason: { text: "FLT licence required" },
-    payBenchmark: { verdict: "fair", label: "around average for FLT drivers in Northamptonshire", range: "£14–£17/hr typical" },
+    payBenchmark: { rangeLow: 14, rangeHigh: 17, roleLabel: "FLT drivers in Northamptonshire" },
     findingDiffs: ["Higher pay rate"],
     requiresFltLicence: true,
     findings: {
@@ -422,7 +422,7 @@ const JOBS = [
     listingUrl: "https://www.amazon.jobs/en-gb",
     altBadge: "↑ £4.02/hr",
     altReason: { text: "Leadership experience required" },
-    payBenchmark: { verdict: "good", label: "above average for warehouse team leaders in Northamptonshire", range: "£30,000–£38,000/yr typical" },
+    payBenchmark: { rangeLow: 30000, rangeHigh: 38000, roleLabel: "warehouse team leaders in Northamptonshire" },
     findingDiffs: ["Higher pay", "Better rated employer"],
     requiresFltLicence: false,
     findings: {
@@ -475,7 +475,7 @@ const JOBS = [
     listingUrl: "https://www.greencore.com/careers",
     altBadge: "Better rated",
     altReason: null,
-    payBenchmark: { verdict: "good", label: "above average for production operatives in Northamptonshire", range: "£12–£15/hr typical" },
+    payBenchmark: { rangeLow: 12, rangeHigh: 15, roleLabel: "production operatives in Northamptonshire" },
     findingDiffs: ["Better rated employer", "Above average pay"],
     requiresFltLicence: false,
     findings: {
@@ -529,7 +529,7 @@ const JOBS = [
     listingUrl: "https://www.royalmailgroup.com/en/careers",
     altBadge: "↑ £0.67/hr",
     altReason: null,
-    payBenchmark: { verdict: "good", label: "above average for parcel sorters in Northamptonshire", range: "£11.50–£14/hr typical" },
+    payBenchmark: { rangeLow: 11.5, rangeHigh: 14, roleLabel: "parcel sorters in Northamptonshire" },
     findingDiffs: ["Better sick pay cover"],
     requiresFltLicence: false,
     findings: {
@@ -581,7 +581,7 @@ const JOBS = [
     listingUrl: "https://careers.evri.com",
     altBadge: null,
     altReason: null,
-    payBenchmark: { verdict: "below", label: "below average for parcel hub operatives in Northamptonshire", range: "£12–£14/hr typical" },
+    payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "parcel hub operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
     findings: {
@@ -641,7 +641,7 @@ const JOBS = [
     listingUrl: "https://www.clipperlogistics.com/careers",
     altBadge: null,
     altReason: null,
-    payBenchmark: { verdict: "below", label: "below average for pick & pack operatives in Northamptonshire", range: "£12–£14/hr typical" },
+    payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "pick & pack operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
     findings: {
@@ -1650,6 +1650,37 @@ const DesktopSidebar = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawer,
   </div>
 );
 
+// ─── Pay benchmark helpers ──────────────────────────────────────────────────────
+
+function parsePayValue(payStr) {
+  // "£12.10/hr" → 12.10,  "£25,958/yr" → 25958
+  return parseFloat(payStr.replace(/[£,]/g, "").replace(/\/.*/, ""));
+}
+
+function formatPayRange(low, high, payType) {
+  const fmt = (n) => {
+    const s = Number.isInteger(n) ? n.toLocaleString("en-GB") : n.toFixed(2).replace(/\.?0+$/, "");
+    return `£${s}`;
+  };
+  const unit = payType === "annual" ? "/yr" : "/hr";
+  return `${fmt(low)}–${fmt(high)}${unit} typical`;
+}
+
+function computePayVerdict(payStr, payType, benchmark) {
+  if (!benchmark) return null;
+  const pay = parsePayValue(payStr);
+  if (!pay) return null;
+  const { rangeLow, rangeHigh, roleLabel } = benchmark;
+  const range = formatPayRange(rangeLow, rangeHigh, payType);
+  if (pay < rangeLow) {
+    return { verdict: "below", label: `Below the typical range for ${roleLabel}`, range, arrow: "↓" };
+  } else if (pay > rangeHigh) {
+    return { verdict: "above", label: `Above the typical range for ${roleLabel}`, range, arrow: "↑" };
+  } else {
+    return { verdict: "fair", label: `Within the typical range for ${roleLabel}`, range, arrow: "→" };
+  }
+}
+
 // ─── Main page ─────────────────────────────────────────────────────────────────
 
 export default function JobTriagePage() {
@@ -1757,11 +1788,11 @@ export default function JobTriagePage() {
                 <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, lineHeight: 1.5 }}>{f.text}</span>
               </div>
               {f.benchmark && (() => {
-                const { verdict, label, range } = f.benchmark;
-                const color = verdict === "below" ? COLORS.red : COLORS.greenText;
-                const arrow = verdict === "below" ? "↓" : verdict === "good" ? "↑" : "→";
-                const displayLabel = label.charAt(0).toUpperCase() + label.slice(1);
-                return <div style={{ ...T.body2, fontWeight: 500, color, fontFamily: FONT, marginTop: 2 }}>{arrow} {displayLabel} · {range}</div>;
+                const computed = computePayVerdict(job.pay, job.payType, f.benchmark);
+                if (!computed) return null;
+                const { verdict, label, range, arrow } = computed;
+                const color = verdict === "below" ? COLORS.red : verdict === "above" ? COLORS.greenText : COLORS.muted;
+                return <div style={{ ...T.body2, fontWeight: 500, color, fontFamily: FONT, marginTop: 2 }}>{arrow} {label} · {range}</div>;
               })()}
               {f.commuteRow && (() => {
                 if (!profilePostcode) {
