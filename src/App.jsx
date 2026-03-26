@@ -1301,7 +1301,7 @@ const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, maxHeight: "88vh", background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, overflowY: "auto", boxShadow: "0 -8px 40px rgba(0,0,0,0.15)" }}>
         <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px` }} />
         <h3 style={{ ...T.lead1, margin: 0, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>Your background</h3>
-        <p style={{ ...T.body1, color: COLORS.muted, margin: `0 0 ${S.m2}px`, fontFamily: FONT }}>Tell us about your experience and qualifications — we'll use this to check your fit on every vacancy.</p>
+        <p style={{ ...T.body1, color: COLORS.muted, margin: `0 0 ${S.m2}px`, fontFamily: FONT }}>Tell us about your experience and qualifications — we'll show how well you fit every job you look at.</p>
 
         {/* Work history */}
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>Work history <span style={{ fontWeight: 400, color: COLORS.muted }}>(optional)</span></div>
@@ -1870,7 +1870,7 @@ export default function JobTriagePage() {
                   <div style={{ flex: 1, fontFamily: FONT }}>
                     <div>Are you suited for this role?</div>
                     <div style={{ ...T.body1, color: COLORS.muted, marginTop: S.xs, fontWeight: 400 }}>
-                      Tell us about your experience and qualifications — we'll check your fit on every vacancy.
+                      Tell us about your experience and qualifications — we'll show how well you fit every job you look at.
                     </div>
                     <div style={{ margin: `${S.s}px 0` }}>
                       {[
