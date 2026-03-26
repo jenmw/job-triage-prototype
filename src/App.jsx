@@ -52,11 +52,41 @@ const haversineKm = (lat1, lon1, lat2, lon2) => {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 };
 
-const TRAVEL_MODES = ["🚗 Drive", "🚌 Bus", "🚂 Train", "🚲 Cycle", "🚶 Walk"];
-// Assumed average speed including urban congestion/stops/etc.
-const TRAVEL_SPEED_KPH = { "🚗 Drive": 48, "🚌 Bus": 20, "🚂 Train": 65, "🚲 Cycle": 16, "🚶 Walk": 5 };
-const commuteMin = (km, mode) => Math.round(km / TRAVEL_SPEED_KPH[mode] * 60);
-const modeEmoji = (mode) => mode.split(" ")[0];
+// Transport mode icons — inline SVGs from priv/static/src/images/
+const IconPublicTransport = ({ color = COLORS.text }) => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "block", flexShrink: 0 }}>
+    <circle cx="4" cy="11.9971" r="1.35" stroke={color} strokeWidth="1.3"/>
+    <circle cx="12" cy="11.9971" r="1.35" stroke={color} strokeWidth="1.3"/>
+    <path d="M2.61879 11.5H1.75V6.63886M5.53707 11.5H10.4629M13.3215 11.5H14.25V6.63886M1.75 6.63886V2.75002L5.75 2.75M1.75 6.63886L5.75 6.63884M14.25 6.63886V2.75002H10.2479M14.25 6.63886H10.2479M5.75 2.75V6.63884M5.75 2.75L10.2479 2.75002M5.75 6.63884L10.2479 6.63886M10.2479 2.75002V6.63886" stroke={color} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+const IconCar = ({ color = COLORS.text }) => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "block", flexShrink: 0 }}>
+    <circle cx="4.01685" cy="10.8831" r="1.35" stroke={color} strokeWidth="1.3"/>
+    <circle cx="12" cy="10.8831" r="1.35" stroke={color} strokeWidth="1.3"/>
+    <path d="M11.5001 6.636C13.9977 6.636 14.5 8.73602 14.5 10.3852H13.5344M11.5001 6.636L10 3.11694H6.50925M11.5001 6.636H6.50924M2.60003 10.3852H1.50005C1.50005 9.56301 1.30944 6.636 3.49592 6.636M5.4386 10.3852H10.5615M3.49592 6.636L3.99839 3.11694H6.50925M3.49592 6.636H6.50924M6.50925 3.11694L6.50924 6.636" stroke={color} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+const IconBicycle = ({ color = COLORS.text }) => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "block", flexShrink: 0 }}>
+    <circle cx="3.46118" cy="10.4612" r="1.86118" stroke={color} strokeWidth="1.2"/>
+    <circle cx="12.5388" cy="10.4612" r="1.86118" stroke={color} strokeWidth="1.2"/>
+    <circle cx="7.16956" cy="9.90857" r="0.768921" stroke={color} strokeWidth="0.5"/>
+    <path d="M4.31506 8.19701L5.77454 5.96208M5.77454 5.96208H10.8869M5.77454 5.96208L6.83875 8.89794M5.77454 5.96208L5.2266 4.54783M10.8869 5.96208C10.7902 5.68781 10.6258 5.07505 10.7418 4.81818C10.8869 4.49709 11.5942 3.91515 10.8869 3.71447C10.3211 3.55392 9.70812 3.46024 9.47237 3.43347M10.8869 5.96208L11.1476 6.9249M11.5701 8.19701L11.1476 6.9249M5.2266 4.54783H5.70888M5.2266 4.54783H4.80714M11.1476 6.9249L8.00273 9.31568" stroke={color} strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+// Three transport modes — matches Breakroom onboarding options
+const TRANSPORT_MODES = [
+  { id: "walk-transit", label: "Walk or public transport", Icon: IconPublicTransport, speedKph: 20 },
+  { id: "car",          label: "Car or motorbike",         Icon: IconCar,             speedKph: 48 },
+  { id: "bike",         label: "Bike",                     Icon: IconBicycle,         speedKph: 16 },
+];
+const commuteMin = (km, modeId) => {
+  const speed = TRANSPORT_MODES.find(m => m.id === modeId)?.speedKph ?? 30;
+  return Math.round(km / speed * 60);
+};
+const modeLabelShort = (modeId) => ({ "walk-transit": "Transit", "car": "Car", "bike": "Bike" }[modeId] ?? modeId);
 
 // Groups bad+good findings into Pay / Hours / Workplace sections for the modal
 const PAY_LABELS = new Set(["No sick pay","Some sick pay","No paid breaks","No unpaid overtime","Living wage","Above average pay","Below average pay"]);
@@ -847,14 +877,6 @@ const IconChevronDown = ({ color = COLORS.muted, rotated = false }) => (
   </svg>
 );
 
-// ─── Car SVG icon (matches car--16px-semibold from site) ────────────────────────
-const IconCar = ({ color = COLORS.text }) => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "block", flexShrink: 0 }}>
-    <circle cx="4.01685" cy="10.8831" r="1.35" stroke={color} strokeWidth="1.3"/>
-    <circle cx="12" cy="10.8831" r="1.35" stroke={color} strokeWidth="1.3"/>
-    <path d="M11.5001 6.636C13.9977 6.636 14.5 8.73602 14.5 10.3852H13.5344M11.5001 6.636L10 3.11694H6.50925M11.5001 6.636H6.50924M2.60003 10.3852H1.50005C1.50005 9.56301 1.30944 6.636 3.49592 6.636M5.4386 10.3852H10.5615M3.49592 6.636L3.99839 3.11694H6.50925M3.49592 6.636H6.50924M6.50925 3.11694L6.50924 6.636" stroke={color} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
 
 // ─── Heart SVG icon (matches heart-empty--16px-semibold from site) ──────────────
 const IconHeart = ({ color = COLORS.text }) => (
@@ -1163,8 +1185,8 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
         <h3 style={{ ...T.lead1, margin: 0, color: COLORS.text, fontFamily: FONT, marginBottom: S.s }}>Help us find you better jobs</h3>
         <p style={{ ...T.body1, color: COLORS.muted, margin: `0 0 ${S.m2}px`, fontFamily: FONT }}>Answer a few quick ones and we'll show you jobs that actually fit your life. Takes 30 seconds.</p>
 
-        {/* Commute section — 2-up on wider viewports */}
-        <div style={{ display: "flex", gap: S.m, flexWrap: "wrap", marginBottom: S.s, alignItems: "flex-start" }}>
+        {/* Commute section — side by side on wider viewports, stacked on mobile */}
+        <div style={{ display: "flex", gap: S.m, flexWrap: "wrap", marginBottom: S.s, alignItems: "center" }}>
           <div style={{ flex: "1 1 160px" }}>
             <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>Your postcode</label>
             <input value={postcode} onChange={(e) => setPostcode(e.target.value)} placeholder="e.g. NN18 8ET" style={{ ...inputStyle, marginBottom: 0 }} />
@@ -1172,12 +1194,15 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
           <div style={{ flex: "2 1 220px" }}>
             <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>How do you get there? <span style={{ fontWeight: 400, color: COLORS.muted }}>(pick all that apply)</span></label>
             <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap" }}>
-              {TRAVEL_MODES.map((t) => (
-                <button key={t} onClick={() => toggleTravel(t)}
-                  style={{ padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${travel.includes(t) ? COLORS.accent : COLORS.border}`, background: travel.includes(t) ? COLORS.accentBg : COLORS.card, ...T.body1, cursor: "pointer", fontFamily: FONT, color: travel.includes(t) ? COLORS.accent : COLORS.text, fontWeight: travel.includes(t) ? 700 : 400 }}>
-                  {t}
-                </button>
-              ))}
+              {TRANSPORT_MODES.map(({ id, label, Icon }) => {
+                const sel = travel.includes(id);
+                return (
+                  <button key={id} onClick={() => toggleTravel(id)}
+                    style={{ display: "flex", alignItems: "center", gap: S.xs, padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${sel ? COLORS.accent : COLORS.border}`, background: sel ? COLORS.accentBg : COLORS.card, ...T.body2, cursor: "pointer", fontFamily: FONT, color: sel ? COLORS.accent : COLORS.text, fontWeight: sel ? 700 : 400 }}>
+                    <Icon color={sel ? COLORS.accent : COLORS.text} />{label}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -1305,7 +1330,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
               const hasPriorities = priorities.length > 0;
               const hasTravel = Array.isArray(travel) ? travel.length > 0 : !!travel;
               const lastField = hasLicences ? "licences" : hasPriorities ? "priorities" : hasTravel ? "travel" : currentPay ? "pay" : "postcode";
-              const travelDisplay = Array.isArray(travel) ? travel.map(modeEmoji).join(" ") || null : travel || null;
+              const travelDisplay = Array.isArray(travel) ? travel.map(id => TRANSPORT_MODES.find(m => m.id === id)?.label ?? id).join(", ") || null : travel || null;
               return (
                 <div style={{ background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 8, padding: `0 ${S.m}px`, marginBottom: S.m2 }}>
                   <SummaryRow label="Postcode" value={postcode || null} onClick={() => { onClose(); onOpenDrawer(); }} isLast={lastField === "postcode"} />
@@ -1348,7 +1373,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
             <div style={{ marginBottom: S.m2 }}>
               <div style={{ ...T.lead2, color: COLORS.text, fontFamily: FONT, marginBottom: S.m }}>Job preferences</div>
               {/* Commute — 2-up on wider viewports */}
-              <div style={{ display: "flex", gap: S.m, flexWrap: "wrap", marginBottom: S.s, alignItems: "flex-start" }}>
+              <div style={{ display: "flex", gap: S.m, flexWrap: "wrap", marginBottom: S.s, alignItems: "center" }}>
                 <div style={{ flex: "1 1 160px" }}>
                   <label style={sectionLabel}>Your postcode</label>
                   <input value={lPostcode} onChange={e => setLPostcode(e.target.value)} placeholder="e.g. NN18 8ET" style={{ ...inputStyle, marginBottom: 0 }} />
@@ -1356,12 +1381,15 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
                 <div style={{ flex: "2 1 220px" }}>
                   <label style={sectionLabel}>How do you get there? <span style={{ fontWeight: 400, color: COLORS.muted }}>(pick all that apply)</span></label>
                   <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap" }}>
-                    {TRAVEL_MODES.map(t => (
-                      <button key={t} onClick={() => toggleLTravel(t)}
-                        style={{ padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${lTravel.includes(t) ? COLORS.accent : COLORS.border}`, background: lTravel.includes(t) ? COLORS.accentBg : COLORS.card, ...T.body1, cursor: "pointer", fontFamily: FONT, color: lTravel.includes(t) ? COLORS.accent : COLORS.text, fontWeight: lTravel.includes(t) ? 700 : 400 }}>
-                        {t}
-                      </button>
-                    ))}
+                    {TRANSPORT_MODES.map(({ id, label, Icon }) => {
+                      const sel = lTravel.includes(id);
+                      return (
+                        <button key={id} onClick={() => toggleLTravel(id)}
+                          style={{ display: "flex", alignItems: "center", gap: S.xs, padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${sel ? COLORS.accent : COLORS.border}`, background: sel ? COLORS.accentBg : COLORS.card, ...T.body2, cursor: "pointer", fontFamily: FONT, color: sel ? COLORS.accent : COLORS.text, fontWeight: sel ? 700 : 400 }}>
+                          <Icon color={sel ? COLORS.accent : COLORS.text} />{label}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -1622,11 +1650,15 @@ export default function JobTriagePage() {
                 }
                 return (
                   <div style={{ display: "flex", flexWrap: "wrap", gap: S.xs, marginTop: 4 }}>
-                    {profileTravel.map(mode => (
-                      <span key={mode} style={{ ...T.body2Bold, color: COLORS.greenText, fontFamily: FONT }}>
-                        {modeEmoji(mode)} ~{commuteMin(distKm, mode)} min
-                      </span>
-                    )).reduce((acc, el, i) => i === 0 ? [el] : [...acc, <span key={`sep${i}`} style={{ ...T.body2, color: COLORS.border, fontFamily: FONT }}>·</span>, el], [])}
+                    {profileTravel.map(modeId => {
+                      const m = TRANSPORT_MODES.find(t => t.id === modeId);
+                      if (!m) return null;
+                      return (
+                        <span key={modeId} style={{ display: "inline-flex", alignItems: "center", gap: 4, ...T.body2, color: COLORS.muted, fontFamily: FONT }}>
+                          <m.Icon color={COLORS.muted} />~{commuteMin(distKm, modeId)} min
+                        </span>
+                      );
+                    }).reduce((acc, el, i) => el === null ? acc : i === 0 || acc.length === 0 ? [...acc, el] : [...acc, <span key={`sep${i}`} style={{ ...T.body2, color: COLORS.border, fontFamily: FONT }}>·</span>, el], [])}
                   </div>
                 );
               })()}
