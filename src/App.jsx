@@ -1736,7 +1736,7 @@ export default function JobTriagePage() {
   const heroBlock = (
     <div style={{ paddingTop: S.m2, paddingBottom: S.m }}>
       <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>
-        {job.companyUrl ? <a href={job.companyUrl} style={{ color: "inherit", fontWeight: "inherit", textDecoration: "none", borderBottom: `1px solid ${COLORS.border}` }}>{job.company}</a> : job.company}
+        {job.companyUrl ? <a href={job.companyUrl} style={{ color: "inherit", fontWeight: "inherit", textDecoration: "underline" }}>{job.company}</a> : job.company}
       </div>
 
       <h1 style={{ ...(isDesktop ? T.heading2Lg : T.heading2), margin: `0 0 ${S.xs}px`, fontFamily: FONT, color: COLORS.text }}>{job.title}</h1>
