@@ -2214,15 +2214,15 @@ export default function JobTriagePage() {
 
       {/* Mobile sticky bottom bar */}
       {!isDesktop && (
-        <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 40, background: "rgba(250,248,244,0.95)", backdropFilter: "blur(12px)", borderTop: `1px solid ${COLORS.border}`, padding: `${S.s2}px ${S.m}px` }}>
+        <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 40, background: COLORS.bg, borderTop: `1px solid ${COLORS.border}`, padding: `${S.s2}px ${S.m}px` }}>
           <div style={{ maxWidth: 480, margin: "0 auto", display: "flex", gap: S.s2 }}>
             <button style={{ flex: 1, padding: "6px 22px", borderRadius: 4, border: "2px solid transparent", background: COLORS.accent, color: "#fff", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT }}>
               Apply
             </button>
-            <button style={{ padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `2px solid #323232`, background: COLORS.card, ...T.body2Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
+            <button style={{ padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.text}`, background: "transparent", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
               Save
             </button>
-            <button onClick={() => setDrawerOpen(true)} style={{ padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.accent, whiteSpace: "nowrap" }}>
+            <button onClick={() => setDrawerOpen(true)} style={{ padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.accent, whiteSpace: "nowrap" }}>
               Match me
             </button>
           </div>
