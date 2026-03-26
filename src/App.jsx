@@ -1038,10 +1038,7 @@ const ReviewCard = ({ best, worst, score, role, date }) => (
 const AltJob = ({ job, onClick }) => {
   const { title, company, pay, rating, location, altBadge, altReason: reason, findingDiffs } = job;
   const showPayBadge = altBadge && altBadge !== "Better rated";
-  const showRatingBadge = betterRated;
-  const visibleDiffs = showRatingBadge
-    ? (findingDiffs ?? []).filter(d => !d.toLowerCase().includes("better rated"))
-    : (findingDiffs ?? []);
+  const visibleDiffs = (findingDiffs ?? []).filter(d => !d.toLowerCase().includes("better rated"));
   const hasDiffs = visibleDiffs.length > 0;
   const hasReason = !!reason;
   const badgeStyle = { ...T.body2Bold, border: `2px solid ${COLORS.green}`, color: COLORS.greenText, background: COLORS.card, borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT };
