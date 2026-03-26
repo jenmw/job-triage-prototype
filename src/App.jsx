@@ -1433,7 +1433,7 @@ const AlternativesList = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawe
   return (
     <div>
       <h2 style={{ ...T.lead1, margin: `0 0 ${S.xs}px`, fontFamily: FONT, color: COLORS.text }}>Similar jobs nearby</h2>
-      <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.s}px` }}>Sorted by rating</p>
+      <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.s}px` }}>Sorted by Breakroom Rating</p>
       {personalised && (
         <p style={{ ...T.body1, color: COLORS.muted, margin: `0 0 ${S.m}px`, fontFamily: FONT }}>
           ✓ Personalised for you
