@@ -1612,7 +1612,7 @@ export default function JobTriagePage() {
       {/* .vacancy-card__divider + .vacancy__details */}
       <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", borderBottom: "1px solid rgba(50,50,50,0.1)", marginTop: S.m, marginBottom: S.m, paddingTop: S.m, paddingBottom: S.s, maxWidth: 500 }}>
         {[
-          { icon: <IconPay />, text: job.pay, textAlt: job.payAlt || null, benchmark: job.payBenchmark },
+          { icon: <IconPay />, text: job.pay, benchmark: job.payBenchmark },
           { icon: <IconLocation />, text: job.location, commuteRow: true },
           { icon: <IconClock />, text: [job.hours, job.hoursSub ? `(${job.hoursSub})` : null, job.shifts].filter(Boolean).join(" · ") },
         ].map((f, i) => (
@@ -1621,7 +1621,6 @@ export default function JobTriagePage() {
             <div>
               <div>
                 <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, lineHeight: 1.5 }}>{f.text}</span>
-                {f.textAlt && <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginLeft: S.s }}>{f.textAlt}</span>}
               </div>
               {f.benchmark && (() => {
                 const { verdict, label, range } = f.benchmark;
