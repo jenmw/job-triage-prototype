@@ -86,6 +86,12 @@ const commuteMin = (km, modeId) => {
   const speed = TRANSPORT_MODES.find(m => m.id === modeId)?.speedKph ?? 30;
   return Math.round(km / speed * 60);
 };
+const formatCommute = (mins) => {
+  if (mins < 60) return `~${mins} min`;
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return m === 0 ? `~${h} hr` : `~${h} hr ${m} min`;
+};
 const modeLabelShort = (modeId) => ({ "walk-transit": "Transit", "car": "Car", "bike": "Bike" }[modeId] ?? modeId);
 
 // Groups bad+good findings into Pay / Hours / Workplace sections for the modal
@@ -1185,26 +1191,20 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
         <h3 style={{ ...T.lead1, margin: 0, color: COLORS.text, fontFamily: FONT, marginBottom: S.s }}>Help us find you better jobs</h3>
         <p style={{ ...T.body1, color: COLORS.muted, margin: `0 0 ${S.m2}px`, fontFamily: FONT }}>Answer a few quick ones and we'll show you jobs that actually fit your life. Takes 30 seconds.</p>
 
-        {/* Commute section — side by side on wider viewports, stacked on mobile */}
-        <div style={{ display: "flex", gap: S.m, flexWrap: "wrap", marginBottom: S.s, alignItems: "center" }}>
-          <div style={{ flex: "1 1 160px" }}>
-            <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>Your postcode</label>
-            <input value={postcode} onChange={(e) => setPostcode(e.target.value)} placeholder="e.g. NN18 8ET" style={{ ...inputStyle, marginBottom: 0 }} />
-          </div>
-          <div style={{ flex: "2 1 220px" }}>
-            <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>How do you get there? <span style={{ fontWeight: 400, color: COLORS.muted }}>(pick all that apply)</span></label>
-            <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap" }}>
-              {TRANSPORT_MODES.map(({ id, label, Icon }) => {
-                const sel = travel.includes(id);
-                return (
-                  <button key={id} onClick={() => toggleTravel(id)}
-                    style={{ display: "flex", alignItems: "center", gap: S.xs, padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${sel ? COLORS.accent : COLORS.border}`, background: sel ? COLORS.accentBg : COLORS.card, ...T.body2, cursor: "pointer", fontFamily: FONT, color: sel ? COLORS.accent : COLORS.text, fontWeight: sel ? 700 : 400 }}>
-                    <Icon color={sel ? COLORS.accent : COLORS.text} />{label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+        <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>Your postcode</label>
+        <input value={postcode} onChange={(e) => setPostcode(e.target.value)} placeholder="e.g. NN18 8ET" style={{ ...inputStyle, maxWidth: 200 }} />
+
+        <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>How do you get there? <span style={{ fontWeight: 400, color: COLORS.muted }}>(pick all that apply)</span></label>
+        <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginBottom: S.s }}>
+          {TRANSPORT_MODES.map(({ id, label, Icon }) => {
+            const sel = travel.includes(id);
+            return (
+              <button key={id} onClick={() => toggleTravel(id)}
+                style={{ display: "flex", alignItems: "center", gap: S.xs, padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${sel ? COLORS.accent : COLORS.border}`, background: sel ? COLORS.accentBg : COLORS.card, ...T.body2, cursor: "pointer", fontFamily: FONT, color: sel ? COLORS.accent : COLORS.text, fontWeight: sel ? 700 : 400 }}>
+                <Icon color={sel ? COLORS.accent : COLORS.text} />{label}
+              </button>
+            );
+          })}
         </div>
         {(!postcode || travel.length === 0) && (
           <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m}px` }}>
@@ -1213,8 +1213,9 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
         )}
         {postcode && travel.length > 0 && <div style={{ marginBottom: S.m }} />}
 
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: S.s }}>
-          <label style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>What do you currently earn?</label>
+        <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>What do you currently earn?</label>
+        <div style={{ display: "flex", gap: S.s, alignItems: "center", marginBottom: S.m }}>
+          <input value={currentPay} onChange={(e) => setCurrentPay(e.target.value)} placeholder={payType === "hourly" ? "e.g. £12.50" : "e.g. £26,000"} style={{ ...inputStyle, flex: "0 0 auto", width: 160, marginBottom: 0 }} />
           <div style={{ display: "flex", gap: S.xs }}>
             {[["per hour", "hourly"], ["per year", "annual"]].map(([label, val]) => (
               <button key={val} onClick={() => setPayType(val)}
@@ -1224,7 +1225,6 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
             ))}
           </div>
         </div>
-        <input value={currentPay} onChange={(e) => setCurrentPay(e.target.value)} placeholder={payType === "hourly" ? "e.g. £12.50" : "e.g. £26,000"} style={inputStyle} />
 
         <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>What matters most to you? (pick up to 3)</label>
         <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginBottom: S.m2 }}>
@@ -1654,8 +1654,8 @@ export default function JobTriagePage() {
                       const m = TRANSPORT_MODES.find(t => t.id === modeId);
                       if (!m) return null;
                       return (
-                        <span key={modeId} style={{ display: "inline-flex", alignItems: "center", gap: 4, ...T.body2, color: COLORS.muted, fontFamily: FONT }}>
-                          <m.Icon color={COLORS.muted} />~{commuteMin(distKm, modeId)} min
+                        <span key={modeId} style={{ display: "inline-flex", alignItems: "center", gap: 4, ...T.body2, fontWeight: 500, color: COLORS.muted, fontFamily: FONT }}>
+                          <m.Icon color={COLORS.muted} />{formatCommute(commuteMin(distKm, modeId))}
                         </span>
                       );
                     }).reduce((acc, el, i) => el === null ? acc : i === 0 || acc.length === 0 ? [...acc, el] : [...acc, <span key={`sep${i}`} style={{ ...T.body2, color: COLORS.border, fontFamily: FONT }}>·</span>, el], [])}
