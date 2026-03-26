@@ -2059,7 +2059,7 @@ export default function JobTriagePage() {
               Apply
             </button>
             <button style={{ padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `2px solid #323232`, background: COLORS.card, ...T.body2Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
-              ☆ Save
+              Save
             </button>
             <button onClick={() => setDrawerOpen(true)} style={{ padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `2px solid #323232`, background: COLORS.accentBg, ...T.body2Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.text, whiteSpace: "nowrap" }}>
               Match me
