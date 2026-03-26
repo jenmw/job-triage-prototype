@@ -1708,6 +1708,13 @@ export default function JobTriagePage() {
 
   const hasPersonalisation = personalised || userLicences.size > 0;
 
+  // Lock body scroll when any drawer or modal is open
+  useEffect(() => {
+    const anyOpen = drawerOpen || backgroundDrawerOpen || profileOpen || licenceModalOpen;
+    document.body.style.overflow = anyOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [drawerOpen, backgroundDrawerOpen, profileOpen, licenceModalOpen]);
+
   useEffect(() => {
     if (!profilePostcode) { setProfileCoords(null); return; }
     const clean = profilePostcode.trim().replace(/\s+/g, "");
