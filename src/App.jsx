@@ -76,6 +76,18 @@ const IconBicycle = ({ color = COLORS.text }) => (
   </svg>
 );
 
+// Role preference dimensions — based on Breakroom Quiz questions
+const ROLE_PREFS = [
+  { id: "activity", label: "Physical activity", options: [["sitting", "Desk-based"], ["feet", "On my feet"], ["active", "Very active"]] },
+  { id: "teamwork", label: "Working style",     options: [["team", "In a team"], ["solo", "On my own"]] },
+  { id: "public",   label: "Customer-facing",   options: [["yes", "Yes"], ["no", "No"]] },
+  { id: "outdoors", label: "Working outdoors",  options: [["yes", "Yes"], ["no", "No"]] },
+  { id: "children", label: "With children",     options: [["yes", "Yes"], ["no", "No"]] },
+  { id: "caring",   label: "Caring / support",  options: [["yes", "Yes"], ["no", "No"]] },
+];
+
+const PRIORITIES = ["No heavy lifting", "Daytime only", "Paid breaks", "Sick pay", "Friendly team", "Career progression", "Good shift notice"];
+
 // Three transport modes — matches Breakroom onboarding options
 const TRANSPORT_MODES = [
   { id: "walk-transit", label: "Walk or public transport", Icon: IconPublicTransport, speedKph: 20 },
@@ -153,7 +165,7 @@ const JOBS = [
       ],
     },
     signals: [
-      { status: "good", label: "No qualifications required — warehouse experience preferred but not essential", detail: "GXO ask for warehouse experience and inventory process knowledge, but this is 'preferred' rather than a hard requirement.", subtext: null, findingLabel: null },
+      { status: "good", label: "No qualifications required — warehouse experience preferred but not essential", detail: "GXO ask for warehouse experience and inventory process knowledge, but this is 'preferred' rather than a hard requirement.", subtext: null, findingLabel: null, isBackgroundSignal: true },
       { status: "good", label: "Rotating day shifts Mon–Fri — no nights, no weekends", detail: "Shifts rotate between 06:00–14:00 and 14:00–22:00, Monday to Friday. No night shifts or weekend work.", subtext: null, findingLabel: null },
       { status: "bad", label: "70% of GXO workers don't get sick pay", detail: "70% of workers say they wouldn't be paid if they were sick but scheduled to work.", subtext: "Based on 918 Breakroom Quiz responses", findingLabel: "No sick pay" },
     ],
@@ -206,7 +218,7 @@ const JOBS = [
       ],
     },
     signals: [
-      { status: "good", label: "No experience required — Amazon trains you from day one", detail: "Amazon specifically say no prior warehouse experience is needed. Full paid training is provided from your first day.", subtext: null, findingLabel: null },
+      { status: "good", label: "No experience required — Amazon trains you from day one", detail: "Amazon specifically say no prior warehouse experience is needed. Full paid training is provided from your first day.", subtext: null, findingLabel: null, isBackgroundSignal: true },
       { status: "warning", label: "Physically demanding — walking 10–15 miles per shift, lifting up to 23kg", detail: "Amazon warehouse roles are high-activity roles. Workers stand and walk for the full shift and are expected to hit productivity targets.", subtext: null, findingLabel: null },
       { status: "bad", label: "86% of Amazon workers don't get sick pay", detail: "Despite Amazon's higher rating, sick pay is still a major gap — consistent across all Amazon roles.", subtext: "Based on 3,798 Breakroom Quiz responses", findingLabel: null },
     ],
@@ -259,7 +271,7 @@ const JOBS = [
       ],
     },
     signals: [
-      { status: "good", label: "No formal qualifications required", detail: "DHL ask for previous warehouse experience as a preference, but no licences or certificates are required to apply.", subtext: null, findingLabel: null },
+      { status: "good", label: "No formal qualifications required", detail: "DHL ask for previous warehouse experience as a preference, but no licences or certificates are required to apply.", subtext: null, findingLabel: null, isBackgroundSignal: true },
       { status: "warning", label: "40% of DHL workers do unpaid extra work", detail: "Four in ten DHL workers report doing work they're not paid for. Worth asking about overtime expectations at interview.", subtext: "Based on 364 Breakroom Quiz responses", findingLabel: null },
       { status: "warning", label: "60% don't get sick pay — better than most logistics employers", detail: "A majority still lack sick pay, but this compares favourably to GXO (70%), XPO (83%) and Clipper (90%).", subtext: "Based on 364 Breakroom Quiz responses", findingLabel: null },
     ],
@@ -316,7 +328,7 @@ const JOBS = [
       ],
     },
     signals: [
-      { status: "good", label: "No specific qualifications required", detail: "Wincanton ask for warehouse or logistics experience as a preference. No licences or certificates are needed for this role.", subtext: null, findingLabel: null },
+      { status: "good", label: "No specific qualifications required", detail: "Wincanton ask for warehouse or logistics experience as a preference. No licences or certificates are needed for this role.", subtext: null, findingLabel: null, isBackgroundSignal: true },
       { status: "bad", label: "56% of Wincanton workers are paid below average for the role", detail: "Pay is the biggest concern at Wincanton — more than half of workers say they earn below average for warehouse work.", subtext: "Based on 659 Breakroom Quiz responses", findingLabel: null },
       { status: "bad", label: "59% get one week or less notice of shifts", detail: "Short notice makes it hard to plan childcare, travel, or other commitments around work.", subtext: "Based on 659 Breakroom Quiz responses", findingLabel: null },
     ],
@@ -425,7 +437,7 @@ const JOBS = [
       ],
     },
     signals: [
-      { status: "warning", label: "Team leader or supervisory experience required", detail: "Amazon require evidence of leading a team, coaching others, or first-line management. Promote-from-within candidates are welcome.", subtext: null, findingLabel: null },
+      { status: "warning", label: "Team leader or supervisory experience required", detail: "Amazon require evidence of leading a team, coaching others, or first-line management. Promote-from-within candidates are welcome.", subtext: null, findingLabel: null, isBackgroundSignal: true },
       { status: "warning", label: "Working supervisor role — you manage a team while meeting your own targets", detail: "Amazon Team Leaders are hands-on. You'll be on the warehouse floor managing a team while also hitting your own productivity metrics.", subtext: null, findingLabel: null },
       { status: "good", label: "Amazon scores 7.5/10 — one of the better-rated warehouse employers", detail: "74% feel respected by managers, 89% earn above average for their role.", subtext: "Based on 3,798 Breakroom Quiz responses", findingLabel: null },
     ],
@@ -480,7 +492,7 @@ const JOBS = [
       ],
     },
     signals: [
-      { status: "good", label: "No experience required — full training provided from day one", detail: "Greencore train you on food safety and production processes from day one. A Level 2 Food Hygiene certificate is preferred but Greencore can support you to get it.", subtext: null, findingLabel: null },
+      { status: "good", label: "No experience required — full training provided from day one", detail: "Greencore train you on food safety and production processes from day one. A Level 2 Food Hygiene certificate is preferred but Greencore can support you to get it.", subtext: null, findingLabel: null, isBackgroundSignal: true },
       { status: "good", label: "75% of Greencore workers earn above average for their role", detail: "Pay is genuinely competitive for production work in this area — one of Greencore's strongest Breakroom findings.", subtext: "Based on 320 Breakroom Quiz responses", findingLabel: null },
     ],
     jd: [
@@ -531,7 +543,7 @@ const JOBS = [
       ],
     },
     signals: [
-      { status: "good", label: "No qualifications required — Royal Mail trains you", detail: "No previous experience needed. Royal Mail provide a full induction and on-the-job training.", subtext: null, findingLabel: null },
+      { status: "good", label: "No qualifications required — Royal Mail trains you", detail: "No previous experience needed. Royal Mail provide a full induction and on-the-job training.", subtext: null, findingLabel: null, isBackgroundSignal: true },
       { status: "warning", label: "Unsocial hours — shifts typically start at 05:00 or earlier", detail: "Parcel sorting operations run in the early hours to meet delivery schedules. Reliable transport at unsocial hours is essential.", subtext: null, findingLabel: null },
       { status: "good", label: "53% of Royal Mail workers would get paid if sick — better than most", detail: "Royal Mail is one of the few logistics employers where over half of workers have access to sick pay.", subtext: "Based on 3,650 Breakroom Quiz responses", findingLabel: null },
     ],
@@ -647,7 +659,7 @@ const JOBS = [
       ],
     },
     signals: [
-      { status: "good", label: "No experience required — good entry-level role", detail: "Clipper welcome applicants without prior warehouse experience. Full training is provided on the job.", subtext: null, findingLabel: null },
+      { status: "good", label: "No experience required — good entry-level role", detail: "Clipper welcome applicants without prior warehouse experience. Full training is provided on the job.", subtext: null, findingLabel: null, isBackgroundSignal: true },
       { status: "warning", label: "Target-driven picking role — performance is monitored", detail: "Pick & pack operatives are expected to meet hourly pick rates. Performance monitoring is a standard part of the role.", subtext: null, findingLabel: null },
       { status: "bad", label: "90% of Clipper workers don't get sick pay — the worst in this comparison", detail: "Sick pay is Clipper's single most striking Breakroom finding — significantly worse than any other employer shown here.", subtext: "Based on 107 Breakroom Quiz responses", findingLabel: null },
     ],
@@ -1173,6 +1185,7 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
   const [payType, setPayType] = useState(initialValues.payType || "hourly");
   const [travel, setTravel] = useState(Array.isArray(initialValues.travel) ? initialValues.travel : []);
   const [priorities, setPriorities] = useState(new Set(initialValues.priorities || []));
+  const [rolePrefs, setRolePrefs] = useState(initialValues.rolePrefs || {});
   useEffect(() => {
     if (open) {
       setPostcode(initialValues.postcode || "");
@@ -1180,10 +1193,12 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
       setPayType(initialValues.payType || "hourly");
       setTravel(Array.isArray(initialValues.travel) ? initialValues.travel : []);
       setPriorities(new Set(initialValues.priorities || []));
+      setRolePrefs(initialValues.rolePrefs || {});
     }
   }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
   const togglePriority = (p) => setPriorities((s) => { const n = new Set(s); n.has(p) ? n.delete(p) : n.add(p); return n; });
   const toggleTravel = (m) => setTravel(t => t.includes(m) ? t.filter(x => x !== m) : [...t, m]);
+  const toggleRolePref = (id, val) => setRolePrefs(p => ({ ...p, [id]: p[id] === val ? null : val }));
 
   const inputStyle = { width: "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1px solid ${COLORS.border}`, ...T.body1, fontFamily: FONT, marginBottom: S.m, background: COLORS.card, color: COLORS.text, outline: "none", boxSizing: "border-box" };
 
@@ -1230,9 +1245,9 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
           </div>
         </div>
 
-        <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>What matters most to you? (pick up to 3)</label>
+        <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>What matters most to you? <span style={{ fontWeight: 400, color: COLORS.muted }}>(pick up to 3)</span></label>
         <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginBottom: S.m2 }}>
-          {["Better pay", "Short commute", "No heavy lifting", "Daytime only", "Paid breaks", "Sick pay", "Friendly team", "Career progression"].map((p) => (
+          {PRIORITIES.map((p) => (
             <button key={p} onClick={() => { if (priorities.has(p) || priorities.size < 3) togglePriority(p); }}
               style={{ padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${priorities.has(p) ? COLORS.green : COLORS.border}`, background: priorities.has(p) ? COLORS.greenBg : COLORS.card, ...T.body1, cursor: "pointer", fontFamily: FONT, color: priorities.has(p) ? COLORS.green : COLORS.muted, fontWeight: priorities.has(p) ? 700 : 400 }}>
               {p}
@@ -1252,8 +1267,111 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
   );
 };
 
+// ─── Background drawer ─────────────────────────────────────────────────────────
+const QUALIFICATIONS = [
+  "Food hygiene certificate (Level 2)",
+  "CSCS card",
+  "First aid certificate",
+  "SIA licence",
+  "NVQ Level 2 or above",
+  "GCSE English & Maths (grade C/4 or above)",
+];
+
+const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
+  const [prevJobs, setPrevJobs] = useState(initialValues.prevJobs || [{ title: "", employer: "" }]);
+  const [experience, setExperience] = useState(initialValues.experience || null);
+  const [qualifications, setQualifications] = useState(new Set(initialValues.qualifications || []));
+
+  useEffect(() => {
+    if (open) {
+      setPrevJobs(initialValues.prevJobs || [{ title: "", employer: "" }]);
+      setExperience(initialValues.experience || null);
+      setQualifications(new Set(initialValues.qualifications || []));
+    }
+  }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const toggleQual = (q) => setQualifications(s => { const n = new Set(s); n.has(q) ? n.delete(q) : n.add(q); return n; });
+  const updateJob = (i, field, val) => setPrevJobs(jobs => jobs.map((j, idx) => idx === i ? { ...j, [field]: val } : j));
+  const removeJob = (i) => setPrevJobs(jobs => jobs.filter((_, idx) => idx !== i));
+  const inputStyle = { width: "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1px solid ${COLORS.border}`, ...T.body1, fontFamily: FONT, background: COLORS.card, color: COLORS.text, outline: "none", boxSizing: "border-box" };
+
+  return (
+    <>
+      <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity 0.3s", zIndex: 100 }} />
+      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, maxHeight: "88vh", background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, overflowY: "auto", boxShadow: "0 -8px 40px rgba(0,0,0,0.15)" }}>
+        <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px` }} />
+        <h3 style={{ ...T.lead1, margin: 0, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>Your background</h3>
+        <p style={{ ...T.body1, color: COLORS.muted, margin: `0 0 ${S.m2}px`, fontFamily: FONT }}>Tell us about your experience and qualifications — we'll use this to check your fit on every vacancy.</p>
+
+        {/* Work history */}
+        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>Work history <span style={{ fontWeight: 400, color: COLORS.muted }}>(optional)</span></div>
+        <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m}px` }}>Add your most recent roles. Leave blank if you're new to work.</p>
+        {prevJobs.map((job, i) => (
+          <div key={i} style={{ marginBottom: S.m }}>
+            <div style={{ display: "flex", gap: S.m, flexWrap: "wrap" }}>
+              <div style={{ flex: "1 1 140px" }}>
+                <label style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, display: "block", marginBottom: S.xs }}>Job title</label>
+                <input value={job.title} onChange={e => updateJob(i, "title", e.target.value)} placeholder="e.g. Warehouse Operative" style={{ ...inputStyle, marginBottom: 0 }} />
+              </div>
+              <div style={{ flex: "1 1 140px" }}>
+                <label style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, display: "block", marginBottom: S.xs }}>Employer</label>
+                <input value={job.employer} onChange={e => updateJob(i, "employer", e.target.value)} placeholder="e.g. Amazon" style={{ ...inputStyle, marginBottom: 0 }} />
+              </div>
+            </div>
+            {prevJobs.length > 1 && (
+              <div onClick={() => removeJob(i)} style={{ ...T.body2, color: COLORS.muted, textDecoration: "underline", cursor: "pointer", fontFamily: FONT, marginTop: S.xs }}>
+                Remove
+              </div>
+            )}
+          </div>
+        ))}
+        {prevJobs.length < 3 && (
+          <div onClick={() => setPrevJobs(jobs => [...jobs, { title: "", employer: "" }])} style={{ ...T.body2, color: COLORS.accent, textDecoration: "underline", cursor: "pointer", fontFamily: FONT, marginBottom: S.m2 }}>
+            + Add another role
+          </div>
+        )}
+
+        <label style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, display: "block", marginBottom: S.xs }}>How much experience do you have in this kind of work?</label>
+        <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginBottom: S.m2 }}>
+          {[["none", "None — this is new to me"], ["some", "Some — a year or two"], ["lots", "Lots — several years"]].map(([val, label]) => (
+            <button key={val} onClick={() => setExperience(experience === val ? null : val)}
+              style={{ ...T.body2, padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${experience === val ? COLORS.green : COLORS.border}`, background: experience === val ? COLORS.greenBg : COLORS.card, color: experience === val ? COLORS.green : COLORS.muted, fontWeight: experience === val ? 700 : 400, cursor: "pointer", fontFamily: FONT }}>
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {/* Qualifications */}
+        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>Qualifications <span style={{ fontWeight: 400, color: COLORS.muted }}>(optional)</span></div>
+        <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m}px` }}>Tick any you have. Driving licences can be added separately from the job page.</p>
+        <div style={{ background: COLORS.card, borderRadius: 8, padding: `0 ${S.m}px`, marginBottom: S.m2 }}>
+          {QUALIFICATIONS.map((q, i) => {
+            const sel = qualifications.has(q);
+            return (
+              <div key={q} onClick={() => toggleQual(q)} style={{ display: "flex", alignItems: "center", gap: S.m, padding: `${S.s2}px 0`, borderBottom: i < QUALIFICATIONS.length - 1 ? `1px solid ${COLORS.border}` : "none", cursor: "pointer" }}>
+                <span style={{ width: 20, height: 20, borderRadius: 4, border: `2px solid ${sel ? COLORS.green : COLORS.border}`, background: sel ? COLORS.green : "transparent", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  {sel && <span style={{ color: "#fff", fontSize: 12, lineHeight: 1, fontWeight: 700 }}>✓</span>}
+                </span>
+                <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT }}>{q}</span>
+              </div>
+            );
+          })}
+        </div>
+
+        <button onClick={() => onSubmit({ prevJobs, experience, qualifications: [...qualifications] })}
+          style={{ width: "100%", padding: S.m, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
+          Save →
+        </button>
+        <button onClick={onClose} style={{ width: "100%", padding: S.s2, background: "none", border: "none", ...T.body1, color: COLORS.muted, cursor: "pointer", marginTop: S.s, fontFamily: FONT }}>
+          Not now
+        </button>
+      </div>
+    </>
+  );
+};
+
 // ─── Profile hub ───────────────────────────────────────────────────────────────
-const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, currentPay, currentPayType = "hourly", travel, priorities, userLicences, onSavePrefs, onOpenLicenceModal, onOpenDrawer, hasPersonalisation }) => {
+const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, currentPay, currentPayType = "hourly", travel, priorities, rolePrefs: initialRolePrefs = {}, userLicences, onSavePrefs, onOpenLicenceModal, onOpenDrawer, hasPersonalisation }) => {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState(false);
   const [lPostcode, setLPostcode] = useState(postcode);
@@ -1261,7 +1379,9 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
   const [lPayType, setLPayType] = useState(currentPayType);
   const [lTravel, setLTravel] = useState(Array.isArray(travel) ? travel : []);
   const [lPriorities, setLPriorities] = useState(new Set(priorities));
+  const [lRolePrefs, setLRolePrefs] = useState(initialRolePrefs);
   const toggleLTravel = (m) => setLTravel(t => t.includes(m) ? t.filter(x => x !== m) : [...t, m]);
+  const toggleLRolePref = (id, val) => setLRolePrefs(p => ({ ...p, [id]: p[id] === val ? null : val }));
 
   useEffect(() => {
     if (open) {
@@ -1272,6 +1392,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
       setLPayType(currentPayType);
       setLTravel(Array.isArray(travel) ? travel : []);
       setLPriorities(new Set(priorities));
+      setLRolePrefs(initialRolePrefs);
     }
   }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -1415,9 +1536,9 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
                 </div>
               </div>
               <input value={lPay} onChange={e => setLPay(e.target.value)} placeholder={lPayType === "hourly" ? "e.g. £12.50" : "e.g. £26,000"} style={inputStyle} />
-              <label style={sectionLabel}>What matters most to you? (pick up to 3)</label>
+              <label style={sectionLabel}>What matters most to you? <span style={{ fontWeight: 400, color: COLORS.muted }}>(pick up to 3)</span></label>
               <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginBottom: S.m2 }}>
-                {["Better pay", "Short commute", "No heavy lifting", "Daytime only", "Paid breaks", "Sick pay", "Friendly team", "Career progression"].map(p => (
+                {PRIORITIES.map(p => (
                   <button key={p} onClick={() => { if (lPriorities.has(p) || lPriorities.size < 3) toggleP(p); }}
                     style={{ padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${lPriorities.has(p) ? COLORS.green : COLORS.border}`, background: lPriorities.has(p) ? COLORS.greenBg : COLORS.card, ...T.body1, cursor: "pointer", fontFamily: FONT, color: lPriorities.has(p) ? COLORS.green : COLORS.muted, fontWeight: lPriorities.has(p) ? 700 : 400 }}>
                     {p}
@@ -1531,6 +1652,8 @@ const DesktopSidebar = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawer,
 
 export default function JobTriagePage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [backgroundDrawerOpen, setBackgroundDrawerOpen] = useState(false);
+  const [profileBackground, setProfileBackground] = useState({});
   const [profileOpen, setProfileOpen] = useState(false);
   const [allFindingsModalOpen, setAllFindingsModalOpen] = useState(false);
   const [personalised, setPersonalised] = useState(false);
@@ -1548,6 +1671,7 @@ export default function JobTriagePage() {
   const [profilePayType, setProfilePayType] = useState("hourly");
   const [profileTravel, setProfileTravel] = useState([]);
   const [profilePriorities, setProfilePriorities] = useState([]);
+  const [profileRolePrefs, setProfileRolePrefs] = useState({});
 
   const hasPersonalisation = personalised || userLicences.size > 0;
 
@@ -1565,7 +1689,8 @@ export default function JobTriagePage() {
       .catch(() => setProfileCoords(false));
   }, [profilePostcode]);
 
-  const handleSavePrefs = ({ postcode, currentPay, payType = "hourly", travel, priorities }) => {
+  const handleSavePrefs = ({ postcode, currentPay, payType = "hourly", travel, priorities, rolePrefs = {} }) => {
+    setProfileRolePrefs(rolePrefs);
     setProfilePostcode(postcode);
     setProfileCurrentPay(currentPay);
     setProfilePayType(payType);
@@ -1696,30 +1821,84 @@ export default function JobTriagePage() {
       <div style={{ borderBottom: `1px solid ${COLORS.border}`, paddingBottom: S.m }}>
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, padding: `${S.m}px 0` }}>Can you do this job?</div>
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `0 ${S.m}px` }}>
-          {job.signals.map((sig, i, arr) => {
-            if (sig.isFltLicenceSignal) {
+          {(() => {
+            const hasBackground = Object.keys(profileBackground).length > 0;
+            // Filter out background/experience signals — the background card handles these
+            const nonBackgroundSignals = job.signals.filter(s => !s.isBackgroundSignal);
+            // Always show background card first, then 2 remaining job signals (max 3 total)
+            const visibleJobSignals = nonBackgroundSignals.slice(0, 2);
+
+            const renderJobSignal = (sig, i, isLast) => {
+              if (sig.isFltLicenceSignal) {
+                return (
+                  <Signal key={i}
+                    status={userLicences.has("flt") ? "good" : "bad"}
+                    label={userLicences.has("flt") ? "Forklift licence: you have the required licence" : "Forklift licence required (RTITB or ITSSAR)"}
+                    detail="A valid counterbalance forklift licence is required. Reach truck licence is desirable."
+                    subtext={userLicences.has("flt") ? "✓ You told us you have an FLT licence" : "Tell us if you have a forklift licence →"}
+                    subtextClick={userLicences.has("flt") ? null : () => setLicenceModalOpen(true)}
+                    isLast={isLast}
+                  />
+                );
+              }
               return (
                 <Signal key={i}
-                  status={userLicences.has("flt") ? "good" : "bad"}
-                  label={userLicences.has("flt") ? "Forklift licence: you have the required licence" : "Forklift licence required (RTITB or ITSSAR)"}
-                  detail="A valid counterbalance forklift licence is required. Reach truck licence is desirable."
-                  subtext={userLicences.has("flt") ? "✓ You told us you have an FLT licence" : "Tell us if you have a forklift licence →"}
-                  subtextClick={userLicences.has("flt") ? null : () => setLicenceModalOpen(true)}
-                  isLast={i === arr.length - 1}
+                  status={sig.status}
+                  label={sig.label}
+                  detail={sig.detail}
+                  subtext={sig.subtext}
+                  labelClick={sig.findingLabel ? () => handlePillClick(sig.findingLabel) : null}
+                  isLast={isLast}
                 />
               );
-            }
-            return (
-              <Signal key={i}
-                status={sig.status}
-                label={sig.label}
-                detail={sig.detail}
-                subtext={sig.subtext}
-                labelClick={sig.findingLabel ? () => handlePillClick(sig.findingLabel) : null}
-                isLast={i === arr.length - 1}
-              />
+            };
+
+            // Background card — empty state or personalised
+            const bgCard = hasBackground ? (() => {
+              let bgSignal = { status: "good", label: "Your background suits this role", detail: "Based on what you've told us, this looks like a good fit." };
+              if ((profileBackground.qualifications || []).includes("food-hygiene")) bgSignal = { status: "good", label: "Your food hygiene certificate is relevant here", detail: "Level 2 food hygiene certificates are valued in this type of role." };
+              else if (profileBackground.experience === "none") bgSignal = { status: "good", label: "No prior experience required", detail: "This employer offers full training — your background fits." };
+              else if (profileBackground.experience === "lots") {
+                const firstJob = (profileBackground.prevJobs || [])[0];
+                bgSignal = { status: "good", label: "Your experience suits this role", detail: firstJob?.title ? `Your background as ${firstJob.title} is directly relevant.` : "Several years of relevant experience — you're well placed for this." };
+              }
+              return <Signal status={bgSignal.status} label={bgSignal.label} detail={bgSignal.detail} subtext="Update your background" subtextClick={() => setBackgroundDrawerOpen(true)} isLast={false} />;
+            })() : (
+              <div style={{ fontSize: 16, lineHeight: "22px", fontWeight: 500, color: COLORS.text, padding: `${S.m}px 0`, borderBottom: `1px solid rgba(50,50,50,0.1)` }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: S.s }}>
+                  <span style={{ width: 15, height: 15, borderRadius: "50%", background: COLORS.border, border: "2px solid #fff", flexShrink: 0, marginTop: 3 }} />
+                  <div style={{ flex: 1, fontFamily: FONT }}>
+                    <div>Are you suited for this role?</div>
+                    <div style={{ ...T.body1, color: COLORS.muted, marginTop: S.xs, fontWeight: 400 }}>
+                      Tell us about your experience and qualifications — we'll check your fit on every vacancy.
+                    </div>
+                    <div style={{ margin: `${S.s}px 0` }}>
+                      {[
+                        "Your experience level vs. what's required",
+                        "Whether your qualifications are relevant",
+                        "How the working conditions suit you",
+                      ].map((text, j) => (
+                        <div key={j} style={{ display: "flex", alignItems: "flex-start", gap: S.s, padding: `${S.xs}px 0` }}>
+                          <span style={{ width: 10, height: 10, borderRadius: "50%", background: COLORS.border, flexShrink: 0, marginTop: 3 }} />
+                          <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{text}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div onClick={() => setBackgroundDrawerOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", cursor: "pointer", fontFamily: FONT, marginTop: S.xs }}>
+                      Tell us about your background
+                    </div>
+                  </div>
+                </div>
+              </div>
             );
-          })}
+
+            return (
+              <>
+                {bgCard}
+                {visibleJobSignals.map((sig, i) => renderJobSignal(sig, i, i === visibleJobSignals.length - 1))}
+              </>
+            );
+          })()}
         </div>
       </div>
 
@@ -1852,13 +2031,17 @@ export default function JobTriagePage() {
         initialValues={{ postcode: profilePostcode, currentPay: profileCurrentPay, payType: profilePayType, travel: profileTravel, priorities: profilePriorities }}
         onSubmit={(data) => { handleSavePrefs(data); setDrawerOpen(false); }} />
 
+      <BackgroundDrawer open={backgroundDrawerOpen} onClose={() => setBackgroundDrawerOpen(false)}
+        initialValues={profileBackground}
+        onSubmit={(data) => { setProfileBackground(data); setBackgroundDrawerOpen(false); }} />
+
       <LicenceModal open={licenceModalOpen} onClose={() => setLicenceModalOpen(false)}
         userLicences={userLicences} onSave={(s) => setUserLicences(s)} />
 
       <ProfileHub
         open={profileOpen} onClose={() => setProfileOpen(false)}
         isSignedIn={isSignedIn} userEmail={userEmail} onSignIn={handleSignIn}
-        postcode={profilePostcode} currentPay={profileCurrentPay} currentPayType={profilePayType} travel={profileTravel} priorities={profilePriorities}
+        postcode={profilePostcode} currentPay={profileCurrentPay} currentPayType={profilePayType} travel={profileTravel} priorities={profilePriorities} rolePrefs={profileRolePrefs}
         userLicences={userLicences} onSavePrefs={(data) => { handleSavePrefs(data); }} onOpenLicenceModal={() => { setProfileOpen(false); setLicenceModalOpen(true); }}
         hasPersonalisation={hasPersonalisation} onOpenDrawer={() => { setProfileOpen(false); setDrawerOpen(true); }}
       />
