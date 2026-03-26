@@ -44,6 +44,24 @@ const T = {
 // ─── Utility ────────────────────────────────────────────────────────────────
 const toHourly = (pay, type) => (type === "annual" ? pay / 2080 : pay);
 
+// Groups bad+good findings into Pay / Hours / Workplace sections for the modal
+const PAY_LABELS = new Set(["No sick pay","Some sick pay","No paid breaks","No unpaid overtime","Living wage","Above average pay","Below average pay"]);
+const HOURS_LABELS = new Set(["Short shift notice","Hours security","No choice of shifts","No last-minute shift changes","Easy holiday booking"]);
+const buildAllFindings = (bad, good) => {
+  const all = [
+    ...bad.map(f => ({ ...f, opinion: "bad" })),
+    ...good.map(f => ({ ...f, opinion: "good" })),
+  ];
+  const pay = all.filter(f => PAY_LABELS.has(f.label));
+  const hours = all.filter(f => HOURS_LABELS.has(f.label));
+  const workplace = all.filter(f => !PAY_LABELS.has(f.label) && !HOURS_LABELS.has(f.label));
+  return [
+    { section: "Pay", findings: pay },
+    { section: "Hours and flexibility", findings: hours },
+    { section: "Workplace", findings: workplace },
+  ].filter(s => s.findings.length > 0);
+};
+
 // Jobs data — the current listing plus nine alternatives
 const JOBS = [
   // ── 0: Main job — GXO Logistics ─────────────────────────────────────────────
@@ -68,6 +86,21 @@ const JOBS = [
     payBenchmark: { verdict: "below", label: "below average for warehouse operatives in Northamptonshire", range: "£27,000–£32,000/yr typical" },
     findingDiffs: [],
     requiresFltLicence: false,
+    findings: {
+      bad: [
+        { pct: 70, label: "No sick pay", heading: "Most people don't get sick pay", primary: "No. Most people don't get proper sick pay.", secondary: "70% of people say they wouldn't get paid if they were sick but scheduled to work.", why: "Everyone gets sick sometimes. You should be able to take time off without worrying. At a good job you should still get paid if you're scheduled to work but can't due to sickness." },
+        { pct: 69, label: "No choice of shifts", heading: "Most people don't get any choice of shifts", primary: "Most people don't get enough choice over which shifts they work.", secondary: "69% report that their manager doesn't give them enough choice over which shifts they work.", why: "A good job is flexible around your personal life. This means you get a say in when you prefer to work." },
+        { pct: 68, label: "Stressful work", heading: "Most people are stressed", primary: "Most people feel stressed here.", secondary: "68% of people say they often feel stressed at work.", why: "Work isn't always easy, but if you're frequently feel stressed, that's not good. Your employer should support you with enough people and resources to get your job done without feeling overwhelmed." },
+        { pct: 67, label: "No support to progress", heading: "Most people don't get support to progress", primary: "Most people aren't given support to progress here.", secondary: "67% of people report not being given an opportunity to get better at their job, learn a new skill, learn to manage a team or get more responsibility.", why: "A good job should help you progress at work, if you want to." },
+        { pct: 82, label: "Disconnected management", heading: "Head office doesn't understand what's happening", primary: "Most people think head office doesn't understand what's happening where they work.", secondary: "82% of people think that this employer's head office or owners don't have a good understanding of what's really happening where they work.", why: "At a good job, the role of head office should be to support the people on the frontline serving customers. To do that properly, the company's owners or head office need to have a good understanding of what's really happening on the frontline." },
+      ],
+      good: [
+        { pct: 93, label: "No last-minute shift changes", heading: "Shifts don't get changed at short notice", primary: "Most managers don't change people's shifts at short notice.", secondary: "93% of people say their manager doesn't changes their shifts at the last minute.", why: "If your manager is often changing your shifts at short notice that's a sign of poor planning. At a good job you won't be messed around at the last minute." },
+        { pct: 92, label: "Hours security", heading: "Most people don't worry about their hours", primary: "Most people don't worry about getting enough hours.", secondary: "92% of people report they don't worry about getting enough hours.", why: "At a good job, you shouldn't have to worry about getting enough hours each week. A good job should guarantee you a minimum number of hours in a contract, if you want it." },
+        { pct: 90, label: "Proper breaks", heading: "Most people get proper breaks", primary: "Most people get proper breaks.", secondary: "90% of people report that they get to take proper breaks.", why: "When you take a break it should be a proper rest. It should last the full duration and you shouldn't get pulled off it." },
+        { pct: 82, label: "No unpaid overtime", heading: "Most people don't do unpaid extra work", primary: "Rarely. Most people don't do unpaid extra work.", secondary: "82% of people report that they don't do extra unpaid work.", why: "Everyone should get paid for any extra work they do, even if it is outside your contracted hours. At a good job, you should be paid for all the time you spend at work." },
+      ],
+    },
     signals: [
       { status: "good", label: "No qualifications required — warehouse experience preferred but not essential", detail: "GXO ask for warehouse experience and inventory process knowledge, but this is 'preferred' rather than a hard requirement.", subtext: null, findingLabel: null },
       { status: "good", label: "Rotating day shifts Mon–Fri — no nights, no weekends", detail: "Shifts rotate between 06:00–14:00 and 14:00–22:00, Monday to Friday. No night shifts or weekend work.", subtext: null, findingLabel: null },
@@ -100,13 +133,26 @@ const JOBS = [
     shifts: "Various shifts",
     rating: 7.5,
     quizCount: 3798,
-    highlights: [],
+    highlights: ["No last-minute shift changes", "Living wage", "No unpaid overtime"],
     listingUrl: "https://www.amazon.jobs/en-gb",
     altBadge: "Better rated",
     altReason: null,
     payBenchmark: { verdict: "good", label: "above average for warehouse associates in Northamptonshire", range: "£12–£14/hr typical" },
     findingDiffs: ["No experience required", "Better rated employer"],
     requiresFltLicence: false,
+    findings: {
+      bad: [
+        { pct: 86, label: "No sick pay", heading: "Most people don't get sick pay", primary: "No. Most people don't get proper sick pay.", secondary: "86% of people say they wouldn't get paid if they were sick but scheduled to work.", why: "Everyone gets sick sometimes. You should be able to take time off without worrying. At a good job you should still get paid if you're scheduled to work but can't due to sickness." },
+        { pct: 61, label: "Short shift notice", heading: "Less than 4 weeks notice of shifts", primary: "Most people don't get 4 weeks notice of when they're working.", secondary: "61% of people with changing schedules report getting one week notice or less.", why: "At a good job, you get plenty of notice about when you're working. This makes it easy for you to plan the rest of life, as well as your finances, because you know how much you'll be working and when." },
+        { pct: 69, label: "Disconnected management", heading: "Head office doesn't understand what's happening", primary: "Most people think head office doesn't understand what's happening where they work.", secondary: "69% of people think that this employer's head office or owners don't have a good understanding of what's really happening where they work.", why: "At a good job, the role of head office should be to support the people on the frontline serving customers. To do that properly, the company's owners or head office need to have a good understanding of what's really happening on the frontline." },
+      ],
+      good: [
+        { pct: 92, label: "Living wage", heading: "Most people are paid a living wage", primary: "Most people are paid a living wage.", secondary: "92% of people say they are paid at or above the Real Living Wage for where they live.", why: "Everyone should be paid enough to live on. The Real Living Wage is a voluntary rate employers can sign up to that is based on the real cost of living." },
+        { pct: 91, label: "No last-minute shift changes", heading: "Shifts don't get changed at short notice", primary: "Most managers don't change people's shifts at short notice.", secondary: "91% of people say their manager doesn't change their shifts at the last minute.", why: "If your manager is often changing your shifts at short notice that's a sign of poor planning. At a good job you won't be messed around at the last minute." },
+        { pct: 89, label: "Hours security", heading: "Most people don't worry about their hours", primary: "Most people don't worry about getting enough hours.", secondary: "89% of people report they don't worry about getting enough hours.", why: "At a good job, you shouldn't have to worry about getting enough hours each week." },
+        { pct: 84, label: "No unpaid overtime", heading: "Most people don't do unpaid extra work", primary: "Rarely. Most people don't do unpaid extra work.", secondary: "84% of people report that they don't do extra unpaid work.", why: "Everyone should get paid for any extra work they do, even if it is outside your contracted hours." },
+      ],
+    },
     signals: [
       { status: "good", label: "No experience required — Amazon trains you from day one", detail: "Amazon specifically say no prior warehouse experience is needed. Full paid training is provided from your first day.", subtext: null, findingLabel: null },
       { status: "warning", label: "Physically demanding — walking 10–15 miles per shift, lifting up to 23kg", detail: "Amazon warehouse roles are high-activity roles. Workers stand and walk for the full shift and are expected to hit productivity targets.", subtext: null, findingLabel: null },
@@ -139,13 +185,26 @@ const JOBS = [
     shifts: "Day shifts",
     rating: 6.7,
     quizCount: 364,
-    highlights: [],
+    highlights: ["Hours security", "No last-minute shift changes"],
     listingUrl: "https://www.dhl.com/gb-en/home/careers.html",
     altBadge: "↑ £0.27/hr",
     altReason: null,
     payBenchmark: { verdict: "fair", label: "around average for warehouse operatives in Northamptonshire", range: "£12–£14/hr typical" },
     findingDiffs: ["Better sick pay cover", "Less unpaid overtime"],
     requiresFltLicence: false,
+    findings: {
+      bad: [
+        { pct: 69, label: "No paid breaks", heading: "Most people don't get paid breaks", primary: "No. Most people don't get paid breaks.", secondary: "69% of people say they don't get paid breaks.", why: "A good job should have paid breaks. You should be paid for all your time at work, whether you're on a break or not." },
+        { pct: 70, label: "No choice of shifts", heading: "Most people don't get any choice of shifts", primary: "Most people don't get enough choice over which shifts they work.", secondary: "70% report that their manager doesn't give them enough choice over which shifts they work.", why: "A good job is flexible around your personal life. This means you get a say in when you prefer to work." },
+        { pct: 82, label: "Disconnected management", heading: "Head office doesn't understand what's happening", primary: "Most people think head office doesn't understand what's happening where they work.", secondary: "82% of people think that this employer's head office or owners don't have a good understanding of what's really happening where they work.", why: "At a good job, the role of head office should be to support the people on the frontline serving customers. To do that properly, the company's owners or head office need to have a good understanding of what's really happening on the frontline." },
+      ],
+      good: [
+        { pct: 94, label: "Hours security", heading: "Most people don't worry about their hours", primary: "Most people don't worry about getting enough hours.", secondary: "94% of people report they don't worry about getting enough hours.", why: "At a good job, you shouldn't have to worry about getting enough hours each week. A good job should guarantee you a minimum number of hours in a contract, if you want it." },
+        { pct: 87, label: "No last-minute shift changes", heading: "Shifts don't get changed at short notice", primary: "Most managers don't change people's shifts at short notice.", secondary: "87% of people say their manager doesn't changes their shifts at the last minute.", why: "If your manager is often changing your shifts at short notice that's a sign of poor planning. At a good job you won't be messed around at the last minute." },
+        { pct: 84, label: "Living wage", heading: "Most people are paid a living wage", primary: "Most people are paid at a living wage.", secondary: "84% of people say they are paid at or above the Real Living Wage for where they live.", why: "Everyone should be paid enough to live on." },
+        { pct: 78, label: "Proper breaks", heading: "Most people get proper breaks", primary: "Most people get proper breaks.", secondary: "78% of people report that they get to take proper breaks.", why: "When you take a break it should be a proper rest. It should last the full duration and you shouldn't get pulled off it." },
+      ],
+    },
     signals: [
       { status: "good", label: "No formal qualifications required", detail: "DHL ask for previous warehouse experience as a preference, but no licences or certificates are required to apply.", subtext: null, findingLabel: null },
       { status: "warning", label: "40% of DHL workers do unpaid extra work", detail: "Four in ten DHL workers report doing work they're not paid for. Worth asking about overtime expectations at interview.", subtext: "Based on 364 Breakroom Quiz responses", findingLabel: null },
@@ -178,13 +237,30 @@ const JOBS = [
     shifts: "Mixed shifts",
     rating: 6.1,
     quizCount: 659,
-    highlights: [],
+    highlights: ["Hours security", "No last-minute shift changes"],
     listingUrl: "https://www.wincanton.co.uk/careers",
     altBadge: null,
     altReason: null,
     payBenchmark: { verdict: "below", label: "below average for warehouse operatives in Northamptonshire", range: "£12–£14/hr typical" },
     findingDiffs: [],
     requiresFltLicence: false,
+    findings: {
+      bad: [
+        { pct: 59, label: "Short shift notice", heading: "Less than 4 weeks notice of shifts", primary: "Most people don't get 4 weeks notice.", secondary: "59% of people with changing schedules report getting one week notice or less.", why: "At a good job, you get plenty of notice about when you're working. This makes it easy for you to plan the rest of life, as well as your finances, because you know how much you'll be working and when." },
+        { pct: 68, label: "No choice of shifts", heading: "Most people don't get any choice of shifts", primary: "Most people don't get enough choice over which shifts they work.", secondary: "68% report that their manager doesn't give them enough choice over which shifts they work.", why: "A good job is flexible around your personal life. This means you get a say in when you prefer to work." },
+        { pct: 68, label: "Stressful work", heading: "Most people are stressed", primary: "Most people feel stressed here.", secondary: "68% of people say they often feel stressed at work.", why: "Work isn't always easy, but if you're frequently feel stressed, that's not good. Your employer should support you with enough people and resources to get your job done without feeling overwhelmed." },
+        { pct: 68, label: "Team atmosphere", heading: "Most people don't recommend their team", primary: "Not many people recommend working with their team.", secondary: "68% of people report that they wouldn't recommend working with their immediate team to a friend.", why: "A good job means enjoying the place where you work. The people you work with every day really matter. They can be the difference between a terrible day and a great one." },
+        { pct: 69, label: "No support to progress", heading: "Most people don't get support to progress", primary: "Most people aren't given support to progress here.", secondary: "69% of people report not being given an opportunity to get better at their job, learn a new skill, learn to manage a team or get more responsibility.", why: "A good job should help you progress at work, if you want to." },
+        { pct: 88, label: "Disconnected management", heading: "Head office doesn't understand what's happening", primary: "Most people think head office doesn't understand what's happening where they work.", secondary: "88% of people think that this employer's head office or owners don't have a good understanding of what's really happening where they work.", why: "At a good job, the role of head office should be to support the people on the frontline serving customers." },
+        { pct: 70, label: "Poor communication", heading: "Most people don't feel well informed by head office", primary: "Most people don't feel well informed about how the company is doing.", secondary: "70% of people feel that they aren't kept well informed about how the company is doing as a whole.", why: "At a good job, there should be a supportive relationship between the people working on the frontline and the people who own the company or work in head office. You should be kept informed about how the company is doing as a whole, both in good times and when things get tough for the business." },
+      ],
+      good: [
+        { pct: 95, label: "Hours security", heading: "Most people don't worry about their hours", primary: "Most people don't worry about getting enough hours.", secondary: "95% of people report they don't worry about getting enough hours.", why: "At a good job, you shouldn't have to worry about getting enough hours each week." },
+        { pct: 84, label: "No last-minute shift changes", heading: "Shifts don't get changed at short notice", primary: "Most managers don't change people's shifts at short notice.", secondary: "84% of people say their manager doesn't change their shifts at the last minute.", why: "If your manager is often changing your shifts at short notice that's a sign of poor planning. At a good job you won't be messed around at the last minute." },
+        { pct: 79, label: "No unpaid overtime", heading: "Most people don't do unpaid extra work", primary: "Rarely. Most people don't do unpaid extra work.", secondary: "79% of people report that they don't do extra unpaid work.", why: "Everyone should get paid for any extra work they do, even if it is outside your contracted hours." },
+        { pct: 78, label: "Proper breaks", heading: "Most people get proper breaks", primary: "Most people get proper breaks.", secondary: "78% of people report that they get to take proper breaks.", why: "When you take a break it should be a proper rest. It should last the full duration and you shouldn't get pulled off it." },
+      ],
+    },
     signals: [
       { status: "good", label: "No specific qualifications required", detail: "Wincanton ask for warehouse or logistics experience as a preference. No licences or certificates are needed for this role.", subtext: null, findingLabel: null },
       { status: "bad", label: "56% of Wincanton workers are paid below average for the role", detail: "Pay is the biggest concern at Wincanton — more than half of workers say they earn below average for warehouse work.", subtext: "Based on 659 Breakroom Quiz responses", findingLabel: null },
@@ -217,13 +293,29 @@ const JOBS = [
     shifts: "Day shifts",
     rating: 5.8,
     quizCount: 372,
-    highlights: [],
+    highlights: ["Hours security", "No unpaid overtime"],
     listingUrl: "https://www.xpo.com/en-gb/careers",
     altBadge: "↑ £2.02/hr",
     altReason: { text: "FLT licence required" },
     payBenchmark: { verdict: "fair", label: "around average for FLT drivers in Northamptonshire", range: "£14–£17/hr typical" },
     findingDiffs: ["Higher pay rate"],
     requiresFltLicence: true,
+    findings: {
+      bad: [
+        { pct: 75, label: "No paid breaks", heading: "Most people don't get paid breaks", primary: "No. Most people don't get paid breaks.", secondary: "75% of people say they don't get paid breaks.", why: "A good job should have paid breaks. You should be paid for all your time at work, whether you're on a break or not." },
+        { pct: 83, label: "No sick pay", heading: "Most people don't get sick pay", primary: "No. Most people don't get proper sick pay.", secondary: "83% of people say they wouldn't get paid if they were sick but scheduled to work.", why: "Everyone gets sick sometimes. You should be able to take time off without worrying. At a good job you should still get paid if you're scheduled to work but can't due to sickness." },
+        { pct: 74, label: "Short shift notice", heading: "Less than 4 weeks notice of shifts", primary: "Most people don't get 4 weeks notice of when they're working.", secondary: "74% of people with changing schedules report getting one week notice or less.", why: "At a good job, you get plenty of notice about when you're working. This makes it easy for you to plan the rest of life, as well as your finances, because you know how much you'll be working and when." },
+        { pct: 68, label: "No support to progress", heading: "Most people don't get support to progress", primary: "Most people aren't given support to progress here.", secondary: "In the last year, 68% of people report not being given an opportunity to get better at their job, learn a new skill, learn to manage a team or get more responsibility in their role.", why: "A good job should help you progress at work, if you want to." },
+        { pct: 85, label: "Disconnected management", heading: "Head office doesn't understand what's happening", primary: "Most people think head office doesn't understand what's happening where they work.", secondary: "85% of people think that this employer's head office or owners don't have a good understanding of what's really happening where they work.", why: "At a good job, the role of head office should be to support the people on the frontline serving customers." },
+        { pct: 82, label: "Poor communication", heading: "Most people don't feel well informed by head office", primary: "Most people don't feel well informed about how the company is doing.", secondary: "82% of people feel that they aren't kept well informed about how the company is doing as a whole.", why: "You should be kept informed about how the company is doing as a whole, both in good times and when things get tough for the business." },
+      ],
+      good: [
+        { pct: 86, label: "Hours security", heading: "Most people don't worry about their hours", primary: "Most people don't worry about getting enough hours.", secondary: "86% of people report they don't worry about getting enough hours.", why: "At a good job, you shouldn't have to worry about getting enough hours each week." },
+        { pct: 81, label: "Living wage", heading: "Most people are paid a living wage", primary: "Most people are paid a living wage.", secondary: "81% of people say they are paid at or above the Real Living Wage for where they live.", why: "Everyone should be paid enough to live on." },
+        { pct: 73, label: "Easy holiday booking", heading: "Easy to book holiday", primary: "Most people find it easy to book holiday.", secondary: "73% of people report it's easy to book holidays.", why: "A good job should let you take time off when you need it, and it shouldn't be a nightmare to arrange." },
+        { pct: 70, label: "No unpaid overtime", heading: "Most people don't do unpaid extra work", primary: "Rarely. Most people don't do unpaid extra work.", secondary: "70% of people report that they don't do extra unpaid work.", why: "Everyone should get paid for any extra work they do, even if it is outside your contracted hours." },
+      ],
+    },
     signals: [
       { status: null, label: null, detail: null, subtext: null, findingLabel: null, isFltLicenceSignal: true },
       { status: "warning", label: "Minimum 1 year counterbalance FLT experience required", detail: "XPO require at least a year of documented forklift operating experience. Reach truck experience is desirable but not essential.", subtext: null, findingLabel: null },
@@ -256,13 +348,26 @@ const JOBS = [
     shifts: "Various shifts",
     rating: 7.5,
     quizCount: 3798,
-    highlights: [],
+    highlights: ["Living wage", "No last-minute shift changes", "No unpaid overtime"],
     listingUrl: "https://www.amazon.jobs/en-gb",
     altBadge: "↑ £4.02/hr",
     altReason: { text: "Leadership experience required" },
     payBenchmark: { verdict: "good", label: "above average for warehouse team leaders in Northamptonshire", range: "£30,000–£38,000/yr typical" },
     findingDiffs: ["Higher pay", "Better rated employer"],
     requiresFltLicence: false,
+    findings: {
+      bad: [
+        { pct: 86, label: "No sick pay", heading: "Most people don't get sick pay", primary: "No. Most people don't get proper sick pay.", secondary: "86% of people say they wouldn't get paid if they were sick but scheduled to work.", why: "Everyone gets sick sometimes. You should be able to take time off without worrying. At a good job you should still get paid if you're scheduled to work but can't due to sickness." },
+        { pct: 61, label: "Short shift notice", heading: "Less than 4 weeks notice of shifts", primary: "Most people don't get 4 weeks notice of when they're working.", secondary: "61% of people with changing schedules report getting one week notice or less.", why: "At a good job, you get plenty of notice about when you're working. This makes it easy for you to plan the rest of life, as well as your finances, because you know how much you'll be working and when." },
+        { pct: 69, label: "Disconnected management", heading: "Head office doesn't understand what's happening", primary: "Most people think head office doesn't understand what's happening where they work.", secondary: "69% of people think that this employer's head office or owners don't have a good understanding of what's really happening where they work.", why: "At a good job, the role of head office should be to support the people on the frontline serving customers. To do that properly, the company's owners or head office need to have a good understanding of what's really happening on the frontline." },
+      ],
+      good: [
+        { pct: 92, label: "Living wage", heading: "Most people are paid a living wage", primary: "Most people are paid a living wage.", secondary: "92% of people say they are paid at or above the Real Living Wage for where they live.", why: "Everyone should be paid enough to live on. The Real Living Wage is a voluntary rate employers can sign up to that is based on the real cost of living." },
+        { pct: 91, label: "No last-minute shift changes", heading: "Shifts don't get changed at short notice", primary: "Most managers don't change people's shifts at short notice.", secondary: "91% of people say their manager doesn't change their shifts at the last minute.", why: "If your manager is often changing your shifts at short notice that's a sign of poor planning. At a good job you won't be messed around at the last minute." },
+        { pct: 89, label: "Hours security", heading: "Most people don't worry about their hours", primary: "Most people don't worry about getting enough hours.", secondary: "89% of people report they don't worry about getting enough hours.", why: "At a good job, you shouldn't have to worry about getting enough hours each week." },
+        { pct: 84, label: "No unpaid overtime", heading: "Most people don't do unpaid extra work", primary: "Rarely. Most people don't do unpaid extra work.", secondary: "84% of people report that they don't do extra unpaid work.", why: "Everyone should get paid for any extra work they do, even if it is outside your contracted hours." },
+      ],
+    },
     signals: [
       { status: "warning", label: "Team leader or supervisory experience required", detail: "Amazon require evidence of leading a team, coaching others, or first-line management. Promote-from-within candidates are welcome.", subtext: null, findingLabel: null },
       { status: "warning", label: "Working supervisor role — you manage a team while meeting your own targets", detail: "Amazon Team Leaders are hands-on. You'll be on the warehouse floor managing a team while also hitting your own productivity metrics.", subtext: null, findingLabel: null },
@@ -295,13 +400,28 @@ const JOBS = [
     shifts: "Rotating shifts",
     rating: 7.2,
     quizCount: 320,
-    highlights: [],
+    highlights: ["No last-minute shift changes", "Hours security", "Proper breaks"],
     listingUrl: "https://www.greencore.com/careers",
     altBadge: "Better rated",
     altReason: { text: "Food production role" },
     payBenchmark: { verdict: "good", label: "above average for production operatives in Northamptonshire", range: "£12–£15/hr typical" },
     findingDiffs: ["Better rated employer", "Above average pay"],
     requiresFltLicence: false,
+    findings: {
+      bad: [
+        { pct: 79, label: "No sick pay", heading: "Most people don't get sick pay", primary: "No. Most people don't get proper sick pay.", secondary: "79% of people say they wouldn't get paid if they were sick but scheduled to work.", why: "Everyone gets sick sometimes. You should be able to take time off without worrying. At a good job you should still get paid if you're scheduled to work but can't due to sickness." },
+        { pct: 55, label: "Short shift notice", heading: "Less than 4 weeks notice of shifts", primary: "Most people don't get 4 weeks notice of when they're working.", secondary: "55% of people with changing schedules report getting one week notice or less.", why: "At a good job, you get plenty of notice about when you're working. This makes it easy for you to plan the rest of life, as well as your finances, because you know how much you'll be working and when." },
+        { pct: 73, label: "Disconnected management", heading: "Head office doesn't understand what's happening", primary: "Most people think head office doesn't understand what's happening where they work.", secondary: "73% of people think that this employer's head office or owners don't have a good understanding of what's really happening where they work.", why: "At a good job, the role of head office should be to support the people on the frontline serving customers. To do that properly, the company's owners or head office need to have a good understanding of what's really happening on the frontline." },
+      ],
+      good: [
+        { pct: 92, label: "No last-minute shift changes", heading: "Shifts don't get changed at short notice", primary: "Most managers don't change people's shifts at short notice.", secondary: "92% of people say their manager doesn't changes their shifts at the last minute.", why: "If your manager is often changing your shifts at short notice that's a sign of poor planning. At a good job you won't be messed around at the last minute." },
+        { pct: 89, label: "Living wage", heading: "Most people are paid a living wage", primary: "Most people are paid a living wage.", secondary: "89% of people say they are paid at or above the Real Living Wage for where they live.", why: "Everyone should be paid enough to live on." },
+        { pct: 88, label: "Hours security", heading: "Most people don't worry about their hours", primary: "Most people don't worry about getting enough hours.", secondary: "88% of people report they don't worry about getting enough hours.", why: "At a good job, you shouldn't have to worry about getting enough hours each week." },
+        { pct: 85, label: "Proper breaks", heading: "Most people get proper breaks", primary: "Most people get proper breaks.", secondary: "85% of people report that they get to take proper breaks.", why: "When you take a break it should be a proper rest. It should last the full duration and you shouldn't get pulled off it." },
+        { pct: 84, label: "No unpaid overtime", heading: "Most people don't do unpaid extra work", primary: "Rarely. Most people don't do unpaid extra work.", secondary: "84% of people report that they don't do extra unpaid work.", why: "Everyone should get paid for any extra work they do, even if it is outside your contracted hours." },
+        { pct: 75, label: "Above average pay", heading: "Most people are paid market rates", primary: "Most people are paid above average for their job.", secondary: "75% of people are paid above average for the type of work they do.", why: "Pay can vary a lot between types of job. Employers should be ensuring that the rates their staff are paid are in line with similar roles elsewhere." },
+      ],
+    },
     signals: [
       { status: "warning", label: "Food production environment — different to general warehouse work", detail: "This is a production line role in a food factory, not a pick/pack warehouse. You'll work in a temperature-controlled environment with strict hygiene requirements.", subtext: null, findingLabel: null },
       { status: "good", label: "No prior food production experience required — full training provided", detail: "Greencore train you on food safety and production processes from day one. A Level 2 Food Hygiene certificate is preferred but Greencore can support you to get it.", subtext: null, findingLabel: null },
@@ -334,13 +454,25 @@ const JOBS = [
     shifts: "Early mornings",
     rating: 5.5,
     quizCount: 3650,
-    highlights: [],
+    highlights: ["Living wage", "Hours security", "No unpaid overtime"],
     listingUrl: "https://www.royalmailgroup.com/en/careers",
     altBadge: "↑ £0.67/hr",
     altReason: null,
     payBenchmark: { verdict: "good", label: "above average for parcel sorters in Northamptonshire", range: "£11.50–£14/hr typical" },
     findingDiffs: ["Better sick pay cover"],
     requiresFltLicence: false,
+    findings: {
+      bad: [
+        { pct: 68, label: "Short shift notice", heading: "Less than 4 weeks notice of shifts", primary: "Most people don't get 4 weeks notice of when they're working.", secondary: "68% of people with changing schedules report getting one week notice or less.", why: "At a good job, you get plenty of notice about when you're working. This makes it easy for you to plan the rest of life, as well as your finances, because you know how much you'll be working and when." },
+        { pct: 76, label: "No support to progress", heading: "Most people don't get support to progress", primary: "Most people aren't given support to progress here.", secondary: "76% of people report not being given an opportunity to get better at their job, learn a new skill, learn to manage a team or get more responsibility.", why: "A good job should help you progress at work, if you want to." },
+        { pct: 92, label: "Disconnected management", heading: "Head office doesn't understand what's happening", primary: "Most people think head office doesn't understand what's happening where they work.", secondary: "92% of people think that this employer's head office or owners don't have a good understanding of what's really happening where they work.", why: "At a good job, the role of head office should be to support the people on the frontline serving customers. To do that properly, the company's owners or head office need to have a good understanding of what's really happening on the frontline." },
+      ],
+      good: [
+        { pct: 88, label: "Living wage", heading: "Most people are paid a living wage", primary: "Most people are paid a living wage.", secondary: "88% of people say they are paid at or above the Real Living Wage for where they live.", why: "Everyone should be paid enough to live on." },
+        { pct: 80, label: "Hours security", heading: "Most people don't worry about their hours", primary: "Most people don't worry about getting enough hours.", secondary: "80% of people report they don't worry about getting enough hours.", why: "At a good job, you shouldn't have to worry about getting enough hours each week." },
+        { pct: 73, label: "No unpaid overtime", heading: "Most people don't do unpaid extra work", primary: "Rarely. Most people don't do unpaid extra work.", secondary: "73% of people report that they don't do extra unpaid work.", why: "Everyone should get paid for any extra work they do, even if it is outside your contracted hours." },
+      ],
+    },
     signals: [
       { status: "good", label: "No qualifications required — Royal Mail trains you", detail: "No previous experience needed. Royal Mail provide a full induction and on-the-job training.", subtext: null, findingLabel: null },
       { status: "warning", label: "Unsocial hours — shifts typically start at 05:00 or earlier", detail: "Parcel sorting operations run in the early hours to meet delivery schedules. Reliable transport at unsocial hours is essential.", subtext: null, findingLabel: null },
@@ -373,13 +505,32 @@ const JOBS = [
     shifts: "Various shifts",
     rating: 4.9,
     quizCount: 609,
-    highlights: [],
+    highlights: ["Hours security", "No unpaid overtime"],
     listingUrl: "https://careers.evri.com",
     altBadge: null,
     altReason: null,
     payBenchmark: { verdict: "below", label: "below average for parcel hub operatives in Northamptonshire", range: "£12–£14/hr typical" },
     findingDiffs: [],
     requiresFltLicence: false,
+    findings: {
+      bad: [
+        { pct: 82, label: "No paid breaks", heading: "Most people don't get paid breaks", primary: "No. Most people don't get paid breaks.", secondary: "82% of people say they don't get paid breaks.", why: "A good job should have paid breaks. You should be paid for all your time at work, whether you're on a break or not." },
+        { pct: 85, label: "No sick pay", heading: "Most people don't get sick pay", primary: "No. Most people don't get proper sick pay.", secondary: "85% of people say they wouldn't get paid if they were sick but scheduled to work.", why: "Everyone gets sick sometimes. You should be able to take time off without worrying. At a good job you should still get paid if you're scheduled to work but can't due to sickness." },
+        { pct: 79, label: "Short shift notice", heading: "Less than 4 weeks notice of shifts", primary: "Most people don't get 4 weeks notice of when they're working.", secondary: "79% of people with changing schedules report getting one week notice or less.", why: "At a good job, you get plenty of notice about when you're working. This makes it easy for you to plan the rest of life, as well as your finances, because you know how much you'll be working and when." },
+        { pct: 80, label: "Stressful work", heading: "Most people are stressed", primary: "Most people feel stressed here.", secondary: "80% of people say they often feel stressed at work.", why: "Work isn't always easy, but if you're frequently feel stressed, that's not good. Your employer should support you with enough people and resources to get your job done without feeling overwhelmed." },
+        { pct: 69, label: "Team atmosphere", heading: "Most people don't recommend their team", primary: "Not many people recommend working with their team.", secondary: "69% of people report that they wouldn't recommend working with their immediate team to a friend.", why: "A good job means enjoying the place where you work. The people you work with every day really matter. They can be the difference between a terrible day and a great one." },
+        { pct: 67, label: "Poor training", heading: "Most people don't get enough training", primary: "Most people didn't get enough training when they started.", secondary: "67% of people report they didn't get enough training when they started working here.", why: "A good job should give you good training when you start, not just drop you in at the deep end. This means that you'll be happier and more productive from day one." },
+        { pct: 68, label: "No support to progress", heading: "Most people don't get support to progress", primary: "Most people aren't given support to progress here.", secondary: "In the last year, 68% of people report not being given an opportunity to get better at their job, learn a new skill, learn to manage a team or get more responsibility in their role.", why: "A good job should help you progress at work, if you want to." },
+        { pct: 84, label: "Disconnected management", heading: "Head office doesn't understand what's happening", primary: "Most people think head office doesn't understand what's happening where they work.", secondary: "84% of people think that this employer's head office or owners don't have a good understanding of what's really happening where they work.", why: "At a good job, the role of head office should be to support the people on the frontline serving customers." },
+        { pct: 76, label: "Poor communication", heading: "Most people don't feel well informed by head office", primary: "Most people don't feel well informed about how the company is doing.", secondary: "76% of people feel that they aren't kept well informed about how the company is doing as a whole.", why: "At a good job, there should be a supportive relationship between the people working on the frontline serving customers and the people who own the company or work in head office." },
+      ],
+      good: [
+        { pct: 79, label: "Hours security", heading: "Most people don't worry about their hours", primary: "Most people don't worry about getting enough hours.", secondary: "79% of people report they don't worry about getting enough hours.", why: "At a good job, you shouldn't have to worry about getting enough hours each week." },
+        { pct: 73, label: "No unpaid overtime", heading: "Most people don't do unpaid extra work", primary: "Rarely. Most people don't do unpaid extra work.", secondary: "73% of people report that they don't do extra unpaid work.", why: "Everyone should get paid for any extra work they do, even if it is outside your contracted hours." },
+        { pct: 69, label: "Easy holiday booking", heading: "Easy to book holiday", primary: "Most people find it easy to book holiday.", secondary: "69% of people report it's easy to book holidays.", why: "A good job should let you take time off when you need it, and it shouldn't be a nightmare to arrange." },
+        { pct: 67, label: "Living wage", heading: "Most people are paid a living wage", primary: "Most people are paid a living wage.", secondary: "67% of people say they are paid at or above the Real Living Wage for where they live.", why: "Everyone should be paid enough to live on." },
+      ],
+    },
     signals: [
       { status: "bad", label: "37% of Evri workers are on zero-hours contracts — check before accepting", detail: "Over a third of Evri workers have no guaranteed hours. Make sure you understand what contract type you're being offered before accepting.", subtext: "Based on 609 Breakroom Quiz responses", findingLabel: null },
       { status: "warning", label: "Physical role — parcels up to 31.5kg, standing for the full shift", detail: "Parcel hub work involves continuous lifting and sorting. A basic level of physical fitness is required.", subtext: null, findingLabel: null },
@@ -413,13 +564,29 @@ const JOBS = [
     shifts: "Day shifts",
     rating: 6.0,
     quizCount: 107,
-    highlights: [],
+    highlights: ["No last-minute shift changes", "Hours security"],
     listingUrl: "https://www.clipperlogistics.com/careers",
     altBadge: null,
     altReason: null,
     payBenchmark: { verdict: "below", label: "below average for pick & pack operatives in Northamptonshire", range: "£12–£14/hr typical" },
     findingDiffs: [],
     requiresFltLicence: false,
+    findings: {
+      bad: [
+        { pct: 69, label: "Below average pay", heading: "Most people are paid below market rates", primary: "Most people are paid less than average for their job.", secondary: "69% of people are paid below average for the type of work they do.", why: "Pay can vary a lot between types of job. Employers should be ensuring that the rates their staff are paid are in line with similar roles elsewhere." },
+        { pct: 90, label: "No sick pay", heading: "Most people don't get sick pay", primary: "No. Most people don't get proper sick pay.", secondary: "90% of people say they wouldn't get paid if they were sick but scheduled to work.", why: "Everyone gets sick sometimes. You should be able to take time off without worrying. At a good job you should still get paid if you're scheduled to work but can't due to sickness." },
+        { pct: 73, label: "Short shift notice", heading: "Less than 4 weeks notice of shifts", primary: "Most people don't get 4 weeks notice of when they're working.", secondary: "73% of people with changing schedules report getting one week notice or less.", why: "At a good job, you get plenty of notice about when you're working. This makes it easy for you to plan the rest of life, as well as your finances, because you know how much you'll be working and when." },
+        { pct: 69, label: "Stressful work", heading: "Most people are stressed", primary: "Most people feel stressed here.", secondary: "69% of people say they often feel stressed at work.", why: "Work isn't always easy, but if you're frequently feel stressed, that's not good. Your employer should support you with enough people and resources to get your job done without feeling overwhelmed." },
+        { pct: 88, label: "Disconnected management", heading: "Head office doesn't understand what's happening", primary: "Most people think head office doesn't understand what's happening where they work.", secondary: "88% of people think that this employer's head office or owners don't have a good understanding of what's really happening where they work.", why: "At a good job, the role of head office should be to support the people on the frontline serving customers." },
+      ],
+      good: [
+        { pct: 90, label: "No last-minute shift changes", heading: "Shifts don't get changed at short notice", primary: "Most managers don't change people's shifts at short notice.", secondary: "90% of people say their manager doesn't change their shifts at the last minute.", why: "If your manager is often changing your shifts at short notice that's a sign of poor planning. At a good job you won't be messed around at the last minute." },
+        { pct: 77, label: "Living wage", heading: "Most people are paid a living wage", primary: "Most people are paid a living wage.", secondary: "77% of people say they are paid at or above the Real Living Wage for where they live.", why: "Everyone should be paid enough to live on." },
+        { pct: 77, label: "Proper breaks", heading: "Most people get proper breaks", primary: "Most people get proper breaks.", secondary: "77% of people report that they get to take proper breaks.", why: "When you take a break it should be a proper rest. It should last the full duration and you shouldn't get pulled off it." },
+        { pct: 75, label: "No unpaid overtime", heading: "Most people don't do unpaid extra work", primary: "Rarely. Most people don't do unpaid extra work.", secondary: "75% of people report that they don't do extra unpaid work.", why: "Everyone should get paid for any extra work they do, even if it is outside your contracted hours." },
+        { pct: 73, label: "Hours security", heading: "Most people don't worry about their hours", primary: "Most people don't worry about getting enough hours.", secondary: "73% of people report they don't worry about getting enough hours.", why: "At a good job, you shouldn't have to worry about getting enough hours each week." },
+      ],
+    },
     signals: [
       { status: "good", label: "No experience required — good entry-level role", detail: "Clipper welcome applicants without prior warehouse experience. Full training is provided on the job.", subtext: null, findingLabel: null },
       { status: "warning", label: "Target-driven picking role — performance is monitored", detail: "Pick & pack operatives are expected to meet hourly pick rates. Performance monitoring is a standard part of the role.", subtext: null, findingLabel: null },
@@ -438,6 +605,9 @@ const JOBS = [
     ],
   },
 ];
+
+// Build allFindings for each job from their findings.bad + findings.good
+JOBS.forEach(job => { job.allFindings = buildAllFindings(job.findings.bad, job.findings.good); });
 
 // Returns badge colours matching the rating dial thresholds
 const ratingBadge = (score) =>
@@ -1283,116 +1453,6 @@ const DesktopSidebar = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawer,
   </div>
 );
 
-// ─── All findings data — used by "See all findings from workers" modal ─────────
-const ALL_FINDINGS = [
-  {
-    section: "Pay",
-    findings: [
-      {
-        heading: "Most people don't get sick pay",
-        opinion: "bad",
-        primary: "No. Most people don't get proper sick pay",
-        secondary: "70% of people say they wouldn't get paid if they were sick but scheduled to work.",
-        why: "Everyone gets sick sometimes. You should be able to take time off without worrying. At a good job you should still get paid if you're scheduled to work but can't due to sickness.",
-      },
-      {
-        heading: "Pay is around or below average for the area",
-        opinion: "okay",
-        primary: "Pay at GXO is around the local average for warehouse work",
-        secondary: "£25,958/yr (≈ £12.48/hr) is at the lower end of the range for warehouse operatives in Northamptonshire.",
-        why: "The Living Wage is the minimum needed to meet the basic cost of living. It's worth comparing pay across similar roles before deciding.",
-      },
-      {
-        heading: "Most people get paid the same regardless of age",
-        opinion: "good",
-        primary: "Yes. Most people get equal pay regardless of age",
-        secondary: "76% of people say they get paid the same as everyone else their age.",
-        why: "Your age shouldn't affect your pay. Everyone doing the same job deserves the same rate.",
-      },
-    ],
-  },
-  {
-    section: "Hours and flexibility",
-    findings: [
-      {
-        heading: "Shifts don't get changed at short notice",
-        opinion: "good",
-        primary: "Most people's shifts don't get changed at short notice",
-        secondary: "93% of people say their manager doesn't change their shifts at the last minute.",
-        why: "Having your shifts changed at the last minute is really disruptive to your life. A good employer respects your time.",
-      },
-      {
-        heading: "People don't worry about getting enough hours",
-        opinion: "good",
-        primary: "Most people don't worry about getting enough hours",
-        secondary: "92% of people don't worry about getting enough hours.",
-        why: "Knowing you'll get enough hours makes it much easier to manage your finances and plan your life.",
-      },
-      {
-        heading: "Some people find it hard to change shifts",
-        opinion: "okay",
-        primary: "It can be hard to swap or change shifts",
-        secondary: "47% of people say it's difficult to change a shift when they need to.",
-        why: "Life is unpredictable. A good employer makes it reasonably easy to swap shifts when something comes up.",
-      },
-      {
-        heading: "Some people find it hard to take sick leave",
-        opinion: "okay",
-        primary: "Some people find it hard to take time off sick",
-        secondary: "41% of people say they find it difficult to take sick leave when they need it.",
-        why: "When you're unwell, you should be able to take time off without fear of losing your job or facing consequences.",
-      },
-    ],
-  },
-  {
-    section: "Workplace",
-    findings: [
-      {
-        heading: "Most people are stressed",
-        opinion: "bad",
-        primary: "Most people feel stressed here",
-        secondary: "68% of people say they often feel stressed at work.",
-        why: "Work isn't always easy, but if you're frequently stressed, that's not good. Your employer should support you with enough people and resources to get your job done without feeling overwhelmed.",
-      },
-      {
-        heading: "Most people don't get paid breaks",
-        opinion: "bad",
-        primary: "No. Most people don't get paid breaks",
-        secondary: "54% of people say they don't get paid breaks.",
-        why: "A good job should have paid breaks. You should be paid for all your time at work, whether you're on a break or not.",
-      },
-      {
-        heading: "Head office doesn't understand what's happening",
-        opinion: "bad",
-        primary: "Most people think head office doesn't understand what's happening",
-        secondary: "82% of people think head office doesn't have a good understanding of what's really happening where they work.",
-        why: "At a good job, the role of head office should be to support the people on the frontline serving customers. To do that properly, the company's owners or head office need to have a good understanding of what's really happening on the frontline.",
-      },
-      {
-        heading: "Most people get proper breaks",
-        opinion: "good",
-        primary: "Most people get proper breaks",
-        secondary: "90% of people report that they get to take proper breaks.",
-        why: "When you take a break it should be a proper rest. It should last the full duration and you shouldn't get pulled off it.",
-      },
-      {
-        heading: "Most people feel treated with respect",
-        opinion: "good",
-        primary: "Most people feel treated with respect by their managers",
-        secondary: "74% of people say they're treated with respect by their managers.",
-        why: "Everyone should get treated with respect by their managers. You shouldn't feel discriminated against or bullied, and if you have a problem you should be able to speak to someone about it.",
-      },
-      {
-        heading: "Work can be physically demanding",
-        opinion: "okay",
-        primary: "Some people find the physical demands tough",
-        secondary: "45% of people say the physical demands of the job are harder than expected.",
-        why: "Warehouse work is physically demanding. A good employer provides the right equipment, training, and breaks to protect your health.",
-      },
-    ],
-  },
-];
-
 // ─── Main page ─────────────────────────────────────────────────────────────────
 
 export default function JobTriagePage() {
@@ -1555,36 +1615,7 @@ export default function JobTriagePage() {
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0`, marginBottom: S.m }}>
         <div style={{ ...T.smallcaps, color: COLORS.text, display: "inline-block", textTransform: "uppercase", fontFamily: FONT }}>Needs improving</div>
         <div>
-          {[
-            {
-              pct: 70, label: "No sick pay",
-              heading: "Most people don't get sick pay",
-              primary: "No. Most people don't get proper sick pay",
-              secondary: "70% of people say they wouldn't get paid if they were sick but scheduled to work.",
-              why: "Everyone gets sick sometimes. You should be able to take time off without worrying. At a good job you should still get paid if you're scheduled to work but can't due to sickness.",
-            },
-            {
-              pct: 68, label: "Stressful work",
-              heading: "Most people are stressed",
-              primary: "Most people feel stressed here",
-              secondary: "68% of people say they often feel stressed at work.",
-              why: "Work isn't always easy, but if you're frequently stressed, that's not good. Your employer should support you with enough people and resources to get your job done without feeling overwhelmed.",
-            },
-            {
-              pct: 54, label: "Unpaid breaks",
-              heading: "Most people don't get paid breaks",
-              primary: "No. Most people don't get paid breaks",
-              secondary: "54% of people say they don't get paid breaks.",
-              why: "A good job should have paid breaks. You should be paid for all your time at work, whether you're on a break or not.",
-            },
-            {
-              pct: 82, label: "Disconnected management",
-              heading: "Head office doesn't understand what's happening",
-              primary: "Most people think head office doesn't understand what's happening",
-              secondary: "82% of people think head office doesn't have a good understanding of what's really happening where they work.",
-              why: "At a good job, the role of head office should be to support the people on the frontline serving customers. To do that properly, the company's owners or head office need to have a good understanding of what's really happening on the frontline.",
-            },
-          ].map((v, i, arr) => (
+          {job.findings.bad.map((v, i, arr) => (
             <FindingTile key={v.label} {...v} variant="red" lit={highlightFinding === v.label} forceOpen={highlightFinding === v.label} isLast={i === arr.length - 1} />
           ))}
         </div>
@@ -1594,29 +1625,7 @@ export default function JobTriagePage() {
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0` }}>
         <div style={{ ...T.smallcaps, color: COLORS.text, display: "inline-block", textTransform: "uppercase", fontFamily: FONT }}>Good</div>
         <div>
-          {[
-            {
-              pct: 93, label: "No last-minute shift changes",
-              heading: "Shifts rarely get changed at short notice",
-              primary: "Most people's shifts don't get changed at short notice",
-              secondary: "93% of people say their manager doesn't change their shifts at the last minute.",
-              why: "Having your shifts changed at the last minute is really disruptive. It makes it hard to plan childcare, travel, and your personal life. At a good job your schedule should be reliable.",
-            },
-            {
-              pct: 92, label: "Hours security",
-              heading: "People don't worry about getting enough hours",
-              primary: "Most people don't worry about getting enough hours",
-              secondary: "92% of people don't worry about getting enough hours.",
-              why: "Knowing you'll get enough hours makes it much easier to manage your finances and plan your life. You shouldn't have to chase your employer for shifts.",
-            },
-            {
-              pct: 90, label: "Proper breaks",
-              heading: "Most people get proper breaks",
-              primary: "Most people get proper breaks",
-              secondary: "90% of people report that they get to take proper breaks.",
-              why: "When you take a break it should be a proper rest. It should last the full duration and you shouldn't get pulled off it.",
-            },
-          ].map((v, i, arr) => (
+          {job.findings.good.map((v, i, arr) => (
             <FindingTile key={v.label} {...v} variant="green" lit={highlightFinding === v.label} forceOpen={highlightFinding === v.label} isLast={i === arr.length - 1} />
           ))}
         </div>
@@ -1747,7 +1756,7 @@ export default function JobTriagePage() {
                 ✕ Close
               </button>
               <h2 style={{ ...T.heading2, margin: `0 0 ${S.m2}px`, fontFamily: FONT, color: COLORS.text }}>All findings from workers</h2>
-              {ALL_FINDINGS.map((group) => (
+              {job.allFindings.map((group) => (
                 <div key={group.section} style={{ marginBottom: S.l }}>
                   <h3 style={{ ...T.lead2, margin: `0 0 ${S.s2}px`, fontFamily: FONT, color: COLORS.text }}>{group.section}</h3>
                   {/* .finding-group card */}
