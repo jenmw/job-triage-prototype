@@ -78,11 +78,12 @@ const IconBicycle = ({ color = COLORS.text }) => (
 
 // Work style preference questions — paged quiz in the work style drawer
 const WORK_STYLE_QUESTIONS = [
-  { id: "activity", question: "How active do you want to be at work?", options: [["sitting", "Mostly sitting down"], ["feet", "On my feet"], ["active", "Very physically active"]] },
-  { id: "teamwork", question: "Do you prefer working in a team or on your own?", options: [["team", "In a team"], ["solo", "On my own"], ["either", "Either is fine"]] },
-  { id: "public",   question: "Are you happy working with customers or the public?", options: [["yes", "Yes, I enjoy it"], ["no", "Prefer not to"], ["either", "Don't mind"]] },
-  { id: "outdoors", question: "Do you prefer working indoors or outdoors?", options: [["indoors", "Indoors"], ["outdoors", "Outdoors"], ["either", "Either is fine"]] },
-  { id: "children", question: "Are you comfortable working with children or young people?", options: [["yes", "Yes"], ["no", "Prefer not to"], ["na", "Not applicable"]] },
+  { id: "activity", question: "How active do you want to be at work?", options: [["sitting", "Mostly sitting down"], ["feet", "On my feet"], ["active", "Very physically active"], ["either", "I don't mind"]] },
+  { id: "teamwork", question: "How do you like to work?", options: [["team", "In a team"], ["solo", "On my own"], ["either", "I don't mind"]] },
+  { id: "public",   question: "Do you want to serve customers or deal with the general public?", options: [["yes", "Yes, I enjoy it"], ["no", "Prefer not to"], ["either", "I don't mind"]] },
+  { id: "outdoors", question: "Do you prefer working indoors or outdoors?", options: [["indoors", "Indoors"], ["outdoors", "Outdoors"], ["either", "I don't mind"]] },
+  { id: "children", question: "Are you comfortable working with children or young people?", options: [["yes", "Yes"], ["no", "Prefer not to"], ["either", "I don't mind"]] },
+  { id: "caring",   question: "Are you interested in helping people in need?", subtext: "These jobs can be stressful and difficult at times, but you'll be making a difference to people's lives.", options: [["yes", "Yes, I find this rewarding"], ["no", "Prefer not to"], ["either", "I don't mind"]] },
 ];
 
 const PRIORITIES = ["No heavy lifting", "Daytime only", "Paid breaks", "Sick pay", "Friendly team", "Career progression", "Good shift notice"];
@@ -1680,7 +1681,8 @@ const WorkStyleDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
         </div>
 
         {/* Question */}
-        <div style={{ ...T.lead1, color: COLORS.text, fontFamily: FONT, marginBottom: S.m2, minHeight: 60 }}>{q.question}</div>
+        <div style={{ ...T.lead1, color: COLORS.text, fontFamily: FONT, marginBottom: q.subtext ? S.s : S.m2, minHeight: 60 }}>{q.question}</div>
+        {q.subtext && <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, marginBottom: S.m2 }}>{q.subtext}</div>}
 
         {/* Options */}
         <div style={{ display: "flex", flexDirection: "column", gap: S.s, marginBottom: S.m2 }}>
