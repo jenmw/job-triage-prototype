@@ -150,6 +150,12 @@ const JOBS = [
     altBadge: null,
     altReason: null,
     payBenchmark: { rangeLow: 27000, rangeHigh: 32000, roleLabel: "warehouse operatives in Northamptonshire" },
+    matchCriteria: {
+      licences: [],
+      qualifications: [],
+      experience: { preferred: true, required: false, keywords: ["warehouse", "logistics", "picking", "packing", "distribution", "stock", "forklift"] },
+      note: "Warehouse or logistics experience is preferred but not essential — GXO train you on the job.",
+    },
     findingDiffs: [],
     requiresFltLicence: false,
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
@@ -2042,6 +2048,7 @@ export default function JobTriagePage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [backgroundDrawerOpen, setBackgroundDrawerOpen] = useState(false);
   const [profileBackground, setProfileBackground] = useState({});
+  const [matchWhyOpen, setMatchWhyOpen] = useState(false);
   const [workStyleDrawerOpen, setWorkStyleDrawerOpen] = useState(false);
   const [workStylePrefs, setWorkStylePrefs] = useState({});
   const [profileOpen, setProfileOpen] = useState(false);
@@ -2215,76 +2222,77 @@ export default function JobTriagePage() {
   );
 
   // ── Personalised match card (customer vacancies only) ─────────────────────
-  const matchPoints = (() => {
-    if (!job.isCustomer) return [];
-    const points = [];
-    const goodLabels = job.findings.good.map(f => f.label.toLowerCase());
-    const badLabels  = job.findings.bad.map(f => f.label.toLowerCase());
-    const goodByLabel = (kw) => job.findings.good.find(f => f.label.toLowerCase().includes(kw));
-    const notBad = (kw) => !badLabels.some(l => l.includes(kw));
+  const matchReasons = (() => {
+    if (!job.isCustomer || !job.matchCriteria) return [];
+    const criteria = job.matchCriteria;
+    const bg = profileBackground;
+    const hasAnyBackground = Object.keys(bg).length > 0;
+    if (!hasAnyBackground && userLicences.size === 0) return [];
 
-    // Priority → finding matches
-    if (profilePriorities.includes("Sick pay") && notBad("sick pay")) {
-      const f = goodByLabel("sick pay");
-      if (f) points.push(`${f.pct}% of workers get paid if they're sick — you said sick pay matters to you`);
-    }
-    if (profilePriorities.includes("Paid breaks") && notBad("paid breaks")) {
-      const f = goodByLabel("paid break");
-      if (f) points.push(`${f.pct}% say they get paid breaks`);
-    }
-    if (profilePriorities.includes("Good shift notice")) {
-      const f = goodByLabel("shift");
-      if (f) points.push(`${f.pct}% say shifts don't get changed at short notice — matches your preference`);
-    }
-    if (profilePriorities.includes("Career progression") && notBad("progress")) {
-      const f = goodByLabel("progress");
-      if (f) points.push(`${f.pct}% say they get support to progress here`);
-    }
-    if (profilePriorities.includes("Friendly team") && notBad("team")) {
-      const f = goodByLabel("team");
-      if (f) points.push(`${f.pct}% would recommend working with their team`);
-    }
-    if (profilePriorities.includes("Daytime only") && job.shifts && /day/i.test(job.shifts)) {
-      points.push(`Shifts are ${job.shifts.toLowerCase()} — no evenings or nights`);
-    }
-    if (profilePriorities.includes("No heavy lifting") && job.workStyle?.activity !== "active") {
-      points.push(`Not a heavy lifting role — suits your preference`);
+    const reasons = [];
+
+    // Licence match
+    if (criteria.licences?.length > 0) {
+      const matched = criteria.licences.filter(l => userLicences.has(l));
+      matched.forEach(l => reasons.push({ label: `You hold the required ${l}`, detail: "This is a requirement for this role — you're eligible to apply." }));
+    } else if (userLicences.size > 0 && criteria.licences?.length === 0) {
+      // No licence required — candidate has one but it's not needed here, don't surface
     }
 
-    // Work style matches
-    const ws = job.workStyle || {};
-    if (workStylePrefs.activity && workStylePrefs.activity === ws.activity) {
-      const labels = { sitting: "desk-based work", feet: "being on your feet", active: "very active work" };
-      points.push(`The activity level matches — you prefer ${labels[workStylePrefs.activity]}`);
-    }
-    if (workStylePrefs.teamwork === "team" && ws.teamwork === "team") {
-      points.push(`Team-based role — matches your preference for working with others`);
-    }
-    if (workStylePrefs.teamwork === "solo" && ws.teamwork === "solo") {
-      points.push(`Mostly independent work — matches your preference for working on your own`);
-    }
-    if (workStylePrefs.outdoors === "indoors" && ws.outdoors === false) {
-      points.push(`Indoor role — matches your preference`);
-    }
-    if (workStylePrefs.outdoors === "outdoors" && ws.outdoors === true) {
-      points.push(`Outdoor role — matches your preference`);
+    // Qualification match
+    if (criteria.qualifications?.length > 0 && bg.qualifications) {
+      const bgQuals = new Set([...(bg.qualifications || [])].map(q => q.toLowerCase()));
+      criteria.qualifications.forEach(q => {
+        if (bgQuals.has(q.toLowerCase())) reasons.push({ label: `You have the required qualification: ${q}`, detail: "Listed as a requirement for this role." });
+      });
     }
 
-    // Hours security — always a strong positive if present
-    if (points.length < 3) {
-      const f = goodByLabel("hours security");
-      if (f && !points.some(p => p.includes("hours"))) {
-        points.push(`${f.pct}% don't worry about getting enough hours each week`);
+    // Experience match
+    if (criteria.experience && bg.prevJobs) {
+      const keywords = criteria.experience.keywords || [];
+      const relevantJob = bg.prevJobs.find(j =>
+        j.title && keywords.some(kw => j.title.toLowerCase().includes(kw))
+      );
+      const hasExperience = bg.experience === "some" || bg.experience === "lots";
+      if (relevantJob) {
+        reasons.push({ label: `Your experience as ${relevantJob.title} is relevant here`, detail: criteria.note || `${job.company} prefer candidates with relevant prior experience.` });
+      } else if (hasExperience && criteria.experience.preferred) {
+        reasons.push({ label: `You have relevant work experience`, detail: criteria.note || `${job.company} prefer candidates with prior experience in a similar role.` });
       }
     }
 
-    return points.slice(0, 3);
+    return reasons;
   })();
 
-  const matchCard = matchPoints.length > 0 ? (
-    <div style={{ background: "#E5FFD9", border: `1px solid #C1FCA5`, borderRadius: 5, padding: `${S.s2}px ${S.m}px`, marginBottom: S.m }}>
+  const matchCard = matchReasons.length > 0 ? (
+    <div style={{ background: "#E5FFD9", border: `1px solid #C1FCA5`, borderRadius: 5, padding: `${S.s2}px ${S.m}px`, marginBottom: S.m, display: "flex", alignItems: "center", justifyContent: "space-between", gap: S.s }}>
       <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>This looks like a strong match for you</div>
+      <span onClick={() => setMatchWhyOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", cursor: "pointer", fontFamily: FONT, whiteSpace: "nowrap", flexShrink: 0 }}>Why?</span>
     </div>
+  ) : null;
+
+  const matchWhyModal = matchWhyOpen ? (
+    <>
+      <div onClick={() => setMatchWhyOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", zIndex: 200 }} />
+      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, maxHeight: "70vh", background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, zIndex: 201, overflowY: "auto", boxShadow: "0 -8px 40px rgba(0,0,0,0.15)" }}>
+        <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px` }} />
+        <h3 style={{ ...T.lead1, margin: `0 0 ${S.xs}px`, color: COLORS.text, fontFamily: FONT }}>Why you're a strong match</h3>
+        <p style={{ ...T.body1, color: COLORS.muted, margin: `0 0 ${S.m2}px`, fontFamily: FONT }}>Based on what you've told us about your background, here's why {job.company} looks like a good fit.</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: S.m }}>
+          {matchReasons.map((r, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: S.s2 }}>
+              <span style={{ width: 20, height: 20, borderRadius: "50%", background: "#E5FFD9", border: "1px solid #C1FCA5", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>
+                <span style={{ fontSize: 11, color: COLORS.greenText, fontWeight: 700 }}>✓</span>
+              </span>
+              <div>
+                <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{r.label}</div>
+                <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, marginTop: S.xs }}>{r.detail}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
   ) : null;
 
   const sectionsBlock = (
@@ -2614,6 +2622,8 @@ export default function JobTriagePage() {
 
       <LicenceModal open={licenceModalOpen} onClose={() => setLicenceModalOpen(false)}
         userLicences={userLicences} onSave={(s) => setUserLicences(s)} />
+
+      {matchWhyModal}
 
       <ProfileHub
         open={profileOpen} onClose={() => setProfileOpen(false)}
