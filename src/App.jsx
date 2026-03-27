@@ -108,7 +108,10 @@ const getPriorityChips = (job, priorities) => {
   check("Good team mates",         goodF("team"));
   check("Career progression",      goodF("progress"));
   check("Good managers",           goodF("respect") || goodF("manager"));
-  check("No experience required",  job.matchCriteria?.experience?.required === false);
+  check("No experience required",
+    job.matchCriteria?.experience?.required === false ||
+    (job.findingDiffs || []).some(d => d.toLowerCase().includes("no experience"))
+  );
   // "Recommended by students" and "Recommended by parents" need recommendation data — skip for now
 
   // Sort: selected priorities first, then neutral
