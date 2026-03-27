@@ -2282,16 +2282,8 @@ export default function JobTriagePage() {
   })();
 
   const matchCard = matchPoints.length > 0 ? (
-    <div style={{ background: COLORS.accentBg, border: `1px solid ${COLORS.accentBorder || COLORS.accent + "33"}`, borderRadius: 5, padding: `${S.m}px ${S.m}px`, marginBottom: S.m }}>
-      <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.s }}>This looks like a strong match for you</div>
-      <div style={{ display: "flex", flexDirection: "column", gap: S.xs }}>
-        {matchPoints.map((pt, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: S.s }}>
-            <span style={{ color: COLORS.green, fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✓</span>
-            <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT }}>{pt}</span>
-          </div>
-        ))}
-      </div>
+    <div style={{ background: "#E5FFD9", border: `1px solid #C1FCA5`, borderRadius: 5, padding: `${S.s2}px ${S.m}px`, marginBottom: S.m }}>
+      <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>This looks like a strong match for you</div>
     </div>
   ) : null;
 
