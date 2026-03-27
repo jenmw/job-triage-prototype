@@ -1681,7 +1681,7 @@ const WorkStyleDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
         </div>
 
         {/* Question */}
-        <div style={{ ...T.lead1, color: COLORS.text, fontFamily: FONT, marginBottom: q.subtext ? S.s : S.m2, minHeight: 60 }}>{q.question}</div>
+        <div style={{ ...T.lead1, color: COLORS.text, fontFamily: FONT, marginBottom: q.subtext ? S.xs : S.m2, minHeight: 60 }}>{q.question}</div>
         {q.subtext && <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, marginBottom: S.m2 }}>{q.subtext}</div>}
 
         {/* Options */}
@@ -1707,7 +1707,7 @@ const WorkStyleDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
             ? <span onClick={() => setStep(s => s - 1)} style={{ ...T.body2, color: COLORS.muted, textDecoration: "underline", cursor: "pointer", fontFamily: FONT }}>← Back</span>
             : <span />}
           <span onClick={skip} style={{ ...T.body2, color: COLORS.muted, textDecoration: "underline", cursor: "pointer", fontFamily: FONT }}>
-            {isLast ? "Save without answering" : "Skip"}
+            Skip
           </span>
         </div>
       </div>
