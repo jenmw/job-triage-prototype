@@ -1430,7 +1430,7 @@ const LicenceModal = ({ open, onClose, userLicences, onSave }) => {
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, maxHeight: "85vh", background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, overflowY: "auto", boxShadow: open ? "0 -8px 40px rgba(0,0,0,0.15)" : "none" }}>
         <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px` }} />
         <h3 style={{ ...T.lead1, margin: 0, color: COLORS.text, fontFamily: FONT, marginBottom: S.s }}>Do you hold a UK driving or forklift licence?</h3>
-        <p style={{ ...T.body1, color: COLORS.muted, margin: `0 0 ${S.m2}px`, fontFamily: FONT }}>We'll use this to show you which jobs you're eligible for — including future listings.</p>
+        <p style={{ ...T.body1, color: COLORS.muted, margin: `0 0 ${S.m2}px`, fontFamily: FONT }}>We'll use this to show you which jobs you could get — including future ones.</p>
         <div style={{ display: "flex", flexDirection: "column", gap: S.s, marginBottom: S.m2 }}>
           {LICENCE_OPTIONS.map(({ id, label, sub }) => {
             const on = selected.has(id);
@@ -2367,12 +2367,12 @@ export default function JobTriagePage() {
     if (workStylePrefs.activity === "sitting" && ws.activity === "sitting")
       reasons.push({ label: "Desk-based work — matches your preference", detail: "You said you prefer mostly sitting down. This role fits." });
     else if (workStylePrefs.activity === "feet" && (ws.activity === "feet" || ws.activity === "sitting"))
-      reasons.push({ label: "On your feet but not physically demanding", detail: "You said you prefer to be on your feet. This role is active without being strenuous." });
+      reasons.push({ label: "On your feet but not physically demanding", detail: "You said you prefer to be on your feet. This role is active but not too physical." });
     else if (workStylePrefs.activity === "active" && ws.activity === "active")
       reasons.push({ label: "Physically active role — matches your preference", detail: "You said you enjoy very active work. This role involves physical activity throughout the shift." });
 
     if (workStylePrefs.teamwork === "team" && ws.teamwork === "team")
-      reasons.push({ label: "Team-based work — matches your preference", detail: "You said you prefer working in a team. This is a collaborative role." });
+      reasons.push({ label: "Team-based work — matches your preference", detail: "You said you prefer working in a team. This is a team-based role." });
     else if (workStylePrefs.teamwork === "solo" && ws.teamwork === "solo")
       reasons.push({ label: "Mostly independent work — matches your preference", detail: "You said you prefer working on your own. This role suits that." });
 
