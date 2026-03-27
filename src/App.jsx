@@ -1026,14 +1026,19 @@ const FindingTile = ({ pct, label, heading, primary, secondary, why, variant, li
 
 // ─── Signal row — matches .finding-group__finding linear style ─────────────────
 // White card container wraps all signals in a section; each row has a coloured dot
-const Signal = ({ status, label, detail, subtext, subtextClick, labelClick, isLast }) => {
+const Signal = ({ status, label, detail, subtext, subtextClick, labelClick, isLast, badge }) => {
   const dot = status === "good" ? COLORS.green : status === "warning" ? COLORS.amber : COLORS.red;
+  const badgeBg = status === "good" ? COLORS.greenBg : COLORS.amberBg;
+  const badgeColor = status === "good" ? COLORS.greenText : COLORS.amberText;
   return (
     <div style={{ fontSize: 16, lineHeight: "22px", fontWeight: 500, color: COLORS.text, padding: `${S.m}px 0`, borderBottom: isLast ? "none" : "1px solid rgba(50,50,50,0.1)", position: "relative" }}>
       <div style={{ display: "flex", alignItems: "flex-start", gap: S.s }}>
         <span style={{ width: 15, height: 15, borderRadius: "50%", background: dot, border: "2px solid #fff", flexShrink: 0, marginTop: 3 }} />
         <div style={{ flex: 1, fontFamily: FONT }}>
-          <div onClick={labelClick} style={labelClick ? { cursor: "pointer", color: COLORS.accent, fontWeight: 700 } : {}}>{label}</div>
+          <div onClick={labelClick} style={labelClick ? { cursor: "pointer", color: COLORS.accent, fontWeight: 700 } : {}}>
+            {label}
+            {badge && <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.3px", padding: "2px 7px", borderRadius: 10, background: badgeBg, color: badgeColor, marginLeft: S.s, display: "inline-block", verticalAlign: "middle", lineHeight: "18px" }}>{badge}</span>}
+          </div>
           {detail && <div style={{ ...T.body1, color: COLORS.muted, marginTop: S.xs, fontWeight: 400 }}>{detail}</div>}
           {subtext && (
             <div onClick={subtextClick} style={{ ...T.body2Bold, color: subtextClick ? COLORS.accent : COLORS.muted, marginTop: S.xs, cursor: subtextClick ? "pointer" : "default" }}>
@@ -1993,7 +1998,7 @@ export default function JobTriagePage() {
                     detail="A valid counterbalance forklift licence is required. Reach truck licence is desirable."
                     subtext={userLicences.has("flt") ? "✓ You told us you have an FLT licence" : "Tell us if you have a forklift licence"}
                     subtextClick={userLicences.has("flt") ? null : () => setLicenceModalOpen(true)}
-                    isLast={true}
+                    isLast={false}
                   />
                 );
               }
@@ -2004,7 +2009,7 @@ export default function JobTriagePage() {
                   detail={sig.detail}
                   subtext={sig.subtext}
                   labelClick={sig.findingLabel ? () => handlePillClick(sig.findingLabel) : null}
-                  isLast={true}
+                  isLast={false}
                 />
               );
             };
@@ -2050,31 +2055,54 @@ export default function JobTriagePage() {
             // ── Card 2: Work style ──────────────────────────────────────────────
             const wsCard = hasWorkStyle ? (() => {
               const ws = job.workStyle || {};
+              const prefs = workStylePrefs;
               const issues = [];
-              if (workStylePrefs.activity === "sitting" && ws.activity === "active")
-                issues.push({ label: "Very physical role — lifting and moving for the full shift", detail: "You said you prefer desk-based work" });
-              else if (workStylePrefs.activity === "active" && ws.activity === "sitting")
-                issues.push({ label: "Mainly desk-based work", detail: "You said you prefer very active work" });
-              else if (workStylePrefs.activity === "feet" && ws.activity === "active")
-                issues.push({ label: "Very physically demanding role", detail: "You said you prefer to be on your feet — this goes further than that" });
-              if (workStylePrefs.teamwork === "solo" && ws.teamwork === "team")
-                issues.push({ label: "Team-based work — you'll work closely with others all shift", detail: "You said you prefer working on your own" });
-              if (workStylePrefs.public === "no" && ws.public === true)
-                issues.push({ label: "Customer-facing role", detail: "You said you'd prefer not to work with the public" });
-              if (workStylePrefs.outdoors === "outdoors" && ws.outdoors === false)
-                issues.push({ label: "Mainly indoor work", detail: "You said you prefer working outdoors" });
-              else if (workStylePrefs.outdoors === "indoors" && ws.outdoors === true)
-                issues.push({ label: "Mainly outdoor work", detail: "You said you prefer working indoors" });
-              if (workStylePrefs.children === "no" && ws.children === true)
-                issues.push({ label: "Involves working with children", detail: "You said you'd rather not work with children" });
+              let relevant = 0;
+              let matches = 0;
 
+              const check = (hasDim, isMismatch, issue) => {
+                if (!hasDim) return;
+                relevant++;
+                if (isMismatch) issues.push(issue);
+                else matches++;
+              };
+
+              check(ws.activity !== undefined,
+                (prefs.activity === "sitting" && ws.activity === "active") ||
+                (prefs.activity === "active" && ws.activity === "sitting") ||
+                (prefs.activity === "feet" && ws.activity === "active"),
+                prefs.activity === "sitting"
+                  ? { label: "Very physical role — lifting and moving for the full shift", detail: "You said you prefer desk-based work" }
+                  : prefs.activity === "feet"
+                  ? { label: "Very physically demanding role", detail: "You said you prefer to be on your feet — this goes further than that" }
+                  : { label: "Mainly desk-based work", detail: "You said you prefer very active work" });
+
+              check(ws.teamwork !== undefined,
+                prefs.teamwork === "solo" && ws.teamwork === "team",
+                { label: "Team-based work — you'll work closely with others all shift", detail: "You said you prefer working on your own" });
+
+              check(ws.public !== undefined,
+                prefs.public === "no" && ws.public === true,
+                { label: "Customer-facing role", detail: "You said you'd prefer not to work with the public" });
+
+              check(ws.outdoors !== undefined,
+                (prefs.outdoors === "outdoors" && ws.outdoors === false) || (prefs.outdoors === "indoors" && ws.outdoors === true),
+                prefs.outdoors === "outdoors"
+                  ? { label: "Mainly indoor work", detail: "You said you prefer working outdoors" }
+                  : { label: "Mainly outdoor work", detail: "You said you prefer working indoors" });
+
+              check(ws.children !== undefined,
+                prefs.children === "no" && ws.children === true,
+                { label: "Involves working with children", detail: "You said you'd rather not work with children" });
+
+              const badge = relevant > 0 ? `${matches}/${relevant} match` : null;
               const wsSignal = issues.length === 0
                 ? { status: "good", label: "The day-to-day work suits your preferences", detail: null }
                 : { status: "warning", label: issues[0].label, detail: issues[0].detail + (issues.length > 1 ? ` · plus ${issues.length - 1} other thing${issues.length > 2 ? "s" : ""} to consider` : "") };
 
-              return <Signal status={wsSignal.status} label={wsSignal.label} detail={wsSignal.detail} subtext="Update work style" subtextClick={() => setWorkStyleDrawerOpen(true)} isLast={false} />;
+              return <Signal status={wsSignal.status} label={wsSignal.label} detail={wsSignal.detail} badge={badge} subtext="Update work style" subtextClick={() => setWorkStyleDrawerOpen(true)} isLast={true} />;
             })() : (
-              <div style={{ fontSize: 16, lineHeight: "22px", fontWeight: 500, color: COLORS.text, padding: `${S.m}px 0`, borderBottom: `1px solid rgba(50,50,50,0.1)` }}>
+              <div style={{ fontSize: 16, lineHeight: "22px", fontWeight: 500, color: COLORS.text, padding: `${S.m}px 0` }}>
                 <div style={{ display: "flex", alignItems: "flex-start", gap: S.s }}>
                   <span style={{ width: 15, height: 15, borderRadius: "50%", background: COLORS.border, border: "2px solid #fff", flexShrink: 0, marginTop: 3 }} />
                   <div style={{ flex: 1, fontFamily: FONT }}>
@@ -2082,16 +2110,11 @@ export default function JobTriagePage() {
                     <div style={{ ...T.body1, color: COLORS.muted, marginTop: S.xs, fontWeight: 400 }}>
                       Tell us your preferences and we'll flag them on every vacancy.
                     </div>
-                    <div style={{ margin: `${S.s}px 0` }}>
-                      {[
-                        "Activity level (desk-based to very active)",
-                        "Working style (team, solo, or customer-facing)",
-                        "Environment (indoors, outdoors)",
-                      ].map((text, j) => (
-                        <div key={j} style={{ display: "flex", alignItems: "flex-start", gap: S.s, padding: `${S.xs}px 0` }}>
-                          <span style={{ width: 10, height: 10, borderRadius: "50%", background: COLORS.border, flexShrink: 0, marginTop: 3 }} />
-                          <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{text}</span>
-                        </div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: S.xs, margin: `${S.s}px 0` }}>
+                      {["Activity level", "Working style", "Environment", "Children"].map((chip, j) => (
+                        <span key={j} style={{ ...T.body2, fontFamily: FONT, color: COLORS.muted, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: `2px ${S.s2}px`, fontSize: 13 }}>
+                          {chip}
+                        </span>
                       ))}
                     </div>
                     <div onClick={() => setWorkStyleDrawerOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", cursor: "pointer", fontFamily: FONT, marginTop: S.xs }}>
@@ -2104,9 +2127,9 @@ export default function JobTriagePage() {
 
             return (
               <>
+                {renderFindingSignal(findingSignal)}
                 {bgCard}
                 {wsCard}
-                {renderFindingSignal(findingSignal)}
 </>
             );
           })()}
