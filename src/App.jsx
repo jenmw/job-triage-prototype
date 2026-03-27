@@ -3587,7 +3587,7 @@ const SearchResultCard = ({ job, onClick, profilePriorities }) => {
         <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: S.xs }}>
           {chips.map(c => c.status === "good"
             ? <VacancyHighlight key={c.label} label={c.label} />
-            : <span key={c.label} style={{ padding: "2px 8px", borderRadius: 100, fontFamily: FONT, fontSize: 12, color: COLORS.muted, border: `1px solid ${COLORS.border}`, background: COLORS.card }}>{c.label}</span>
+            : <span key={c.label} style={{ ...T.body2Bold, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT, whiteSpace: "nowrap" }}>{c.label}</span>
           )}
         </div>
       )}
