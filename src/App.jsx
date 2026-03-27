@@ -129,6 +129,7 @@ const JOBS = [
   // ── 0: Main job — GXO Logistics ─────────────────────────────────────────────
   {
     id: 0,
+    isCustomer: true,
     title: "Warehouse Operative",
     occupationDesc: "Warehouse operatives take delivery of goods, and pick, pack and dispatch products.",
     company: "GXO Logistics",
@@ -2213,8 +2214,90 @@ export default function JobTriagePage() {
     </div>
   );
 
+  // ── Personalised match card (customer vacancies only) ─────────────────────
+  const matchPoints = (() => {
+    if (!job.isCustomer) return [];
+    const points = [];
+    const goodLabels = job.findings.good.map(f => f.label.toLowerCase());
+    const badLabels  = job.findings.bad.map(f => f.label.toLowerCase());
+    const goodByLabel = (kw) => job.findings.good.find(f => f.label.toLowerCase().includes(kw));
+    const notBad = (kw) => !badLabels.some(l => l.includes(kw));
+
+    // Priority → finding matches
+    if (profilePriorities.includes("Sick pay") && notBad("sick pay")) {
+      const f = goodByLabel("sick pay");
+      if (f) points.push(`${f.pct}% of workers get paid if they're sick — you said sick pay matters to you`);
+    }
+    if (profilePriorities.includes("Paid breaks") && notBad("paid breaks")) {
+      const f = goodByLabel("paid break");
+      if (f) points.push(`${f.pct}% say they get paid breaks`);
+    }
+    if (profilePriorities.includes("Good shift notice")) {
+      const f = goodByLabel("shift");
+      if (f) points.push(`${f.pct}% say shifts don't get changed at short notice — matches your preference`);
+    }
+    if (profilePriorities.includes("Career progression") && notBad("progress")) {
+      const f = goodByLabel("progress");
+      if (f) points.push(`${f.pct}% say they get support to progress here`);
+    }
+    if (profilePriorities.includes("Friendly team") && notBad("team")) {
+      const f = goodByLabel("team");
+      if (f) points.push(`${f.pct}% would recommend working with their team`);
+    }
+    if (profilePriorities.includes("Daytime only") && job.shifts && /day/i.test(job.shifts)) {
+      points.push(`Shifts are ${job.shifts.toLowerCase()} — no evenings or nights`);
+    }
+    if (profilePriorities.includes("No heavy lifting") && job.workStyle?.activity !== "active") {
+      points.push(`Not a heavy lifting role — suits your preference`);
+    }
+
+    // Work style matches
+    const ws = job.workStyle || {};
+    if (workStylePrefs.activity && workStylePrefs.activity === ws.activity) {
+      const labels = { sitting: "desk-based work", feet: "being on your feet", active: "very active work" };
+      points.push(`The activity level matches — you prefer ${labels[workStylePrefs.activity]}`);
+    }
+    if (workStylePrefs.teamwork === "team" && ws.teamwork === "team") {
+      points.push(`Team-based role — matches your preference for working with others`);
+    }
+    if (workStylePrefs.teamwork === "solo" && ws.teamwork === "solo") {
+      points.push(`Mostly independent work — matches your preference for working on your own`);
+    }
+    if (workStylePrefs.outdoors === "indoors" && ws.outdoors === false) {
+      points.push(`Indoor role — matches your preference`);
+    }
+    if (workStylePrefs.outdoors === "outdoors" && ws.outdoors === true) {
+      points.push(`Outdoor role — matches your preference`);
+    }
+
+    // Hours security — always a strong positive if present
+    if (points.length < 3) {
+      const f = goodByLabel("hours security");
+      if (f && !points.some(p => p.includes("hours"))) {
+        points.push(`${f.pct}% don't worry about getting enough hours each week`);
+      }
+    }
+
+    return points.slice(0, 3);
+  })();
+
+  const matchCard = matchPoints.length > 0 ? (
+    <div style={{ background: COLORS.accentBg, border: `1px solid ${COLORS.accentBorder || COLORS.accent + "33"}`, borderRadius: 5, padding: `${S.m}px ${S.m}px`, marginBottom: S.m }}>
+      <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.s }}>This looks like a strong match for you</div>
+      <div style={{ display: "flex", flexDirection: "column", gap: S.xs }}>
+        {matchPoints.map((pt, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: S.s }}>
+            <span style={{ color: COLORS.green, fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✓</span>
+            <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT }}>{pt}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  ) : null;
+
   const sectionsBlock = (
     <>
+      {matchCard}
       {/* "What you need to know" — always visible, no accordion */}
       <div style={{ borderBottom: `1px solid ${COLORS.border}`, paddingBottom: S.m }}>
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, padding: `${S.m}px 0` }}>What you need to know</div>
