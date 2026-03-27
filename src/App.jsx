@@ -80,9 +80,9 @@ const IconBicycle = ({ color = COLORS.text }) => (
 const WORK_STYLE_QUESTIONS = [
   { id: "activity", question: "How active do you want to be at work?", options: [["sitting", "Mostly sitting down"], ["feet", "On my feet"], ["active", "Very physically active"], ["either", "I don't mind"]] },
   { id: "teamwork", question: "How do you like to work?", options: [["team", "In a team"], ["solo", "On my own"], ["either", "I don't mind"]] },
-  { id: "public",   question: "Do you want to serve customers or deal with the general public?", options: [["yes", "Yes, I enjoy it"], ["no", "Prefer not to"], ["either", "I don't mind"]] },
+  { id: "public",   question: "Do you want to serve customers or deal with the general public?", options: [["yes", "Yes"], ["no", "No"], ["either", "I don't mind"]] },
   { id: "outdoors", question: "Do you prefer working indoors or outdoors?", options: [["indoors", "Indoors"], ["outdoors", "Outdoors"], ["either", "I don't mind"]] },
-  { id: "children", question: "Are you comfortable working with children or young people?", options: [["yes", "Yes"], ["no", "Prefer not to"], ["either", "I don't mind"]] },
+  { id: "children", question: "Are you comfortable working with children or young people?", options: [["yes", "Yes"], ["no", "No"], ["either", "I don't mind"]] },
   { id: "caring",   question: "Are you interested in helping people in need?", subtext: "These jobs can be stressful and difficult at times, but you'll be making a difference to people's lives.", options: [["yes", "Yes"], ["no", "No"], ["either", "I don't mind"]] },
 ];
 
