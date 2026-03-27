@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 
 const FONT = "'CeraPro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
@@ -132,7 +132,7 @@ const JOBS = [
     id: 0,
     isCustomer: true,
     title: "Warehouse Operative",
-    occupationDesc: "Warehouse operatives take delivery of goods, and pick, pack and dispatch products.",
+    occupationDesc: "Warehouse operatives take in deliveries, pick and pack goods, and get them sent out.",
     company: "GXO Logistics",
     companyUrl: "https://www.breakroom.cc/companies/gxo-logistics",
     companyType: "Employer",
@@ -217,6 +217,7 @@ const JOBS = [
   {
     id: 1,
     title: "Warehouse Associate",
+    occupationDesc: "Warehouse operatives take in goods, pick and pack orders, and get them ready to ship.",
     company: "Amazon",
     companyUrl: "https://www.breakroom.cc/companies/amazon",
     companyType: "Employer",
@@ -295,6 +296,7 @@ const JOBS = [
   {
     id: 2,
     title: "Warehouse Operative",
+    occupationDesc: "Warehouse operatives take in deliveries, pick and pack goods, and get them sent out.",
     company: "DHL Supply Chain",
     companyUrl: "https://www.breakroom.cc/companies/dhl-supply-chain",
     companyType: "Employer",
@@ -373,6 +375,7 @@ const JOBS = [
   {
     id: 3,
     title: "Warehouse Operative",
+    occupationDesc: "Warehouse operatives take in deliveries, pick and pack goods, and get them sent out.",
     company: "Wincanton",
     companyUrl: "https://www.breakroom.cc/companies/wincanton",
     companyType: "Employer",
@@ -451,6 +454,7 @@ const JOBS = [
   {
     id: 4,
     title: "FLT Driver",
+    occupationDesc: "FLT drivers use forklift trucks to move heavy loads and pallets around warehouses and distribution centres.",
     company: "XPO Logistics",
     companyUrl: "https://www.breakroom.cc/companies/xpo-logistics",
     companyType: "Employer",
@@ -529,6 +533,7 @@ const JOBS = [
   {
     id: 5,
     title: "Warehouse Team Leader",
+    occupationDesc: "Warehouse team leaders look after a team of operatives, making sure goods come in, get stored and go out on time.",
     company: "Amazon",
     companyUrl: "https://www.breakroom.cc/companies/amazon",
     companyType: "Employer",
@@ -607,6 +612,7 @@ const JOBS = [
   {
     id: 6,
     title: "Production Operative",
+    occupationDesc: "Production operatives work on a production line, using equipment and running checks so products come out right.",
     company: "Greencore",
     companyUrl: "https://www.breakroom.cc/companies/greencore",
     companyType: "Employer",
@@ -686,6 +692,7 @@ const JOBS = [
   {
     id: 7,
     title: "Parcel Sorter",
+    occupationDesc: "Parcel sorters scan and sort packages at mail centres so they get to the right place on time.",
     company: "Royal Mail",
     companyUrl: "https://www.breakroom.cc/companies/royal-mail",
     companyType: "Employer",
@@ -764,6 +771,7 @@ const JOBS = [
   {
     id: 8,
     title: "Parcel Hub Operative",
+    occupationDesc: "Parcel hub operatives sort and handle packages at distribution hubs, scanning them so they're delivered on time.",
     company: "Evri",
     companyUrl: "https://www.breakroom.cc/companies/evri",
     companyType: "Employer",
@@ -843,6 +851,7 @@ const JOBS = [
   {
     id: 9,
     title: "Pick & Pack Operative",
+    occupationDesc: "Pick and pack operatives find the right items in a warehouse, pick them to order and pack them up ready to send out.",
     company: "Clipper Logistics",
     companyUrl: "https://www.breakroom.cc/companies/clipper-logistics",
     companyType: "Employer",
@@ -1983,6 +1992,131 @@ const AlternativesList = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawe
   );
 };
 
+// ─── Search results ────────────────────────────────────────────────────────────
+
+const SearchResultCard = ({ job, onClick }) => (
+  <div onClick={onClick} style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: S.m, cursor: "pointer" }}>
+    <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>{job.title}</div>
+    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: S.xs }}>
+      <TinyRatingDial score={job.rating} />
+      <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{job.rating.toFixed(1)}</span>
+      <span style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>{job.company}</span>
+    </div>
+    <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>{job.pay} · {job.location}</div>
+  </div>
+);
+
+const SEARCH_FILTERS = ["Full time", "Part time", "Days", "Nights", "Weekends", "£11+/hr", "Permanent", "Temporary"];
+const SORT_OPTIONS = [
+  { key: "rating", label: "Best rated" },
+  { key: "pay",    label: "Highest pay" },
+  { key: "relevant", label: "Most relevant" },
+];
+
+const parsePayToHourly = (pay) => {
+  if (!pay) return 0;
+  // Take first number found (handles ranges like "£12.21–£19.32/hr")
+  const num = parseFloat(pay.replace(/[£,]/g, "").match(/[\d.]+/)?.[0] ?? 0);
+  if (pay.includes("/yr")) return num / 2080;
+  return num; // already hourly
+};
+
+const SearchResultsPage = ({ jobs, onJobSelect, isDesktop }) => {
+  const [sortKey, setSortKey] = useState("rating");
+
+  const sorted = useMemo(() => {
+    const arr = [...jobs];
+    if (sortKey === "rating")   arr.sort((a, b) => b.rating - a.rating);
+    if (sortKey === "pay")      arr.sort((a, b) => parsePayToHourly(b.pay) - parsePayToHourly(a.pay));
+    // "relevant" keeps original order
+    return arr;
+  }, [jobs, sortKey]);
+
+  const sortLabel = SORT_OPTIONS.find(o => o.key === sortKey)?.label ?? "";
+
+  const SortSidebar = () => (
+    <div style={{ flexShrink: 0, width: 200 }}>
+      <div style={{ ...T.smallcaps, color: COLORS.muted, fontFamily: FONT, marginBottom: S.s }}>Sort by</div>
+      {SORT_OPTIONS.map(o => (
+        <div
+          key={o.key}
+          onClick={() => setSortKey(o.key)}
+          style={{
+            ...T.body1, fontFamily: FONT, cursor: "pointer", padding: `${S.xs}px 0`,
+            color: sortKey === o.key ? COLORS.accent : COLORS.text,
+            fontWeight: sortKey === o.key ? 700 : 400,
+          }}
+        >
+          {o.label}
+        </div>
+      ))}
+    </div>
+  );
+
+  const MobileSortPills = () => (
+    <div style={{ display: "flex", alignItems: "center", gap: S.xs, marginBottom: S.s, flexWrap: "wrap" }}>
+      <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, whiteSpace: "nowrap" }}>Sort:</span>
+      {SORT_OPTIONS.map(o => (
+        <span
+          key={o.key}
+          onClick={() => setSortKey(o.key)}
+          style={{
+            ...T.body2, fontFamily: FONT, cursor: "pointer", whiteSpace: "nowrap",
+            border: `1px solid ${sortKey === o.key ? COLORS.accent : COLORS.border}`,
+            borderRadius: 20, padding: "4px 12px",
+            background: sortKey === o.key ? COLORS.accentBg : COLORS.bg,
+            color: sortKey === o.key ? COLORS.accent : COLORS.text,
+            fontWeight: sortKey === o.key ? 700 : 400,
+          }}
+        >
+          {o.label}
+        </span>
+      ))}
+    </div>
+  );
+
+  return (
+    <div>
+      {/* Search form */}
+      <div style={{ background: COLORS.card, borderBottom: `1px solid ${COLORS.border}`, padding: `${S.m}px` }}>
+        <div style={{ maxWidth: 1032, margin: "0 auto" }}>
+          <div style={{ display: "flex", gap: S.s, marginBottom: S.s }}>
+            <div style={{ flex: 1, border: `1px solid ${COLORS.border}`, borderRadius: 4, padding: `8px ${S.m}px`, background: COLORS.bg }}>
+              <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>What</div>
+              <div style={{ ...T.body1, color: COLORS.text, fontFamily: FONT }}>Warehouse</div>
+            </div>
+            <div style={{ flex: 1, border: `1px solid ${COLORS.border}`, borderRadius: 4, padding: `8px ${S.m}px`, background: COLORS.bg }}>
+              <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>Where</div>
+              <div style={{ ...T.body1, color: COLORS.text, fontFamily: FONT }}>Corby, Northamptonshire</div>
+            </div>
+            <button style={{ background: COLORS.accent, color: "#fff", border: "none", borderRadius: 4, padding: `0 ${S.m2}px`, ...T.body1Bold, fontFamily: FONT, cursor: "pointer", whiteSpace: "nowrap" }}>Search</button>
+          </div>
+          <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap" }}>
+            {SEARCH_FILTERS.map(f => (
+              <span key={f} style={{ ...T.body2, fontFamily: FONT, color: COLORS.text, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "4px 12px", cursor: "pointer", background: COLORS.bg, whiteSpace: "nowrap" }}>{f}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+      {/* Results */}
+      <div style={{ maxWidth: 1032, margin: "0 auto", padding: `${S.m}px ${S.m}px ${S.xxl}px` }}>
+        {!isDesktop && <MobileSortPills />}
+        <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m}px` }}>
+          {sorted.length} warehouse jobs near Corby · {sortLabel}
+        </p>
+        <div style={{ display: "flex", gap: S.l, alignItems: "flex-start" }}>
+          {isDesktop && <SortSidebar />}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: S.s2 }}>
+            {sorted.map(job => (
+              <SearchResultCard key={job.id} job={job} onClick={() => onJobSelect(job.id)} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // ─── Desktop sidebar ───────────────────────────────────────────────────────────
 
 const DesktopSidebar = ({ currentJobIdx, rating, personalised, isSignedIn, onOpenDrawer, onJobSelect, onOpenProfile, coords, location, onMapExpand }) => (
@@ -2140,6 +2274,7 @@ export default function JobTriagePage() {
   const [allFindingsModalOpen, setAllFindingsModalOpen] = useState(false);
   const [mapModalOpen, setMapModalOpen] = useState(false);
   const [personalised, setPersonalised] = useState(false);
+  const [view, setView] = useState("search");
   const [selectedJobIdx, setSelectedJobIdx] = useState(0);
   const [findingsForceOpen, setFindingsForceOpen] = useState(false);
   const [highlightFinding, setHighlightFinding] = useState(null);
@@ -2202,8 +2337,14 @@ export default function JobTriagePage() {
 
   const handleJobSelect = (idx) => {
     setSelectedJobIdx(idx);
+    setView("job");
     setFindingsForceOpen(false);
     setHighlightFinding(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleBackToSearch = () => {
+    setView("search");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -2223,6 +2364,9 @@ export default function JobTriagePage() {
 
   const heroBlock = (
     <div style={{ paddingTop: S.m2, paddingBottom: S.m }}>
+      <div style={{ marginBottom: S.s }}>
+        <span onClick={handleBackToSearch} style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, cursor: "pointer" }}>← Search results</span>
+      </div>
       <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>
         {job.companyUrl ? <a href={job.companyUrl} style={{ color: "inherit", fontWeight: "inherit", textDecoration: "underline" }}>{job.company}</a> : job.company}
       </div>
@@ -2714,7 +2858,7 @@ export default function JobTriagePage() {
       <div style={{ position: "sticky", top: 0, zIndex: 50, background: COLORS.card, borderBottom: `1px solid ${COLORS.border}`, height: 70 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "100%", maxWidth: 1032, margin: "0 auto", padding: `0 ${S.m}px` }}>
           {/* .header__identity */}
-          <a href="#" onClick={e => { e.preventDefault(); handleJobSelect(0); }} style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+          <a href="#" onClick={e => { e.preventDefault(); handleBackToSearch(); }} style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
             <IconBreakroomLogo />
           </a>
           {/* .header__buttons */}
@@ -2746,26 +2890,30 @@ export default function JobTriagePage() {
         </div>
       </div>
 
-      {isDesktop ? (
-        <div style={{ maxWidth: 1032, margin: "0 auto", padding: `0 ${S.m}px ${S.xl}px`, display: "grid", gridTemplateColumns: "1fr 380px", gap: S.xl, alignItems: "start" }}>
-          <div>
-            {heroBlock}
-            {sectionsBlock}
-          </div>
-          <DesktopSidebar currentJobIdx={selectedJobIdx} rating={JOBS[selectedJobIdx].rating} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} onOpenProfile={() => setProfileOpen(true)} coords={JOBS[selectedJobIdx].coords} location={JOBS[selectedJobIdx].location} onMapExpand={() => setMapModalOpen(true)} />
-        </div>
+      {view === "search" ? (
+        <SearchResultsPage jobs={JOBS} onJobSelect={handleJobSelect} isDesktop={isDesktop} />
       ) : (
-        <div style={{ padding: `0 ${S.m}px ${S.xxl}px` }}>
-          {heroBlock}
-          {sectionsBlock}
-          <div style={{ marginTop: S.m2, marginBottom: S.s }}>
-            <AlternativesList currentJobIdx={selectedJobIdx} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={() => setDrawerOpen(true)} onOpenProfile={() => setProfileOpen(true)} onJobSelect={handleJobSelect} />
-          </div>
-        </div>
-      )}
+        <>
+          {isDesktop ? (
+            <div style={{ maxWidth: 1032, margin: "0 auto", padding: `0 ${S.m}px ${S.xl}px`, display: "grid", gridTemplateColumns: "1fr 380px", gap: S.xl, alignItems: "start" }}>
+              <div>
+                {heroBlock}
+                {sectionsBlock}
+              </div>
+              <DesktopSidebar currentJobIdx={selectedJobIdx} rating={JOBS[selectedJobIdx].rating} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} onOpenProfile={() => setProfileOpen(true)} coords={JOBS[selectedJobIdx].coords} location={JOBS[selectedJobIdx].location} onMapExpand={() => setMapModalOpen(true)} />
+            </div>
+          ) : (
+            <div style={{ padding: `0 ${S.m}px ${S.xxl}px` }}>
+              {heroBlock}
+              {sectionsBlock}
+              <div style={{ marginTop: S.m2, marginBottom: S.s }}>
+                <AlternativesList currentJobIdx={selectedJobIdx} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={() => setDrawerOpen(true)} onOpenProfile={() => setProfileOpen(true)} onJobSelect={handleJobSelect} />
+              </div>
+            </div>
+          )}
 
-      {/* Mobile sticky bottom bar */}
-      {!isDesktop && (
+          {/* Mobile sticky bottom bar */}
+          {!isDesktop && (
         <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 40, background: COLORS.bg, borderTop: `1px solid ${COLORS.border}`, padding: `${S.s2}px ${S.m}px` }}>
           <div style={{ maxWidth: 480, margin: "0 auto", display: "flex", gap: S.s2 }}>
             <button style={{ flex: 1, padding: "6px 22px", borderRadius: 4, border: "2px solid transparent", background: COLORS.accent, color: "#fff", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT }}>
@@ -2779,6 +2927,8 @@ export default function JobTriagePage() {
             </button>
           </div>
         </div>
+        )}
+        </>
       )}
 
       <OnboardingDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)}
