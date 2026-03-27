@@ -2247,7 +2247,7 @@ export default function JobTriagePage() {
             {renderRow({ icon: <IconLocation />, text: job.location, commuteRow: true })}
             {renderRow({ icon: <IconClock />, text: [job.hours, job.hoursSub ? `(${job.hoursSub})` : null, job.shifts].filter(Boolean).join(" · ") })}
             {!isDesktop && (
-              <div style={{ marginTop: S.s }}>
+              <div style={{ marginTop: S.m }}>
                 <MapThumbnail coords={job.coords} onExpand={() => setMapModalOpen(true)} height={180} />
               </div>
             )}
