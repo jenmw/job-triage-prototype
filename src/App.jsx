@@ -2049,36 +2049,72 @@ function computePayVerdict(payStr, payType, benchmark) {
 
 // ─── Map components ────────────────────────────────────────────────────────────
 
+const LOCATION_MARKER_HTML = `<svg width="36" height="44" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 2px 3px rgba(0,0,0,0.35));display:block;"><path d="M12.9979 6.90747C12.9979 10.7244 7.99692 13.996 7.99692 13.996C7.99692 13.996 2.99597 10.7244 2.99597 6.90747C2.99597 5.60593 3.52286 4.35769 4.46071 3.43736C5.39857 2.51704 6.67058 2 7.99692 2C9.32325 2 10.5953 2.51704 11.5331 3.43736C12.471 4.35769 12.9979 5.60593 12.9979 6.90747Z" fill="${COLORS.accent}" stroke="white" stroke-width="0.5"/><path d="M8 8.5C9.10457 8.5 10 7.60457 10 6.5C10 5.39543 9.10457 4.5 8 4.5C6.89543 4.5 6 5.39543 6 6.5C6 7.60457 6.89543 8.5 8 8.5Z" fill="white" stroke="none"/></svg>`;
+
+function LeafletMap({ coords, interactive = false }) {
+  const containerRef = useRef(null);
+  const mapRef = useRef(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    let cancelled = false;
+
+    import("leaflet").then((mod) => {
+      if (cancelled || !containerRef.current) return;
+      const L = mod.default || mod;
+
+      if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; }
+
+      const map = L.map(containerRef.current, {
+        center: coords,
+        zoom: interactive ? 14 : 15,
+        zoomControl: interactive,
+        dragging: interactive,
+        touchZoom: interactive,
+        scrollWheelZoom: false,
+        doubleClickZoom: interactive,
+        keyboard: false,
+        attributionControl: interactive,
+      });
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+      }).addTo(map);
+
+      const icon = L.divIcon({
+        html: LOCATION_MARKER_HTML,
+        className: "",
+        iconSize: [36, 44],
+        iconAnchor: [18, 39],
+      });
+
+      L.marker(coords, { icon }).addTo(map);
+      mapRef.current = map;
+    });
+
+    return () => {
+      cancelled = true;
+      if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; }
+    };
+  }, [coords[0], coords[1], interactive]);
+
+  return <div ref={containerRef} style={{ width: "100%", height: "100%" }} />;
+}
+
 function MapThumbnail({ coords, onExpand, height = 180, label }) {
-  const [lat, lon] = coords;
-  // Tight bbox for thumbnail (~400 m radius). OSM bbox = west,south,east,north
-  const dLat = 0.004, dLon = 0.006;
-  const bbox = `${lon - dLon},${lat - dLat},${lon + dLon},${lat + dLat}`;
-  const src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}`;
   return (
     <div
       onClick={onExpand}
       role="button"
       aria-label="View larger map"
-      style={{
-        position: "relative",
-        height,
-        borderRadius: 5,
-        overflow: "hidden",
-        cursor: "pointer",
-        border: `1px solid ${COLORS.border}`,
-      }}
+      style={{ position: "relative", zIndex: 0, height, borderRadius: 5, overflow: "hidden", cursor: "pointer", border: `1px solid ${COLORS.border}` }}
     >
-      <iframe
-        title="Job location"
-        src={src}
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none", pointerEvents: "none" }}
-        loading="lazy"
-      />
-      {/* Transparent overlay prevents iframe swallowing click events */}
+      <LeafletMap coords={coords} interactive={false} />
+      {/* Overlay prevents map interactions on thumbnail */}
       <div style={{ position: "absolute", inset: 0 }} />
       <div style={{
-        position: "absolute", bottom: 0, left: 0, right: 0,
+        position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 1000,
         padding: `${S.xs}px ${S.s}px`,
         background: "rgba(255,255,255,0.88)",
         ...T.body2, color: COLORS.text, fontFamily: FONT,
@@ -2813,32 +2849,25 @@ export default function JobTriagePage() {
         </>
       )}
 
-      {mapModalOpen && (() => {
-        const [lat, lon] = job.coords;
-        // Modal bbox (~1.5 km radius) — tighter but enough for neighbourhood context
-        const dLat = 0.013, dLon = 0.018;
-        const bbox = `${lon - dLon},${lat - dLat},${lon + dLon},${lat + dLat}`;
-        const src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}`;
-        return (
-          <>
-            <div onClick={() => setMapModalOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 100 }} />
-            <div onClick={() => setMapModalOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 101, overflow: "auto", padding: `${S.l}px ${S.m}px` }}>
-              <div onClick={e => e.stopPropagation()} style={{ background: COLORS.bg, borderRadius: 5, maxWidth: 640, margin: "0 auto", overflow: "hidden" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: `${S.m}px ${S.m}px ${S.s2}px` }}>
-                  <div>
-                    <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{job.title} · {job.company}</div>
-                    <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{job.location}</div>
-                  </div>
-                  <button onClick={() => setMapModalOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", ...T.body1Bold, color: COLORS.muted, fontFamily: FONT, flexShrink: 0, marginLeft: S.m }}>✕</button>
+      {mapModalOpen && (
+        <>
+          <div onClick={() => setMapModalOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 100 }} />
+          <div onClick={() => setMapModalOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 101, overflow: "auto", padding: `${S.l}px ${S.m}px` }}>
+            <div onClick={e => e.stopPropagation()} style={{ background: COLORS.bg, borderRadius: 5, maxWidth: 640, margin: "0 auto", overflow: "hidden" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: `${S.m}px ${S.m}px ${S.s2}px` }}>
+                <div>
+                  <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{job.title} · {job.company}</div>
+                  <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{job.location}</div>
                 </div>
-                <div style={{ height: "60vh" }}>
-                  <iframe title="Job location map" src={src} style={{ width: "100%", height: "100%", border: "none", display: "block" }} />
-                </div>
+                <button onClick={() => setMapModalOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", ...T.body1Bold, color: COLORS.muted, fontFamily: FONT, flexShrink: 0, marginLeft: S.m }}>✕</button>
+              </div>
+              <div style={{ height: "60vh" }}>
+                <LeafletMap coords={job.coords} interactive={true} />
               </div>
             </div>
-          </>
-        );
-      })()}
+          </div>
+        </>
+      )}
 
     </div>
   );
