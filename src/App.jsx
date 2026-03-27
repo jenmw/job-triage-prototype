@@ -1965,13 +1965,13 @@ const AlternativesList = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawe
       <div style={{ display: "flex", flexDirection: "column", gap: S.s2 }}>
         {!personalised && (
           <button onClick={onOpenDrawer} style={{
-            background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)",
-            padding: S.m, cursor: "pointer", border: "none", fontFamily: FONT, textAlign: "left", width: "100%",
+            background: COLORS.accentBg, borderRadius: 5, border: `2px solid ${COLORS.accent}`,
+            padding: S.m, cursor: "pointer", fontFamily: FONT, textAlign: "left", width: "100%",
             display: "flex", justifyContent: "space-between", alignItems: "center",
           }}>
             <div>
-              <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>What matters most to you?</div>
-              <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>Set your priorities to see better-matched jobs</div>
+              <div style={{ ...T.body1Bold, color: COLORS.accent, fontFamily: FONT, marginBottom: S.xs }}>What matters most to you?</div>
+              <div style={{ ...T.body1, color: COLORS.accent, fontFamily: FONT, opacity: 0.8 }}>Set your priorities to see better-matched jobs</div>
             </div>
           </button>
         )}
