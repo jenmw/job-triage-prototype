@@ -1681,7 +1681,7 @@ const WorkStyleDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
         </div>
 
         {/* Question */}
-        <div style={{ ...T.lead1, color: COLORS.text, fontFamily: FONT, marginBottom: q.subtext ? S.xs : S.m2, ...(q.subtext ? {} : { minHeight: 60 }) }}>{q.question}</div>
+        <div style={{ ...T.lead1, color: COLORS.text, fontFamily: FONT, marginBottom: q.subtext ? S.xs : S.m2 }}>{q.question}</div>
         {q.subtext && <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, marginBottom: S.m2 }}>{q.subtext}</div>}
 
         {/* Options */}
