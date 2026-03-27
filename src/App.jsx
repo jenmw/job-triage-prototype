@@ -86,7 +86,39 @@ const WORK_STYLE_QUESTIONS = [
   { id: "caring",   question: "Are you interested in helping people in need?", subtext: "These jobs can be stressful and difficult at times, but you'll be making a difference to people's lives.", options: [["yes", "Yes"], ["no", "No"], ["either", "I don't mind"]] },
 ];
 
-const PRIORITIES = ["Good shift notice", "Well rated employer", "Good team mates", "Chance to learn new things", "Recommended by students", "Recommended by parents", "Good managers", "No experience required"];
+const PRIORITIES = ["Good shift notice", "Well rated employer", "Good team mates", "Career progression", "Recommended by students", "Recommended by parents", "Good managers", "No experience required"];
+
+// Maps each priority chip to relevant findings on a job, returning coloured chips for the job list card.
+// status: "good" | "bad" | "neutral"
+const getPriorityChips = (job, priorities) => {
+  if (!priorities || priorities.length === 0) {
+    return (job.highlights || []).slice(0, 3).map(h => ({ label: h, status: "neutral" }));
+  }
+  const goodF = (kw) => job.findings.good.find(f => f.label.toLowerCase().includes(kw));
+  const badF  = (kw) => job.findings.bad.find(f => f.label.toLowerCase().includes(kw));
+  const chips = [];
+  for (const p of priorities) {
+    if (p === "Good shift notice") {
+      if (goodF("shift"))        chips.push({ label: p, status: "good" });
+      else if (badF("shift"))    chips.push({ label: p, status: "bad" });
+    } else if (p === "Well rated employer") {
+      chips.push({ label: p, status: job.rating >= 7.0 ? "good" : job.rating >= 5.5 ? "neutral" : "bad" });
+    } else if (p === "Good team mates") {
+      if (goodF("team"))         chips.push({ label: p, status: "good" });
+      else if (badF("team"))     chips.push({ label: p, status: "bad" });
+    } else if (p === "Career progression") {
+      if (goodF("progress"))     chips.push({ label: p, status: "good" });
+      else if (badF("progress")) chips.push({ label: p, status: "bad" });
+    } else if (p === "Good managers") {
+      if (goodF("respect") || goodF("manager"))      chips.push({ label: p, status: "good" });
+      else if (badF("disconnect") || badF("manager")) chips.push({ label: p, status: "bad" });
+    } else if (p === "No experience required") {
+      if (job.matchCriteria?.experience?.required === false) chips.push({ label: p, status: "good" });
+    }
+    // "Recommended by students" and "Recommended by parents" need recommendation data — skip for now
+  }
+  return chips.slice(0, 4);
+};
 
 // Three transport modes — matches Breakroom onboarding options
 const TRANSPORT_MODES = [
@@ -3535,17 +3567,32 @@ const AlternativesList = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawe
 
 // ─── Search results ────────────────────────────────────────────────────────────
 
-const SearchResultCard = ({ job, onClick }) => (
-  <div onClick={onClick} style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: S.m, cursor: "pointer" }}>
-    <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>{job.title}</div>
-    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: S.xs }}>
-      <TinyRatingDial score={job.rating} />
-      <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{job.rating.toFixed(1)}</span>
-      <span style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>{job.company}</span>
+const SearchResultCard = ({ job, onClick, profilePriorities }) => {
+  const chips = getPriorityChips(job, profilePriorities);
+  return (
+    <div onClick={onClick} style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: S.m, cursor: "pointer" }}>
+      <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>{job.title}</div>
+      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: S.xs }}>
+        <TinyRatingDial score={job.rating} />
+        <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{job.rating.toFixed(1)}</span>
+        <span style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>{job.company}</span>
+      </div>
+      <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, marginBottom: chips.length > 0 ? S.xs : 0 }}>{job.pay} · {job.location}</div>
+      {chips.length > 0 && (
+        <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: S.xs }}>
+          {chips.map(c => (
+            <span key={c.label} style={{
+              padding: "2px 8px", borderRadius: 100, fontFamily: FONT, fontSize: 12, fontWeight: c.status === "neutral" ? 400 : 600,
+              background: c.status === "good" ? COLORS.greenBg : c.status === "bad" ? "#FFF0F0" : COLORS.bg,
+              color:      c.status === "good" ? COLORS.green  : c.status === "bad" ? "#C0392B"  : COLORS.muted,
+              border:     `1px solid ${c.status === "good" ? COLORS.green : c.status === "bad" ? "#FFCDD2" : COLORS.border}`,
+            }}>{c.label}</span>
+          ))}
+        </div>
+      )}
     </div>
-    <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>{job.pay} · {job.location}</div>
-  </div>
-);
+  );
+};
 
 const SEARCH_FILTERS = ["Full time", "Part time", "Days", "Nights", "Weekends", "£11+/hr", "Permanent", "Temporary"];
 const SORT_OPTIONS = [
@@ -3562,7 +3609,7 @@ const parsePayToHourly = (pay) => {
   return num; // already hourly
 };
 
-const SearchResultsPage = ({ jobs, onJobSelect, isDesktop }) => {
+const SearchResultsPage = ({ jobs, onJobSelect, isDesktop, profilePriorities }) => {
   const [sortKey, setSortKey] = useState("rating");
 
   const sorted = useMemo(() => {
@@ -3649,7 +3696,7 @@ const SearchResultsPage = ({ jobs, onJobSelect, isDesktop }) => {
           {isDesktop && <SortSidebar />}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: S.s2 }}>
             {sorted.map(job => (
-              <SearchResultCard key={job.id} job={job} onClick={() => onJobSelect(job.id)} />
+              <SearchResultCard key={job.id} job={job} onClick={() => onJobSelect(job.id)} profilePriorities={profilePriorities} />
             ))}
           </div>
         </div>
@@ -4079,21 +4126,23 @@ export default function JobTriagePage() {
       const f = goodByLabel("shift");
       if (f) reasons.push({ label: `${f.pct}% say shifts don't get changed at short notice`, detail: "You said good shift notice matters to you — this employer scores well here." });
     }
-    if (profilePriorities.includes("Sick pay") && notBad("sick pay")) {
-      const f = goodByLabel("sick pay");
-      if (f) reasons.push({ label: `${f.pct}% of workers get sick pay`, detail: "You said sick pay matters to you — more workers here have it than at many similar employers." });
+    if (profilePriorities.includes("Well rated employer")) {
+      if (job.rating >= 7.0) reasons.push({ label: `Rated ${job.rating.toFixed(1)} by workers`, detail: "You said you want a well-rated employer — this one scores above average on Breakroom." });
     }
-    if (profilePriorities.includes("Paid breaks") && notBad("paid breaks")) {
-      const f = goodByLabel("paid break");
-      if (f) reasons.push({ label: `${f.pct}% get paid breaks`, detail: "You said paid breaks matter to you — this employer is above average here." });
-    }
-    if (profilePriorities.includes("Friendly team") && notBad("team")) {
+    if (profilePriorities.includes("Good team mates") && notBad("team")) {
       const f = goodByLabel("team");
-      if (f) reasons.push({ label: `${f.pct}% would recommend working with their team`, detail: "You said a friendly team is important to you." });
+      if (f) reasons.push({ label: `${f.pct}% say their colleagues are a good bunch`, detail: "You said good team mates matter to you — workers here rate their colleagues highly." });
     }
     if (profilePriorities.includes("Career progression") && notBad("progress")) {
       const f = goodByLabel("progress");
       if (f) reasons.push({ label: `${f.pct}% say they get support to progress`, detail: "You said career progression matters to you." });
+    }
+    if (profilePriorities.includes("Good managers") && notBad("respect") && notBad("disconnect")) {
+      const f = goodByLabel("respect") || goodByLabel("manager");
+      if (f) reasons.push({ label: `${f.pct}% say managers treat them with respect`, detail: "You said good managers are important to you — this employer scores well here." });
+    }
+    if (profilePriorities.includes("No experience required")) {
+      if (job.matchCriteria?.experience?.required === false) reasons.push({ label: "No experience required", detail: "You said you're looking for a role you can get into without prior experience — this job fits." });
     }
 
     return reasons;
@@ -4433,7 +4482,7 @@ export default function JobTriagePage() {
       </div>
 
       {view === "search" ? (
-        <SearchResultsPage jobs={JOBS} onJobSelect={handleJobSelect} isDesktop={isDesktop} />
+        <SearchResultsPage jobs={JOBS} onJobSelect={handleJobSelect} isDesktop={isDesktop} profilePriorities={profilePriorities} />
       ) : (
         <>
           {isDesktop ? (
