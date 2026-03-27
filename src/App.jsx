@@ -3573,7 +3573,16 @@ const AlternativesList = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawe
 // ─── Search results ────────────────────────────────────────────────────────────
 
 const SearchResultCard = ({ job, onClick, profilePriorities }) => {
-  const chips = getPriorityChips(job, profilePriorities);
+  const priorityChips = getPriorityChips(job, profilePriorities);
+  const greenChips = priorityChips.filter(c => c.status === "good");
+
+  // Job-specific grey chips: findingDiffs + altReason, deduplicated against green labels
+  const greenLabels = new Set(greenChips.map(c => c.label.toLowerCase()));
+  const greyChipStyle = { ...T.body2Bold, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT, whiteSpace: "nowrap" };
+  const diffChips = (job.findingDiffs ?? []).filter(d => !greenLabels.has(d.toLowerCase()));
+  const reasonChip = job.altReason?.text && !greenLabels.has(job.altReason.text.toLowerCase()) ? job.altReason.text : null;
+
+  const hasChips = greenChips.length > 0 || diffChips.length > 0 || reasonChip;
   return (
     <div onClick={onClick} style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: S.m, cursor: "pointer" }}>
       <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>{job.title}</div>
@@ -3582,13 +3591,12 @@ const SearchResultCard = ({ job, onClick, profilePriorities }) => {
         <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{job.rating.toFixed(1)}</span>
         <span style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>{job.company}</span>
       </div>
-      <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, marginBottom: chips.length > 0 ? S.xs : 0 }}>{job.pay} · {job.location}</div>
-      {chips.length > 0 && (
+      <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, marginBottom: hasChips ? S.xs : 0 }}>{job.pay} · {job.location}</div>
+      {hasChips && (
         <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: S.xs }}>
-          {chips.map(c => c.status === "good"
-            ? <VacancyHighlight key={c.label} label={c.label} />
-            : <span key={c.label} style={{ ...T.body2Bold, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT, whiteSpace: "nowrap" }}>{c.label}</span>
-          )}
+          {greenChips.map(c => <VacancyHighlight key={c.label} label={c.label} />)}
+          {diffChips.map(d => <span key={d} style={greyChipStyle}>{d}</span>)}
+          {reasonChip && <span style={greyChipStyle}>{reasonChip}</span>}
         </div>
       )}
     </div>
