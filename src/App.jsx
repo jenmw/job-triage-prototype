@@ -3588,10 +3588,10 @@ const SearchResultCard = ({ job, onClick, profilePriorities }) => {
           {chips.map(c => (
             <span key={c.label} style={{
               padding: "2px 8px", borderRadius: 100, fontFamily: FONT, fontSize: 12, fontWeight: c.status === "neutral" ? 400 : 600,
-              background: c.status === "good" ? COLORS.greenBg : c.status === "bad" ? "#FFF0F0" : COLORS.bg,
-              color:      c.status === "good" ? COLORS.green  : c.status === "bad" ? "#C0392B"  : COLORS.muted,
-              border:     `1px solid ${c.status === "good" ? COLORS.green : c.status === "bad" ? "#FFCDD2" : COLORS.border}`,
-            }}>{c.label}</span>
+              background: COLORS.card,
+              color:  c.status === "good" ? COLORS.green : COLORS.muted,
+              border: `1px solid ${c.status === "good" ? COLORS.green : COLORS.border}`,
+            }}>{c.status === "good" ? "👍 " : ""}{c.label}</span>
           ))}
         </div>
       )}
