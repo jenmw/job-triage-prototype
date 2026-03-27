@@ -901,20 +901,17 @@ const synthSignal = (job) => {
   let label, detail;
 
   if (status === "good") {
-    // Lead with the positive, show a concern if there is one
-    label = `Workers rate ${job.company} ${score.toFixed(1)}/10 — broadly positive`;
+    label = `Workers broadly rate conditions at ${job.company} positively`;
     detail = topBad
       ? `${topGood?.heading} · ${topBad.heading}`
       : topGood?.heading || null;
   } else if (status === "warning") {
-    // Lead with score and a hint at the mixed picture, surface the biggest concern
-    label = `Workers give ${job.company} ${score.toFixed(1)}/10 — some things to be aware of`;
+    label = `Workers have mixed views on working at ${job.company}`;
     detail = topBad
       ? secondBad ? `${topBad.heading} · ${secondBad.heading}` : topBad.heading
       : null;
   } else {
-    // Poor rating — lead with the headline concern
-    label = `${job.company} is poorly rated by workers — ${score.toFixed(1)}/10`;
+    label = `Workers raise significant concerns about ${job.company}`;
     detail = topBad
       ? secondBad ? `${topBad.heading} · ${secondBad.heading}` : topBad.heading
       : null;
