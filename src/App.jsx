@@ -106,11 +106,12 @@ const formatCommute = (mins) => {
 const modeLabelShort = (modeId) => ({ "walk-transit": "Transit", "car": "Car", "bike": "Bike" }[modeId] ?? modeId);
 
 // Groups bad+good findings into Pay / Hours / Workplace sections for the modal
-const PAY_LABELS = new Set(["No sick pay","Some sick pay","No paid breaks","No unpaid overtime","Living wage","Above average pay","Below average pay"]);
-const HOURS_LABELS = new Set(["Short shift notice","Hours security","No choice of shifts","No last-minute shift changes","Easy holiday booking"]);
-const buildAllFindings = (bad, good) => {
+const PAY_LABELS = new Set(["No sick pay","Some sick pay","No paid breaks","No unpaid overtime","Living wage","Above average pay","Below average pay","Only some sick pay","Some sick pay available","Some unpaid breaks","Unpaid breaks for some","Proper breaks not guaranteed","Proper breaks","Pay is around average"]);
+const HOURS_LABELS = new Set(["Short shift notice","Hours security","No choice of shifts","No last-minute shift changes","Easy holiday booking","Holiday booking can be tricky","Shift changes can happen","Shift notice varies","Easy to book holiday","Easy to take sick leave","Sick leave isn't always easy","Some choice of shifts","Hours can exceed contract","Hours can match contract","Hours match contract"]);
+const buildAllFindings = (bad, okay, good) => {
   const all = [
     ...bad.map(f => ({ ...f, opinion: "bad" })),
+    ...(okay ?? []).map(f => ({ ...f, opinion: "okay" })),
     ...good.map(f => ({ ...f, opinion: "good" })),
   ];
   const pay = all.filter(f => PAY_LABELS.has(f.label));
@@ -872,7 +873,7 @@ const JOBS = [
 ];
 
 // Build allFindings for each job from their findings.bad + findings.good
-JOBS.forEach(job => { job.allFindings = buildAllFindings(job.findings.bad, job.findings.good); });
+JOBS.forEach(job => { job.allFindings = buildAllFindings(job.findings.bad, job.findings.okay, job.findings.good); });
 
 // Synthesises rating tier into a dot colour + plain-text verdict
 const ratingVerdict = (score) =>
