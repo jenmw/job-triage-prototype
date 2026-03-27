@@ -923,18 +923,29 @@ const ratingVerdict = (score) =>
     ? { dotColor: COLORS.amber,     text: "Workers have mixed views here — some concerns about pay, hours, or conditions to know." }
     : {  dotColor: COLORS.red,      text: "Poorly rated by workers — significant concerns about pay, hours, and working conditions." };
 
-// Synthesises a single signal from a worker review quote + rating
+// Synthesises a signal combining a worker quote with the most notable finding
 const synthSignal = (job) => {
   const score = job.rating;
   const status = score >= 7.0 ? "good" : score >= 5.5 ? "warning" : "bad";
   const review = (job.reviews || [])[0];
 
-  // Good rating: lead with a positive quote. Mixed or poor: lead with the worst quote.
+  // Good rating: positive quote + best finding. Mixed/poor: worst quote + top concern.
   const quote = status === "good" ? review?.best : review?.worst;
   const label = quote ? `"${quote}"` : null;
-  const detail = review ? `${review.role} · ${review.date}` : null;
 
-  return { status, label, detail };
+  const badFindings = job.findings.bad || [];
+  const goodFindings = job.findings.good || [];
+  const topBad = badFindings.reduce((best, f) => !best || f.pct > best.pct ? f : best, null);
+  const topGood = goodFindings.reduce((best, f) => !best || f.pct > best.pct ? f : best, null);
+
+  const attribution = review ? `${review.role} · ${review.date}` : null;
+  const finding = status === "good"
+    ? (topGood ? `${topGood.pct}% say: ${topGood.heading.toLowerCase()}` : null)
+    : (topBad ? `${topBad.pct}% say: ${topBad.heading.toLowerCase()}` : null);
+
+  const detail = [attribution, finding].filter(Boolean).join(" · ");
+
+  return { status, label, detail: detail || null };
 };
 
 // Returns badge colours matching the rating dial thresholds
