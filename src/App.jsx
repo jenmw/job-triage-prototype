@@ -100,7 +100,7 @@ const getPriorityChips = (job, priorities) => {
   const allChips = [];
   const check = (p, met) => {
     if (!met) return;
-    allChips.push({ label: p, status: (noPriorities || selected.has(p)) ? "good" : "neutral" });
+    allChips.push({ label: p, status: selected.has(p) ? "good" : "neutral" });
   };
 
   check("Good shift notice",       goodF("shift"));
