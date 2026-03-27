@@ -3585,14 +3585,10 @@ const SearchResultCard = ({ job, onClick, profilePriorities }) => {
       <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, marginBottom: chips.length > 0 ? S.xs : 0 }}>{job.pay} · {job.location}</div>
       {chips.length > 0 && (
         <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: S.xs }}>
-          {chips.map(c => (
-            <span key={c.label} style={{
-              padding: "2px 8px", borderRadius: 100, fontFamily: FONT, fontSize: 12, fontWeight: c.status === "neutral" ? 400 : 600,
-              background: COLORS.card,
-              color:  c.status === "good" ? COLORS.green : COLORS.muted,
-              border: `1px solid ${c.status === "good" ? COLORS.green : COLORS.border}`,
-            }}>{c.status === "good" ? "👍 " : ""}{c.label}</span>
-          ))}
+          {chips.map(c => c.status === "good"
+            ? <VacancyHighlight key={c.label} label={c.label} />
+            : <span key={c.label} style={{ padding: "2px 8px", borderRadius: 100, fontFamily: FONT, fontSize: 12, color: COLORS.muted, border: `1px solid ${COLORS.border}`, background: COLORS.card }}>{c.label}</span>
+          )}
         </div>
       )}
     </div>
