@@ -1422,11 +1422,11 @@ const AltJob = ({ job, onClick }) => {
 
 // ─── Licence modal — bottom sheet for declaring driving/forklift licences ──────
 const LICENCE_OPTIONS = [
-  { id: "flt",  label: "FLT / Forklift licence",    sub: "RTITB or ITSSAR (counterbalance, reach, etc.)" },
-  { id: "car",  label: "Full UK driving licence",    sub: "Category B — car and light van" },
-  { id: "c1",   label: "C1 licence",                 sub: "Minibus or vehicle up to 7.5 tonnes" },
-  { id: "c",    label: "Cat C / HGV licence",        sub: "Large goods vehicle" },
-  { id: "ce",   label: "Cat C+E / HGV with trailer", sub: "Articulated lorry" },
+  { id: "car",  label: "Full car licence",           sub: null },
+  { id: "c1",   label: "7.5 tonne (category C)",     sub: null },
+  { id: "c",    label: "HGV/LGV class 2",            sub: null },
+  { id: "ce",   label: "HGV/LGV class 1",            sub: null },
+  { id: "flt",  label: "FLT / Forklift licence",     sub: "RTITB or ITSSAR (counterbalance, reach, etc.)" },
 ];
 
 const LicenceModal = ({ open, onClose, userLicences, onSave }) => {
@@ -1450,7 +1450,7 @@ const LicenceModal = ({ open, onClose, userLicences, onSave }) => {
                 </span>
                 <div>
                   <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{label}</div>
-                  <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>{sub}</div>
+                  {sub && <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>{sub}</div>}
                 </div>
               </button>
             );
@@ -1627,7 +1627,7 @@ const LicencesSubSheet = ({ open, onClose, selected, other, onSave }) => {
               </span>
               <div>
                 <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{label}</div>
-                <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>{sub}</div>
+                {sub && <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>{sub}</div>}
               </div>
             </button>
           );
@@ -1855,7 +1855,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
   const toggleP = (p) => setLPriorities(s => { const n = new Set(s); n.has(p) ? n.delete(p) : n.add(p); return n; });
   const inputStyle = { width: "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1px solid ${COLORS.border}`, ...T.body1, fontFamily: FONT, marginBottom: S.m, background: COLORS.card, color: COLORS.text, outline: "none", boxSizing: "border-box" };
   const sectionLabel = { ...T.body1Bold, color: COLORS.text, fontFamily: FONT, display: "block", marginBottom: S.s };
-  const licenceLabels = { flt: "FLT / Forklift licence", car: "UK car driving licence (category B)", hgv: "HGV licence (category C)", van: "Van / light goods licence (category B+E)" };
+  const licenceLabels = { car: "Full car licence", c1: "7.5 tonne (category C)", c: "HGV/LGV class 2", ce: "HGV/LGV class 1", flt: "FLT / Forklift licence" };
 
   // Summary row for read-only state
   const SummaryRow = ({ label, value, onClick, isLast }) => !value ? null : (
