@@ -1695,7 +1695,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
 
 const AlternativesList = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawer, onOpenProfile, onJobSelect }) => {
   const currentJob = JOBS.find((j) => j.id === currentJobIdx);
-  const altJobs = JOBS.filter((j) => j.id !== currentJobIdx).sort((a, b) => b.rating - a.rating);
+  const altJobs = JOBS.filter((j) => j.id !== currentJobIdx).sort((a, b) => b.rating - a.rating).slice(0, 5);
   const sep = <span style={{ color: COLORS.border, margin: `0 ${S.xs}px` }}>·</span>;
   return (
     <div>
