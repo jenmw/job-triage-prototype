@@ -89,29 +89,24 @@ const WORK_STYLE_QUESTIONS = [
 const PRIORITIES = ["Good shift notice", "Well rated employer", "Good team mates", "Career progression", "Recommended by students", "Recommended by parents", "Good managers", "No experience required"];
 
 // Maps each priority chip to relevant findings on a job, returning coloured chips for the job list card.
-// status: "good" | "bad" | "neutral"
+// Only shows green chips (job meets the priority) — chips are simply omitted when a job doesn't qualify.
 const getPriorityChips = (job, priorities) => {
   if (!priorities || priorities.length === 0) {
     return (job.highlights || []).slice(0, 3).map(h => ({ label: h, status: "neutral" }));
   }
   const goodF = (kw) => job.findings.good.find(f => f.label.toLowerCase().includes(kw));
-  const badF  = (kw) => job.findings.bad.find(f => f.label.toLowerCase().includes(kw));
   const chips = [];
   for (const p of priorities) {
     if (p === "Good shift notice") {
-      if (goodF("shift"))        chips.push({ label: p, status: "good" });
-      else if (badF("shift"))    chips.push({ label: p, status: "bad" });
+      if (goodF("shift"))   chips.push({ label: p, status: "good" });
     } else if (p === "Well rated employer") {
-      chips.push({ label: p, status: job.rating >= 7.0 ? "good" : job.rating >= 5.5 ? "neutral" : "bad" });
+      if (job.rating >= 7.0) chips.push({ label: p, status: "good" });
     } else if (p === "Good team mates") {
-      if (goodF("team"))         chips.push({ label: p, status: "good" });
-      else if (badF("team"))     chips.push({ label: p, status: "bad" });
+      if (goodF("team"))    chips.push({ label: p, status: "good" });
     } else if (p === "Career progression") {
-      if (goodF("progress"))     chips.push({ label: p, status: "good" });
-      else if (badF("progress")) chips.push({ label: p, status: "bad" });
+      if (goodF("progress")) chips.push({ label: p, status: "good" });
     } else if (p === "Good managers") {
-      if (goodF("respect") || goodF("manager"))      chips.push({ label: p, status: "good" });
-      else if (badF("disconnect") || badF("manager")) chips.push({ label: p, status: "bad" });
+      if (goodF("respect") || goodF("manager")) chips.push({ label: p, status: "good" });
     } else if (p === "No experience required") {
       if (job.matchCriteria?.experience?.required === false) chips.push({ label: p, status: "good" });
     }
