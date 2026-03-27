@@ -1438,7 +1438,7 @@ const LicenceModal = ({ open, onClose, userLicences, onSave }) => {
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, maxHeight: "85vh", background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, overflowY: "auto", boxShadow: open ? "0 -8px 40px rgba(0,0,0,0.15)" : "none" }}>
         <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px` }} />
         <h3 style={{ ...T.lead1, margin: 0, color: COLORS.text, fontFamily: FONT, marginBottom: S.s }}>Do you hold a UK driving or forklift licence?</h3>
-        <p style={{ ...T.body1, color: COLORS.muted, margin: `0 0 ${S.m2}px`, fontFamily: FONT }}>We'll use this to show you which jobs you could get — including future ones.</p>
+        <p style={{ ...T.body1, color: COLORS.muted, margin: `0 0 ${S.m2}px`, fontFamily: FONT }}>Some jobs require a specific driving licence. Tell us which ones you hold and we'll show you whether you already meet that requirement.</p>
         <div style={{ display: "flex", flexDirection: "column", gap: S.s, marginBottom: S.m2 }}>
           {LICENCE_OPTIONS.map(({ id, label, sub }) => {
             const on = selected.has(id);
@@ -1616,7 +1616,7 @@ const LicencesSubSheet = ({ open, onClose, selected, other, onSave }) => {
   const inputStyle = { width: "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1px solid ${COLORS.border}`, ...T.body1, fontFamily: FONT, background: COLORS.card, color: COLORS.text, outline: "none", boxSizing: "border-box" };
   return (
     <SubSheet open={open} onClose={onClose} title="Your licences">
-      <p style={{ ...T.body1, color: COLORS.muted, margin: `0 0 ${S.m}px`, fontFamily: FONT }}>We'll use this to show you which jobs you could get — including future ones.</p>
+      <p style={{ ...T.body1, color: COLORS.muted, margin: `0 0 ${S.m}px`, fontFamily: FONT }}>Some jobs require a specific driving licence. Tell us which ones you hold and we'll show you whether you already meet that requirement.</p>
       <div style={{ display: "flex", flexDirection: "column", gap: S.s, marginBottom: S.m }}>
         {LICENCE_OPTIONS.map(({ id, label, sub }) => {
           const on = localSelected.has(id);
