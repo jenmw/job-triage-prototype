@@ -1983,7 +1983,7 @@ const AlternativesList = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawe
 
 // ─── Desktop sidebar ───────────────────────────────────────────────────────────
 
-const DesktopSidebar = ({ currentJobIdx, rating, personalised, isSignedIn, onOpenDrawer, onJobSelect, onOpenProfile }) => (
+const DesktopSidebar = ({ currentJobIdx, rating, personalised, isSignedIn, onOpenDrawer, onJobSelect, onOpenProfile, coords, location, onMapExpand }) => (
   <div style={{ display: "flex", flexDirection: "column", gap: S.l2, paddingTop: S.m2 }}>
     {/* CTA card — sticky below header (70px) + S.m gap */}
     <div style={{ position: "sticky", top: 70 + S.m, zIndex: 10 }}>
@@ -2005,6 +2005,9 @@ const DesktopSidebar = ({ currentJobIdx, rating, personalised, isSignedIn, onOpe
       </div>
     </div>
     </div>
+
+    {/* Map — scrolls with page, sits above similar jobs */}
+    <MapThumbnail coords={coords} onExpand={onMapExpand} height={180} label={location} />
 
     {/* Alternatives — not sticky, scrolls with page */}
     <AlternativesList currentJobIdx={currentJobIdx} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={onOpenDrawer} onOpenProfile={onOpenProfile} onJobSelect={onJobSelect} />
@@ -2042,6 +2045,50 @@ function computePayVerdict(payStr, payType, benchmark) {
   }
 }
 
+// ─── Map components ────────────────────────────────────────────────────────────
+
+function MapThumbnail({ coords, onExpand, height = 180, label }) {
+  const [lat, lon] = coords;
+  // Tight bbox for thumbnail (~400 m radius). OSM bbox = west,south,east,north
+  const dLat = 0.004, dLon = 0.006;
+  const bbox = `${lon - dLon},${lat - dLat},${lon + dLon},${lat + dLat}`;
+  const src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}`;
+  return (
+    <div
+      onClick={onExpand}
+      role="button"
+      aria-label="View larger map"
+      style={{
+        position: "relative",
+        height,
+        borderRadius: 5,
+        overflow: "hidden",
+        cursor: "pointer",
+        border: `1px solid ${COLORS.border}`,
+      }}
+    >
+      <iframe
+        title="Job location"
+        src={src}
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none", pointerEvents: "none" }}
+        loading="lazy"
+      />
+      {/* Transparent overlay prevents iframe swallowing click events */}
+      <div style={{ position: "absolute", inset: 0 }} />
+      <div style={{
+        position: "absolute", bottom: 0, left: 0, right: 0,
+        padding: `${S.xs}px ${S.s}px`,
+        background: "rgba(255,255,255,0.88)",
+        ...T.body2, color: COLORS.text, fontFamily: FONT,
+        display: "flex", justifyContent: "space-between", alignItems: "center", gap: S.s,
+      }}>
+        {label && <span style={{ color: COLORS.muted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{label}</span>}
+        <span style={{ textDecoration: "underline", flexShrink: 0 }}>View larger map</span>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main page ─────────────────────────────────────────────────────────────────
 
 export default function JobTriagePage() {
@@ -2053,6 +2100,7 @@ export default function JobTriagePage() {
   const [workStylePrefs, setWorkStylePrefs] = useState({});
   const [profileOpen, setProfileOpen] = useState(false);
   const [allFindingsModalOpen, setAllFindingsModalOpen] = useState(false);
+  const [mapModalOpen, setMapModalOpen] = useState(false);
   const [personalised, setPersonalised] = useState(false);
   const [selectedJobIdx, setSelectedJobIdx] = useState(0);
   const [findingsForceOpen, setFindingsForceOpen] = useState(false);
@@ -2074,7 +2122,7 @@ export default function JobTriagePage() {
 
   // Lock body scroll when any drawer or modal is open
   useEffect(() => {
-    const anyOpen = drawerOpen || backgroundDrawerOpen || profileOpen || licenceModalOpen || allFindingsModalOpen;
+    const anyOpen = drawerOpen || backgroundDrawerOpen || profileOpen || licenceModalOpen || allFindingsModalOpen || mapModalOpen;
     document.body.style.overflow = anyOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [drawerOpen, backgroundDrawerOpen, profileOpen, licenceModalOpen]);
@@ -2146,18 +2194,14 @@ export default function JobTriagePage() {
       {job.occupationDesc && <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.s2}px` }}>{job.occupationDesc}</p>}
 
       {/* .vacancy-card__divider + .vacancy__details */}
-      <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", borderBottom: "1px solid rgba(50,50,50,0.1)", marginTop: S.m, marginBottom: S.m, paddingTop: S.m, paddingBottom: S.s }}>
-        {[
-          { icon: <IconPay />, text: job.pay, benchmark: job.payBenchmark },
-          { icon: <IconLocation />, text: job.location, commuteRow: true },
-          { icon: <IconClock />, text: [job.hours, job.hoursSub ? `(${job.hoursSub})` : null, job.shifts].filter(Boolean).join(" · ") },
-        ].map((f, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "flex-start", marginBottom: S.s }}>
-            <span style={{ marginRight: S.s, marginTop: S.xs, flexShrink: 0, display: "flex" }}>{f.icon}</span>
+      {(() => {
+        const rowStyle = { display: "flex", alignItems: "flex-start", marginBottom: S.s };
+        const iconStyle = { marginRight: S.s, marginTop: S.xs, flexShrink: 0, display: "flex" };
+        const renderRow = (f) => (
+          <div style={rowStyle}>
+            <span style={iconStyle}>{f.icon}</span>
             <div>
-              <div>
-                <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, lineHeight: 1.5 }}>{f.text}</span>
-              </div>
+              <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, lineHeight: 1.5 }}>{f.text}</span>
               {f.benchmark && (() => {
                 const computed = computePayVerdict(job.pay, job.payType, f.benchmark);
                 if (!computed) return null;
@@ -2196,8 +2240,20 @@ export default function JobTriagePage() {
               })()}
             </div>
           </div>
-        ))}
-      </div>
+        );
+        return (
+          <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", borderBottom: isDesktop ? "1px solid rgba(50,50,50,0.1)" : "none", marginTop: S.m, marginBottom: S.m, paddingTop: S.m, paddingBottom: S.s }}>
+            {renderRow({ icon: <IconPay />, text: job.pay, benchmark: job.payBenchmark })}
+            {renderRow({ icon: <IconLocation />, text: job.location, commuteRow: true })}
+            {renderRow({ icon: <IconClock />, text: [job.hours, job.hoursSub ? `(${job.hoursSub})` : null, job.shifts].filter(Boolean).join(" · ") })}
+            {!isDesktop && (
+              <div style={{ marginTop: S.s }}>
+                <MapThumbnail coords={job.coords} onExpand={() => setMapModalOpen(true)} height={180} />
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Breakroom Rating — matches rating--tiny pattern from employer pages */}
       <div style={{ marginBottom: S.s2 }}>
@@ -2658,7 +2714,7 @@ export default function JobTriagePage() {
             {heroBlock}
             {sectionsBlock}
           </div>
-          <DesktopSidebar currentJobIdx={selectedJobIdx} rating={JOBS[selectedJobIdx].rating} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} onOpenProfile={() => setProfileOpen(true)} />
+          <DesktopSidebar currentJobIdx={selectedJobIdx} rating={JOBS[selectedJobIdx].rating} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} onOpenProfile={() => setProfileOpen(true)} coords={JOBS[selectedJobIdx].coords} location={JOBS[selectedJobIdx].location} onMapExpand={() => setMapModalOpen(true)} />
         </div>
       ) : (
         <div style={{ padding: `0 ${S.m}px ${S.xxl}px` }}>
@@ -2754,6 +2810,33 @@ export default function JobTriagePage() {
           </div>
         </>
       )}
+
+      {mapModalOpen && (() => {
+        const [lat, lon] = job.coords;
+        // Modal bbox (~1.5 km radius) — tighter but enough for neighbourhood context
+        const dLat = 0.013, dLon = 0.018;
+        const bbox = `${lon - dLon},${lat - dLat},${lon + dLon},${lat + dLat}`;
+        const src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}`;
+        return (
+          <>
+            <div onClick={() => setMapModalOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 100 }} />
+            <div onClick={() => setMapModalOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 101, overflow: "auto", padding: `${S.l}px ${S.m}px` }}>
+              <div onClick={e => e.stopPropagation()} style={{ background: COLORS.bg, borderRadius: 5, maxWidth: 640, margin: "0 auto", overflow: "hidden" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: `${S.m}px ${S.m}px ${S.s2}px` }}>
+                  <div>
+                    <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{job.title} · {job.company}</div>
+                    <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{job.location}</div>
+                  </div>
+                  <button onClick={() => setMapModalOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", ...T.body1Bold, color: COLORS.muted, fontFamily: FONT, flexShrink: 0, marginLeft: S.m }}>✕</button>
+                </div>
+                <div style={{ height: "60vh" }}>
+                  <iframe title="Job location map" src={src} style={{ width: "100%", height: "100%", border: "none", display: "block" }} />
+                </div>
+              </div>
+            </div>
+          </>
+        );
+      })()}
 
     </div>
   );
