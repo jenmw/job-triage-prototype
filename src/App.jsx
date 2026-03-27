@@ -1776,7 +1776,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
         {stateNoPersonalisation && (
           <>
             <p style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m2}px` }}>
-              Create a free account to get personalised job matches, save jobs for later, and see how vacancies compare to your current job.
+              Create a free account to get personalised job matches, save jobs for later, and see how jobs compare to your current one.
             </p>
             <button onClick={() => { if (!email) { setEmailError(true); } else { onSignIn(email); } }}
               style={{ width: "100%", padding: S.s2, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT, marginBottom: S.m }}>
@@ -2521,7 +2521,7 @@ export default function JobTriagePage() {
                   <div style={{ flex: 1, fontFamily: FONT }}>
                     <div>Are you suited for this role?</div>
                     <div style={{ ...T.body1, color: COLORS.muted, marginTop: S.xs, fontWeight: 400 }}>
-                      Tell us about your experience and qualifications — we'll flag your fit on every vacancy.
+                      Tell us about your experience and qualifications — we'll flag your fit on every job.
                     </div>
                     <div style={{ margin: `${S.s}px 0` }}>
                       {[
@@ -2598,7 +2598,7 @@ export default function JobTriagePage() {
                   <div style={{ flex: 1, fontFamily: FONT }}>
                     <div>Does the day-to-day work suit you?</div>
                     <div style={{ ...T.body1, color: COLORS.muted, marginTop: S.xs, fontWeight: 400 }}>
-                      Tell us your preferences and we'll flag them on every vacancy.
+                      Tell us your preferences and we'll flag them on every job.
                     </div>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: S.xs, margin: `${S.s}px 0` }}>
                       {["Activity level", "Working style", "Environment", "Children"].map((chip, j) => (
