@@ -931,21 +931,20 @@ const synthSignal = (job) => {
 
   // Good rating: positive quote + best finding. Mixed/poor: worst quote + top concern.
   const quote = status === "good" ? review?.best : review?.worst;
-  const label = quote ? `"${quote}"` : null;
 
   const badFindings = job.findings.bad || [];
   const goodFindings = job.findings.good || [];
   const topBad = badFindings.reduce((best, f) => !best || f.pct > best.pct ? f : best, null);
   const topGood = goodFindings.reduce((best, f) => !best || f.pct > best.pct ? f : best, null);
 
-  const attribution = review ? `${review.role} · ${review.date}` : null;
   const finding = status === "good"
     ? (topGood ? `${topGood.pct}% say: ${topGood.heading.toLowerCase()}` : null)
     : (topBad ? `${topBad.pct}% say: ${topBad.heading.toLowerCase()}` : null);
 
-  const detail = [attribution, finding].filter(Boolean).join(" · ");
+  // Finding leads, quote backs it up
+  const quoteText = quote ? `"${quote}" — ${review.role}, ${review.date}` : null;
 
-  return { status, label, detail: detail || null };
+  return { status, label: finding || null, detail: quoteText || null };
 };
 
 // Returns badge colours matching the rating dial thresholds
