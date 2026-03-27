@@ -2264,6 +2264,62 @@ export default function JobTriagePage() {
     return reasons;
   })();
 
+  // Soft preference matches — work style and priorities vs. job characteristics
+  const softReasons = (() => {
+    if (!job.isCustomer) return [];
+    const ws = job.workStyle || {};
+    const reasons = [];
+
+    if (workStylePrefs.activity === "sitting" && ws.activity === "sitting")
+      reasons.push({ label: "Desk-based work — matches your preference", detail: "You said you prefer mostly sitting down. This role fits." });
+    else if (workStylePrefs.activity === "feet" && (ws.activity === "feet" || ws.activity === "sitting"))
+      reasons.push({ label: "On your feet but not physically demanding", detail: "You said you prefer to be on your feet. This role is active without being strenuous." });
+    else if (workStylePrefs.activity === "active" && ws.activity === "active")
+      reasons.push({ label: "Physically active role — matches your preference", detail: "You said you enjoy very active work. This role involves physical activity throughout the shift." });
+
+    if (workStylePrefs.teamwork === "team" && ws.teamwork === "team")
+      reasons.push({ label: "Team-based work — matches your preference", detail: "You said you prefer working in a team. This is a collaborative role." });
+    else if (workStylePrefs.teamwork === "solo" && ws.teamwork === "solo")
+      reasons.push({ label: "Mostly independent work — matches your preference", detail: "You said you prefer working on your own. This role suits that." });
+
+    if (workStylePrefs.outdoors === "indoors" && ws.outdoors === false)
+      reasons.push({ label: "Indoor role — matches your preference", detail: "You said you prefer working indoors. This role is based inside." });
+    else if (workStylePrefs.outdoors === "outdoors" && ws.outdoors === true)
+      reasons.push({ label: "Outdoor role — matches your preference", detail: "You said you prefer working outdoors. This role is based outside." });
+
+    if (workStylePrefs.public === "yes" && ws.public === true)
+      reasons.push({ label: "Customer-facing role — matches your preference", detail: "You said you enjoy working with the public. This role involves regular customer contact." });
+    else if (workStylePrefs.public === "no" && ws.public === false)
+      reasons.push({ label: "No customer contact — matches your preference", detail: "You said you prefer not to work with the public. This is a behind-the-scenes role." });
+
+    // Priority matches against findings
+    const goodByLabel = (kw) => job.findings.good.find(f => f.label.toLowerCase().includes(kw));
+    const notBad = (kw) => !job.findings.bad.some(f => f.label.toLowerCase().includes(kw));
+
+    if (profilePriorities.includes("Good shift notice")) {
+      const f = goodByLabel("shift");
+      if (f) reasons.push({ label: `${f.pct}% say shifts don't get changed at short notice`, detail: "You said good shift notice matters to you — this employer scores well here." });
+    }
+    if (profilePriorities.includes("Sick pay") && notBad("sick pay")) {
+      const f = goodByLabel("sick pay");
+      if (f) reasons.push({ label: `${f.pct}% of workers get sick pay`, detail: "You said sick pay matters to you — more workers here have it than at many similar employers." });
+    }
+    if (profilePriorities.includes("Paid breaks") && notBad("paid breaks")) {
+      const f = goodByLabel("paid break");
+      if (f) reasons.push({ label: `${f.pct}% get paid breaks`, detail: "You said paid breaks matter to you — this employer is above average here." });
+    }
+    if (profilePriorities.includes("Friendly team") && notBad("team")) {
+      const f = goodByLabel("team");
+      if (f) reasons.push({ label: `${f.pct}% would recommend working with their team`, detail: "You said a friendly team is important to you." });
+    }
+    if (profilePriorities.includes("Career progression") && notBad("progress")) {
+      const f = goodByLabel("progress");
+      if (f) reasons.push({ label: `${f.pct}% say they get support to progress`, detail: "You said career progression matters to you." });
+    }
+
+    return reasons;
+  })();
+
   const matchCard = matchReasons.length > 0 ? (
     <div style={{ background: "#E5FFD9", border: `1px solid #C1FCA5`, borderRadius: 5, padding: `${S.s2}px ${S.m}px`, marginBottom: S.m, display: "flex", alignItems: "center", justifyContent: "space-between", gap: S.s }}>
       <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>This looks like a strong match for you</div>
@@ -2278,19 +2334,42 @@ export default function JobTriagePage() {
         <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px` }} />
         <h3 style={{ ...T.lead1, margin: `0 0 ${S.xs}px`, color: COLORS.text, fontFamily: FONT }}>Why you're a strong match</h3>
         <p style={{ ...T.body1, color: COLORS.muted, margin: `0 0 ${S.m2}px`, fontFamily: FONT }}>Based on what you've told us about your background, here's why {job.company} looks like a good fit.</p>
-        <div style={{ display: "flex", flexDirection: "column", gap: S.m }}>
-          {matchReasons.map((r, i) => (
-            <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: S.s2 }}>
-              <span style={{ width: 20, height: 20, borderRadius: "50%", background: "#E5FFD9", border: "1px solid #C1FCA5", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>
-                <span style={{ fontSize: 11, color: COLORS.greenText, fontWeight: 700 }}>✓</span>
-              </span>
-              <div>
-                <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{r.label}</div>
-                <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, marginTop: S.xs }}>{r.detail}</div>
-              </div>
+        {matchReasons.length > 0 && (
+          <>
+            <div style={{ ...T.smallcaps, color: COLORS.muted, textTransform: "uppercase", fontFamily: FONT, marginBottom: S.s }}>Your background</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: S.m, marginBottom: softReasons.length > 0 ? S.m2 : 0 }}>
+              {matchReasons.map((r, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: S.s2 }}>
+                  <span style={{ width: 20, height: 20, borderRadius: "50%", background: "#E5FFD9", border: "1px solid #C1FCA5", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>
+                    <span style={{ fontSize: 11, color: COLORS.greenText, fontWeight: 700 }}>✓</span>
+                  </span>
+                  <div>
+                    <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{r.label}</div>
+                    <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, marginTop: S.xs }}>{r.detail}</div>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
+        {softReasons.length > 0 && (
+          <>
+            <div style={{ ...T.smallcaps, color: COLORS.muted, textTransform: "uppercase", fontFamily: FONT, marginBottom: S.s }}>Your preferences</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: S.m }}>
+              {softReasons.map((r, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: S.s2 }}>
+                  <span style={{ width: 20, height: 20, borderRadius: "50%", background: COLORS.greenBg, border: `1px solid ${COLORS.greenBorder}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>
+                    <span style={{ fontSize: 11, color: COLORS.greenText, fontWeight: 700 }}>✓</span>
+                  </span>
+                  <div>
+                    <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{r.label}</div>
+                    <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, marginTop: S.xs }}>{r.detail}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </>
   ) : null;
