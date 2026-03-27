@@ -88,31 +88,41 @@ const WORK_STYLE_QUESTIONS = [
 
 const PRIORITIES = ["Good shift notice", "Well rated employer", "Good team mates", "Career progression", "Recommended by students", "Recommended by parents", "Good managers", "No experience required"];
 
-// Maps each priority chip to relevant findings on a job, returning coloured chips for the job list card.
-// Only shows green chips (job meets the priority) — chips are simply omitted when a job doesn't qualify.
+// Maps priority chips to relevant findings on a job.
+// Green = job meets it AND user selected it. Grey = job meets it but user didn't prioritise it.
+// Chips are omitted when the job doesn't qualify at all.
 const getPriorityChips = (job, priorities) => {
-  if (!priorities || priorities.length === 0) {
+  const selected = new Set(priorities || []);
+  const noPriorities = selected.size === 0;
+  const goodF = (kw) => job.findings.good.find(f => f.label.toLowerCase().includes(kw));
+
+  // Check each known priority against the job's findings
+  const allChips = [];
+  const check = (p, met) => {
+    if (!met) return;
+    allChips.push({ label: p, status: (noPriorities || selected.has(p)) ? "good" : "neutral" });
+  };
+
+  check("Good shift notice",       goodF("shift"));
+  check("Well rated employer",     job.rating >= 7.0);
+  check("Good team mates",         goodF("team"));
+  check("Career progression",      goodF("progress"));
+  check("Good managers",           goodF("respect") || goodF("manager"));
+  check("No experience required",  job.matchCriteria?.experience?.required === false);
+  // "Recommended by students" and "Recommended by parents" need recommendation data — skip for now
+
+  // Sort: selected priorities first, then neutral
+  allChips.sort((a, b) => {
+    if (a.status === b.status) return 0;
+    return a.status === "good" ? -1 : 1;
+  });
+
+  // When no priorities set, fall back to highlights for the grey chips
+  if (noPriorities && allChips.length === 0) {
     return (job.highlights || []).slice(0, 3).map(h => ({ label: h, status: "neutral" }));
   }
-  const goodF = (kw) => job.findings.good.find(f => f.label.toLowerCase().includes(kw));
-  const chips = [];
-  for (const p of priorities) {
-    if (p === "Good shift notice") {
-      if (goodF("shift"))   chips.push({ label: p, status: "good" });
-    } else if (p === "Well rated employer") {
-      if (job.rating >= 7.0) chips.push({ label: p, status: "good" });
-    } else if (p === "Good team mates") {
-      if (goodF("team"))    chips.push({ label: p, status: "good" });
-    } else if (p === "Career progression") {
-      if (goodF("progress")) chips.push({ label: p, status: "good" });
-    } else if (p === "Good managers") {
-      if (goodF("respect") || goodF("manager")) chips.push({ label: p, status: "good" });
-    } else if (p === "No experience required") {
-      if (job.matchCriteria?.experience?.required === false) chips.push({ label: p, status: "good" });
-    }
-    // "Recommended by students" and "Recommended by parents" need recommendation data — skip for now
-  }
-  return chips.slice(0, 4);
+
+  return allChips.slice(0, 4);
 };
 
 // Three transport modes — matches Breakroom onboarding options
