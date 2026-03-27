@@ -1566,23 +1566,109 @@ const QUALIFICATIONS = [
   "GCSE English & Maths (grade C/4 or above)",
 ];
 
-const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
+// ─── Sub-sheet (drawer within a drawer) ────────────────────────────────────────
+const SubSheet = ({ open, onClose, title, children }) => (
+  <>
+    <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity 0.3s", zIndex: 200 }} />
+    <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, maxHeight: "85vh", background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 201, overflowY: "auto", boxShadow: open ? "0 -8px 40px rgba(0,0,0,0.15)" : "none" }}>
+      <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px` }} />
+      <h3 style={{ ...T.lead1, margin: 0, color: COLORS.text, fontFamily: FONT, marginBottom: S.m2 }}>{title}</h3>
+      {children}
+    </div>
+  </>
+);
+
+const QualificationsSubSheet = ({ open, onClose, selected, other, onSave }) => {
+  const [localSelected, setLocalSelected] = useState(() => new Set(selected));
+  const [localOther, setLocalOther] = useState(other || "");
+  useEffect(() => { if (open) { setLocalSelected(new Set(selected)); setLocalOther(other || ""); } }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
+  const toggle = (q) => setLocalSelected(s => { const n = new Set(s); n.has(q) ? n.delete(q) : n.add(q); return n; });
+  const inputStyle = { width: "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1px solid ${COLORS.border}`, ...T.body1, fontFamily: FONT, background: COLORS.card, color: COLORS.text, outline: "none", boxSizing: "border-box" };
+  return (
+    <SubSheet open={open} onClose={onClose} title="Your qualifications & certificates">
+      <div style={{ background: COLORS.card, borderRadius: 8, padding: `0 ${S.m}px`, marginBottom: S.m }}>
+        {QUALIFICATIONS.map((q, i) => {
+          const sel = localSelected.has(q);
+          return (
+            <div key={q} onClick={() => toggle(q)} style={{ display: "flex", alignItems: "center", gap: S.m, padding: `${S.s2}px 0`, borderBottom: i < QUALIFICATIONS.length - 1 ? `1px solid ${COLORS.border}` : "none", cursor: "pointer" }}>
+              <span style={{ width: 20, height: 20, borderRadius: 4, border: `2px solid ${sel ? COLORS.green : COLORS.border}`, background: sel ? COLORS.green : "transparent", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {sel && <span style={{ color: "#fff", fontSize: 12, lineHeight: 1, fontWeight: 700 }}>✓</span>}
+              </span>
+              <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT }}>{q}</span>
+            </div>
+          );
+        })}
+      </div>
+      <label style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, display: "block", marginBottom: S.xs }}>Other (not listed above)</label>
+      <input value={localOther} onChange={e => setLocalOther(e.target.value)} placeholder="e.g. Level 3 Award in Education and Training" style={{ ...inputStyle, marginBottom: S.m2 }} />
+      <button onClick={() => { onSave(localSelected, localOther); onClose(); }} style={{ width: "100%", padding: S.m, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
+        Save
+      </button>
+    </SubSheet>
+  );
+};
+
+const LicencesSubSheet = ({ open, onClose, selected, other, onSave }) => {
+  const [localSelected, setLocalSelected] = useState(() => new Set(selected));
+  const [localOther, setLocalOther] = useState(other || "");
+  useEffect(() => { if (open) { setLocalSelected(new Set(selected)); setLocalOther(other || ""); } }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
+  const toggle = (id) => setLocalSelected(s => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
+  const inputStyle = { width: "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1px solid ${COLORS.border}`, ...T.body1, fontFamily: FONT, background: COLORS.card, color: COLORS.text, outline: "none", boxSizing: "border-box" };
+  return (
+    <SubSheet open={open} onClose={onClose} title="Your licences">
+      <p style={{ ...T.body1, color: COLORS.muted, margin: `0 0 ${S.m}px`, fontFamily: FONT }}>We'll use this to show you which jobs you could get — including future ones.</p>
+      <div style={{ display: "flex", flexDirection: "column", gap: S.s, marginBottom: S.m }}>
+        {LICENCE_OPTIONS.map(({ id, label, sub }) => {
+          const on = localSelected.has(id);
+          return (
+            <button key={id} onClick={() => toggle(id)} style={{ display: "flex", alignItems: "center", gap: S.m, padding: `${S.s2}px ${S.m}px`, borderRadius: 8, border: `1.5px solid ${on ? COLORS.green : COLORS.border}`, background: on ? COLORS.greenBg : COLORS.card, cursor: "pointer", textAlign: "left", fontFamily: FONT, width: "100%" }}>
+              <span style={{ width: 20, height: 20, borderRadius: "50%", border: `2px solid ${on ? COLORS.green : COLORS.border}`, background: on ? COLORS.green : "transparent", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {on && <span style={{ color: "#fff", fontSize: 12, lineHeight: 1 }}>✓</span>}
+              </span>
+              <div>
+                <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{label}</div>
+                <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>{sub}</div>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+      <label style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, display: "block", marginBottom: S.xs }}>Other (not listed above)</label>
+      <input value={localOther} onChange={e => setLocalOther(e.target.value)} placeholder="e.g. Passenger Carrying Vehicle (PCV) licence" style={{ ...inputStyle, marginBottom: S.m2 }} />
+      <button onClick={() => { onSave(localSelected, localOther); onClose(); }} style={{ width: "100%", padding: S.m, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
+        Save
+      </button>
+    </SubSheet>
+  );
+};
+
+const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initialLicences = new Set() }) => {
   const [prevJobs, setPrevJobs] = useState(initialValues.prevJobs || [{ title: "", employer: "" }]);
   const [experience, setExperience] = useState(initialValues.experience || null);
   const [qualifications, setQualifications] = useState(new Set(initialValues.qualifications || []));
+  const [qualifOther, setQualifOther] = useState(initialValues.qualifOther || "");
+  const [licences, setLicences] = useState(() => new Set(initialLicences));
+  const [licenceOther, setLicenceOther] = useState(initialValues.licenceOther || "");
+  const [qualifSubSheetOpen, setQualifSubSheetOpen] = useState(false);
+  const [licenceSubSheetOpen, setLicenceSubSheetOpen] = useState(false);
 
   useEffect(() => {
     if (open) {
       setPrevJobs(initialValues.prevJobs || [{ title: "", employer: "" }]);
       setExperience(initialValues.experience || null);
       setQualifications(new Set(initialValues.qualifications || []));
+      setQualifOther(initialValues.qualifOther || "");
+      setLicences(new Set(initialLicences));
+      setLicenceOther(initialValues.licenceOther || "");
     }
   }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const toggleQual = (q) => setQualifications(s => { const n = new Set(s); n.has(q) ? n.delete(q) : n.add(q); return n; });
   const updateJob = (i, field, val) => setPrevJobs(jobs => jobs.map((j, idx) => idx === i ? { ...j, [field]: val } : j));
   const removeJob = (i) => setPrevJobs(jobs => jobs.filter((_, idx) => idx !== i));
   const inputStyle = { width: "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1px solid ${COLORS.border}`, ...T.body1, fontFamily: FONT, background: COLORS.card, color: COLORS.text, outline: "none", boxSizing: "border-box" };
+
+  const qualifSummary = [...[...qualifications], ...(qualifOther ? [qualifOther] : [])];
+  const licenceSummary = [...[...licences].map(id => LICENCE_OPTIONS.find(o => o.id === id)?.label).filter(Boolean), ...(licenceOther ? [licenceOther] : [])];
 
   return (
     <>
@@ -1630,24 +1716,25 @@ const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
           ))}
         </div>
 
-        {/* Qualifications */}
-        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>Qualifications <span style={{ fontWeight: 400, color: COLORS.muted }}>(optional)</span></div>
-        <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m}px` }}>Tick any you have. Driving licences can be added separately from the job page.</p>
-        <div style={{ background: COLORS.card, borderRadius: 8, padding: `0 ${S.m}px`, marginBottom: S.m2 }}>
-          {QUALIFICATIONS.map((q, i) => {
-            const sel = qualifications.has(q);
-            return (
-              <div key={q} onClick={() => toggleQual(q)} style={{ display: "flex", alignItems: "center", gap: S.m, padding: `${S.s2}px 0`, borderBottom: i < QUALIFICATIONS.length - 1 ? `1px solid ${COLORS.border}` : "none", cursor: "pointer" }}>
-                <span style={{ width: 20, height: 20, borderRadius: 4, border: `2px solid ${sel ? COLORS.green : COLORS.border}`, background: sel ? COLORS.green : "transparent", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  {sel && <span style={{ color: "#fff", fontSize: 12, lineHeight: 1, fontWeight: 700 }}>✓</span>}
-                </span>
-                <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT }}>{q}</span>
-              </div>
-            );
-          })}
-        </div>
+        {/* Qualifications summary row */}
+        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>Qualifications & certificates</div>
+        <button onClick={() => setQualifSubSheetOpen(true)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 8, border: `1px solid ${COLORS.border}`, background: COLORS.card, cursor: "pointer", fontFamily: FONT, textAlign: "left", marginBottom: S.m2, boxSizing: "border-box" }}>
+          <span style={{ ...T.body1, color: qualifSummary.length > 0 ? COLORS.text : COLORS.muted, fontFamily: FONT, flex: 1, marginRight: S.m }}>
+            {qualifSummary.length > 0 ? qualifSummary.join(", ") : "None added"}
+          </span>
+          <span style={{ color: COLORS.muted, fontSize: 18, flexShrink: 0 }}>›</span>
+        </button>
 
-        <button onClick={() => onSubmit({ prevJobs, experience, qualifications: [...qualifications] })}
+        {/* Licences summary row */}
+        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>Licences</div>
+        <button onClick={() => setLicenceSubSheetOpen(true)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 8, border: `1px solid ${COLORS.border}`, background: COLORS.card, cursor: "pointer", fontFamily: FONT, textAlign: "left", marginBottom: S.m2, boxSizing: "border-box" }}>
+          <span style={{ ...T.body1, color: licenceSummary.length > 0 ? COLORS.text : COLORS.muted, fontFamily: FONT, flex: 1, marginRight: S.m }}>
+            {licenceSummary.length > 0 ? licenceSummary.join(", ") : "None added"}
+          </span>
+          <span style={{ color: COLORS.muted, fontSize: 18, flexShrink: 0 }}>›</span>
+        </button>
+
+        <button onClick={() => onSubmit({ prevJobs, experience, qualifications: [...qualifications], qualifOther, licences, licenceOther })}
           style={{ width: "100%", padding: S.m, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
           Save
         </button>
@@ -1655,6 +1742,21 @@ const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
           Not now
         </button>
       </div>
+
+      <QualificationsSubSheet
+        open={qualifSubSheetOpen}
+        onClose={() => setQualifSubSheetOpen(false)}
+        selected={qualifications}
+        other={qualifOther}
+        onSave={(sel, oth) => { setQualifications(sel); setQualifOther(oth); }}
+      />
+      <LicencesSubSheet
+        open={licenceSubSheetOpen}
+        onClose={() => setLicenceSubSheetOpen(false)}
+        selected={licences}
+        other={licenceOther}
+        onSave={(sel, oth) => { setLicences(sel); setLicenceOther(oth); }}
+      />
     </>
   );
 };
@@ -2937,7 +3039,8 @@ export default function JobTriagePage() {
 
       <BackgroundDrawer open={backgroundDrawerOpen} onClose={() => setBackgroundDrawerOpen(false)}
         initialValues={profileBackground}
-        onSubmit={(data) => { setProfileBackground(data); setBackgroundDrawerOpen(false); }} />
+        initialLicences={userLicences}
+        onSubmit={(data) => { const { licences, licenceOther, ...bgData } = data; setProfileBackground(bgData); setUserLicences(licences); setBackgroundDrawerOpen(false); }} />
 
       <WorkStyleDrawer open={workStyleDrawerOpen} onClose={() => setWorkStyleDrawerOpen(false)}
         initialValues={workStylePrefs}
