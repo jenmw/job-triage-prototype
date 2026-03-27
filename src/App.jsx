@@ -1426,7 +1426,6 @@ const LICENCE_OPTIONS = [
   { id: "c1",   label: "7.5 tonne (category C)",     sub: null },
   { id: "c",    label: "HGV/LGV class 2",            sub: null },
   { id: "ce",   label: "HGV/LGV class 1",            sub: null },
-  { id: "flt",  label: "FLT / Forklift licence",     sub: "RTITB or ITSSAR (counterbalance, reach, etc.)" },
 ];
 
 const LicenceModal = ({ open, onClose, userLicences, onSave }) => {
@@ -1561,6 +1560,7 @@ const QUALIFICATIONS = [
   "Food hygiene certificate (Level 2)",
   "CSCS card",
   "First aid certificate",
+  "FLT / Forklift licence (RTITB or ITSSAR)",
   "SIA licence",
   "NVQ Level 2 or above",
   "GCSE English & Maths (grade C/4 or above)",
@@ -1855,7 +1855,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
   const toggleP = (p) => setLPriorities(s => { const n = new Set(s); n.has(p) ? n.delete(p) : n.add(p); return n; });
   const inputStyle = { width: "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1px solid ${COLORS.border}`, ...T.body1, fontFamily: FONT, marginBottom: S.m, background: COLORS.card, color: COLORS.text, outline: "none", boxSizing: "border-box" };
   const sectionLabel = { ...T.body1Bold, color: COLORS.text, fontFamily: FONT, display: "block", marginBottom: S.s };
-  const licenceLabels = { car: "Full car licence", c1: "7.5 tonne (category C)", c: "HGV/LGV class 2", ce: "HGV/LGV class 1", flt: "FLT / Forklift licence" };
+  const licenceLabels = { car: "Full car licence", c1: "7.5 tonne (category C)", c: "HGV/LGV class 2", ce: "HGV/LGV class 1" };
 
   // Summary row for read-only state
   const SummaryRow = ({ label, value, onClick, isLast }) => !value ? null : (
@@ -2741,13 +2741,14 @@ export default function JobTriagePage() {
             const bgCard = hasBackground ? (() => {
               // FLT licence takes priority if the job requires it
               if (job.requiresFltLicence) {
+                const hasFlt = (profileBackground.qualifications || []).includes("FLT / Forklift licence (RTITB or ITSSAR)");
                 return (
                   <Signal
-                    status={userLicences.has("flt") ? "good" : "bad"}
-                    label={userLicences.has("flt") ? "You have the required forklift licence" : "Forklift licence required (RTITB or ITSSAR)"}
+                    status={hasFlt ? "good" : "bad"}
+                    label={hasFlt ? "You have the required forklift licence" : "Forklift licence required (RTITB or ITSSAR)"}
                     detail="A valid counterbalance forklift licence is required. Reach truck licence is desirable."
-                    subtext={userLicences.has("flt") ? "✓ You told us you hold an FLT licence" : "Tell us if you have a forklift licence"}
-                    subtextClick={userLicences.has("flt") ? null : () => setLicenceModalOpen(true)}
+                    subtext={hasFlt ? "✓ You told us you hold an FLT licence" : "Tell us if you have a forklift licence"}
+                    subtextClick={hasFlt ? null : () => setBackgroundDrawerOpen(true)}
                     isLast={false}
                   />
                 );
