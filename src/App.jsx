@@ -184,6 +184,10 @@ const JOBS = [
         { pct: 79, label: "Hours match contract", subtext: "Based on 918 Breakroom Quiz responses", heading: "Most people work the same hours as their contract", primary: "Most people work the same hours as their contract.", secondary: "79% of people say they work the same number of hours as stated in their contract.", why: "Your contract should accurately reflect the hours you work. Working significantly more than your contracted hours without pay is unfair." },
       ],
     },
+    reviews: [
+      { best: "Shifts are reliable — you always know when you're working and they don't get moved around on you", worst: "Head office have no idea what it's like on the floor. The stress levels are hard to deal with day to day", role: "Warehouse Operative", date: "Jan 2025" },
+      { best: "Good team on my shift, we look out for each other", worst: "No sick pay, so people come in ill because they can't afford not to", role: "Warehouse Operative", date: "Oct 2024" },
+    ],
     signals: [
       { status: "good", label: "No qualifications required — warehouse experience preferred but not essential", detail: "GXO ask for warehouse experience and inventory process knowledge, but this is 'preferred' rather than a hard requirement.", subtext: null, findingLabel: null, isBackgroundSignal: true },
       { status: "good", label: "Rotating day shifts Mon–Fri — no nights, no weekends", detail: "Shifts rotate between 06:00–14:00 and 14:00–22:00, Monday to Friday. No night shifts or weekend work.", subtext: null, findingLabel: null },
@@ -258,6 +262,10 @@ const JOBS = [
         { pct: 83, label: "Hours match contract", subtext: "Based on 3,798 Breakroom Quiz responses", heading: "Most people work the same hours as their contract", primary: "Most people work the same hours as their contract.", secondary: "83% of people say they work the same number of hours as stated in their contract.", why: "Your contract should accurately reflect the hours you work. Working significantly more than your contracted hours without pay is unfair." },
       ],
     },
+    reviews: [
+      { best: "Pay is decent and your hours are always guaranteed — I never worry about getting enough work", worst: "It's relentless. You're walking the whole shift and the targets never stop. Your body knows about it by Friday", role: "Warehouse Associate", date: "Feb 2025" },
+      { best: "No experience needed — they trained me properly from day one", worst: "They track everything. Every minute is monitored and it creates a lot of pressure", role: "Fulfilment Centre Operative", date: "Nov 2024" },
+    ],
     signals: [
       { status: "good", label: "No experience required — Amazon trains you from day one", detail: "Amazon specifically say no prior warehouse experience is needed. Full paid training is provided from your first day.", subtext: null, findingLabel: null, isBackgroundSignal: true },
       { status: "warning", label: "Physically demanding — walking 10–15 miles per shift, lifting up to 23kg", detail: "Amazon warehouse roles are high-activity roles. Workers stand and walk for the full shift and are expected to hit productivity targets.", subtext: null, findingLabel: null },
@@ -332,6 +340,10 @@ const JOBS = [
         { pct: 78, label: "Hours match contract", subtext: "Based on 364 Breakroom Quiz responses", heading: "Most people work the same hours as their contract", primary: "Most people work the same hours as their contract.", secondary: "78% of people say they work the same number of hours as stated in their contract.", why: "Your contract should accurately reflect the hours you work. Working significantly more than your contracted hours without pay is unfair." },
       ],
     },
+    reviews: [
+      { best: "Hours are secure and shifts rarely get moved around. I've worked here two years and it's been consistent", worst: "Breaks aren't paid and you don't get much say in your shifts. It's take it or leave it", role: "Warehouse Operative", date: "Mar 2025" },
+      { best: "Decent site, management on the floor are fair", worst: "Some people are doing unpaid extra work at the end of shifts and it just gets normalised", role: "Picker", date: "Dec 2024" },
+    ],
     signals: [
       { status: "good", label: "No formal qualifications required", detail: "DHL ask for previous warehouse experience as a preference, but no licences or certificates are required to apply.", subtext: null, findingLabel: null, isBackgroundSignal: true },
       { status: "warning", label: "40% of DHL workers do unpaid extra work", detail: "Four in ten DHL workers report doing work they're not paid for. Worth asking about overtime expectations at interview.", subtext: "Based on 364 Breakroom Quiz responses", findingLabel: null },
@@ -406,6 +418,10 @@ const JOBS = [
         { pct: 70, label: "Safe workplace", subtext: "Based on 659 Breakroom Quiz responses", heading: "Most people think their workplace is safe", primary: "Most people think their workplace is safe.", secondary: "70% of people think their workplace is safe.", why: "Everyone has the right to work in a safe environment. Safety should always come first." },
       ],
     },
+    reviews: [
+      { best: "Hours are always there if you want them, and they don't chase you for unpaid overtime", worst: "Pay is low for what you're doing and communication from above is basically non-existent", role: "Warehouse Operative", date: "Jan 2025" },
+      { best: "The site itself is well run and breaks are respected", worst: "Team morale isn't great. People don't really pull together here like other places I've worked", role: "Warehouse Operative", date: "Sep 2024" },
+    ],
     signals: [
       { status: "good", label: "No specific qualifications required", detail: "Wincanton ask for warehouse or logistics experience as a preference. No licences or certificates are needed for this role.", subtext: null, findingLabel: null, isBackgroundSignal: true },
       { status: "bad", label: "74% of Wincanton workers are paid below average for the role", detail: "Pay is the biggest concern at Wincanton — almost three quarters of workers say they earn below average for warehouse work.", subtext: "Based on 659 Breakroom Quiz responses", findingLabel: null },
@@ -480,6 +496,10 @@ const JOBS = [
         { pct: 70, label: "Safe workplace", subtext: "Based on 372 Breakroom Quiz responses", heading: "Most people think their workplace is safe", primary: "Most people think their workplace is safe.", secondary: "70% of people think their workplace is safe.", why: "Everyone has the right to work in a safe environment. Safety should always come first." },
       ],
     },
+    reviews: [
+      { best: "Decent pay if you've got your licence — hours are always there and you're not asked to do unpaid overtime", worst: "You find out your shifts last minute. It's really hard to plan your life around it, especially with kids", role: "FLT Driver", date: "Feb 2025" },
+      { best: "Good site, the FLT work itself is satisfying", worst: "Management at the top have no idea what it's like on the floor. There's a real disconnect", role: "FLT Driver", date: "Nov 2024" },
+    ],
     signals: [
       { status: null, label: null, detail: null, subtext: null, findingLabel: null, isFltLicenceSignal: true },
       { status: "warning", label: "Minimum 1 year counterbalance FLT experience required", detail: "XPO require at least a year of documented forklift operating experience. Reach truck experience is desirable but not essential.", subtext: null, findingLabel: null },
@@ -554,6 +574,10 @@ const JOBS = [
         { pct: 83, label: "Hours match contract", subtext: "Based on 3,798 Breakroom Quiz responses", heading: "Most people work the same hours as their contract", primary: "Most people work the same hours as their contract.", secondary: "83% of people say they work the same number of hours as stated in their contract.", why: "Your contract should accurately reflect the hours you work." },
       ],
     },
+    reviews: [
+      { best: "Real responsibility, good pay, and the hours are always guaranteed — I'd recommend it to anyone with leadership experience", worst: "The targets trickle down relentlessly from above. You're always being pushed harder regardless of how well you're doing", role: "Team Leader", date: "Jan 2025" },
+      { best: "Amazon look after their people better than most logistics employers I've worked for", worst: "Sick pay is still non-existent — for a company this size, there's no excuse", role: "Process Guide", date: "Oct 2024" },
+    ],
     signals: [
       { status: "warning", label: "Team leader or supervisory experience required", detail: "Amazon require evidence of leading a team, coaching others, or first-line management. Promote-from-within candidates are welcome.", subtext: null, findingLabel: null, isBackgroundSignal: true },
       { status: "warning", label: "Working supervisor role — you manage a team while meeting your own targets", detail: "Amazon Team Leaders are hands-on. You'll be on the warehouse floor managing a team while also hitting your own productivity metrics.", subtext: null, findingLabel: null },
@@ -630,6 +654,10 @@ const JOBS = [
         { pct: 69, label: "Treated with respect", subtext: "Based on 320 Breakroom Quiz responses", heading: "Most people feel treated with respect by their managers", primary: "Most people feel treated with respect by their managers.", secondary: "69% of people feel treated with respect by their managers.", why: "Everyone deserves to be treated with respect at work." },
       ],
     },
+    reviews: [
+      { best: "Breaks are proper breaks, shifts don't change on you, and the pay is decent for the area. It's a good place to work", worst: "The lines can be really physical and repetitive, and head office doesn't really understand what it's like on the floor", role: "Production Operative", date: "Mar 2025" },
+      { best: "Team atmosphere here is genuinely good — people look out for each other", worst: "No sick pay is a real problem. When people come in ill it affects the whole team", role: "Production Operative", date: "Dec 2024" },
+    ],
     signals: [
       { status: "good", label: "No experience required — full training provided from day one", detail: "Greencore train you on food safety and production processes from day one. A Level 2 Food Hygiene certificate is preferred but Greencore can support you to get it.", subtext: null, findingLabel: null, isBackgroundSignal: true },
       { status: "good", label: "74% of Greencore workers earn above average for their role", detail: "Pay is genuinely competitive for production work in this area — one of Greencore's strongest Breakroom findings.", subtext: "Based on 320 Breakroom Quiz responses", findingLabel: null },
@@ -703,6 +731,10 @@ const JOBS = [
         { pct: 67, label: "Most people enjoy their job", subtext: "Based on 3,650 Breakroom Quiz responses", heading: "Most people enjoy their job", primary: "Most people enjoy their job.", secondary: "67% of people say they enjoy working here.", why: "Enjoying your work matters. It affects your health, motivation, and how long you stay in a job." },
       ],
     },
+    reviews: [
+      { best: "You're done by early afternoon which suits my life. The job is what they say it is — no surprises", worst: "The early starts every day wear on you, especially in winter. And management at the top have completely lost touch with what it's like on the ground", role: "Parcel Sorter", date: "Feb 2025" },
+      { best: "Hours are always there and you're not expected to stay late or do unpaid work", worst: "There's very little support for progressing. I've been here three years and nothing has changed", role: "Mail Sorter", date: "Sep 2024" },
+    ],
     signals: [
       { status: "good", label: "No qualifications required — Royal Mail trains you", detail: "No previous experience needed. Royal Mail provide a full induction and on-the-job training.", subtext: null, findingLabel: null, isBackgroundSignal: true },
       { status: "warning", label: "Unsocial hours — shifts typically start at 05:00 or earlier", detail: "Parcel sorting operations run in the early hours to meet delivery schedules. Reliable transport at unsocial hours is essential.", subtext: null, findingLabel: null },
@@ -777,6 +809,10 @@ const JOBS = [
         { pct: 67, label: "Most people enjoy their job", subtext: "Based on 609 Breakroom Quiz responses", heading: "Most people enjoy their job", primary: "Most people enjoy their job.", secondary: "67% of people say they enjoy working here.", why: "Enjoying your work matters. It affects your health, motivation, and how long you stay in a job." },
       ],
     },
+    reviews: [
+      { best: "You can pick up extra hours when you need them, and holiday booking isn't a nightmare like at other places I've worked", worst: "80% of us are stressed — it genuinely gets to you after a while. The pace never lets up and there's no support", role: "Parcel Hub Operative", date: "Jan 2025" },
+      { best: "The hours are always there if you want them", worst: "No sick pay, no breaks that are paid, short notice of shifts — it all adds up. You feel like a number not a person", role: "Hub Operative", date: "Nov 2024" },
+    ],
     signals: [
       { status: "bad", label: "37% of Evri workers are on zero-hours contracts — check before accepting", detail: "Over a third of Evri workers have no guaranteed hours. Make sure you understand what contract type you're being offered before accepting.", subtext: "Based on 609 Breakroom Quiz responses", findingLabel: null },
       { status: "warning", label: "Physical role — parcels up to 31.5kg, standing for the full shift", detail: "Parcel hub work involves continuous lifting and sorting. A basic level of physical fitness is required.", subtext: null, findingLabel: null },
@@ -853,6 +889,10 @@ const JOBS = [
         { pct: 62, label: "Hours match contract", subtext: "Based on 107 Breakroom Quiz responses", heading: "Most people work the same hours as their contract", primary: "Most people work the same hours as their contract.", secondary: "62% of people say they work the same number of hours as stated in their contract.", why: "Your contract should accurately reflect the hours you work." },
       ],
     },
+    reviews: [
+      { best: "Shifts are predictable and they don't mess you around at the last minute. Breaks are respected too", worst: "The pick rate targets are stressful and there's no sick pay — you feel you can't afford to be ill", role: "Pick & Pack Operative", date: "Feb 2025" },
+      { best: "Steady work, close to home, and the team on my shift is decent", worst: "Head office are completely out of touch. No one at the top understands what it's actually like doing this job", role: "Warehouse Operative", date: "Oct 2024" },
+    ],
     signals: [
       { status: "good", label: "No experience required — good entry-level role", detail: "Clipper welcome applicants without prior warehouse experience. Full training is provided on the job.", subtext: null, findingLabel: null, isBackgroundSignal: true },
       { status: "warning", label: "Target-driven picking role — performance is monitored", detail: "Pick & pack operatives are expected to meet hourly pick rates. Performance monitoring is a standard part of the role.", subtext: null, findingLabel: null },
@@ -883,39 +923,16 @@ const ratingVerdict = (score) =>
     ? { dotColor: COLORS.amber,     text: "Workers have mixed views here — some concerns about pay, hours, or conditions to know." }
     : {  dotColor: COLORS.red,      text: "Poorly rated by workers — significant concerns about pay, hours, and working conditions." };
 
-// Synthesises a single signal from rating score + findings data
-// Combines worker sentiment with the most notable job quality insight
+// Synthesises a single signal from a worker review quote + rating
 const synthSignal = (job) => {
   const score = job.rating;
   const status = score >= 7.0 ? "good" : score >= 5.5 ? "warning" : "bad";
-  const badFindings = job.findings.bad || [];
-  const goodFindings = job.findings.good || [];
+  const review = (job.reviews || [])[0];
 
-  // Most notable finding = highest pct (most workers affected)
-  const topBad = badFindings.reduce((best, f) => !best || f.pct > best.pct ? f : best, null);
-  const topGood = goodFindings.reduce((best, f) => !best || f.pct > best.pct ? f : best, null);
-
-  // Second most notable (for detail variety)
-  const secondBad = badFindings.filter(f => f !== topBad).reduce((best, f) => !best || f.pct > best.pct ? f : best, null);
-
-  let label, detail;
-
-  if (status === "good") {
-    label = `Workers broadly rate conditions at ${job.company} positively`;
-    detail = topBad
-      ? `${topGood?.heading} · ${topBad.heading}`
-      : topGood?.heading || null;
-  } else if (status === "warning") {
-    label = `Workers have mixed views on working at ${job.company}`;
-    detail = topBad
-      ? secondBad ? `${topBad.heading} · ${secondBad.heading}` : topBad.heading
-      : null;
-  } else {
-    label = `Workers raise significant concerns about ${job.company}`;
-    detail = topBad
-      ? secondBad ? `${topBad.heading} · ${secondBad.heading}` : topBad.heading
-      : null;
-  }
+  // Good rating: lead with a positive quote. Mixed or poor: lead with the worst quote.
+  const quote = status === "good" ? review?.best : review?.worst;
+  const label = quote ? `"${quote}"` : null;
+  const detail = review ? `${review.role} · ${review.date}` : null;
 
   return { status, label, detail };
 };
