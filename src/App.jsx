@@ -3012,10 +3012,10 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
           </div>
         </div>
 
-        <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>What matters most to you? <span style={{ fontWeight: 400, color: COLORS.muted }}>(pick up to 5)</span></label>
+        <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>What matters most to you? <span style={{ fontWeight: 400, color: COLORS.muted }}>(pick up to 3)</span></label>
         <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginBottom: S.m2 }}>
           {PRIORITIES.map((p) => (
-            <button key={p} onClick={() => { if (priorities.has(p) || priorities.size < 5) togglePriority(p); }}
+            <button key={p} onClick={() => { if (priorities.has(p) || priorities.size < 3) togglePriority(p); }}
               style={{ padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${priorities.has(p) ? COLORS.green : COLORS.border}`, background: priorities.has(p) ? COLORS.greenBg : COLORS.card, ...T.body1, cursor: "pointer", fontFamily: FONT, color: priorities.has(p) ? COLORS.green : COLORS.muted, fontWeight: priorities.has(p) ? 700 : 400 }}>
               {p}
             </button>
@@ -3493,7 +3493,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
                 </div>
               </div>
               <input value={lPay} onChange={e => setLPay(e.target.value)} placeholder={lPayType === "hourly" ? "e.g. £12.50" : "e.g. £26,000"} style={inputStyle} />
-              <label style={sectionLabel}>What matters most to you? <span style={{ fontWeight: 400, color: COLORS.muted }}>(pick up to 5)</span></label>
+              <label style={sectionLabel}>What matters most to you? <span style={{ fontWeight: 400, color: COLORS.muted }}>(pick up to 3)</span></label>
               <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginBottom: S.m2 }}>
                 {PRIORITIES.map(p => (
                   <button key={p} onClick={() => { if (lPriorities.has(p) || lPriorities.size < 3) toggleP(p); }}
