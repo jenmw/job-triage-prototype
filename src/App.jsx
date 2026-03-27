@@ -708,6 +708,46 @@ const ratingVerdict = (score) =>
     ? { dotColor: COLORS.amber,     text: "Workers have mixed views here — some concerns about pay, hours, or conditions to know." }
     : {  dotColor: COLORS.red,      text: "Poorly rated by workers — significant concerns about pay, hours, and working conditions." };
 
+// Synthesises a single signal from rating score + findings data
+// Combines worker sentiment with the most notable job quality insight
+const synthSignal = (job) => {
+  const score = job.rating;
+  const status = score >= 7.0 ? "good" : score >= 5.5 ? "warning" : "bad";
+  const badFindings = job.findings.bad || [];
+  const goodFindings = job.findings.good || [];
+
+  // Most notable finding = highest pct (most workers affected)
+  const topBad = badFindings.reduce((best, f) => !best || f.pct > best.pct ? f : best, null);
+  const topGood = goodFindings.reduce((best, f) => !best || f.pct > best.pct ? f : best, null);
+
+  // Second most notable (for detail variety)
+  const secondBad = badFindings.filter(f => f !== topBad).reduce((best, f) => !best || f.pct > best.pct ? f : best, null);
+
+  let label, detail;
+
+  if (status === "good") {
+    // Lead with the positive, show a concern if there is one
+    label = `Workers rate ${job.company} ${score.toFixed(1)}/10 — broadly positive`;
+    detail = topBad
+      ? `${topGood?.heading} · ${topBad.heading}`
+      : topGood?.heading || null;
+  } else if (status === "warning") {
+    // Lead with score and a hint at the mixed picture, surface the biggest concern
+    label = `Workers give ${job.company} ${score.toFixed(1)}/10 — some things to be aware of`;
+    detail = topBad
+      ? secondBad ? `${topBad.heading} · ${secondBad.heading}` : topBad.heading
+      : null;
+  } else {
+    // Poor rating — lead with the headline concern
+    label = `${job.company} is poorly rated by workers — ${score.toFixed(1)}/10`;
+    detail = topBad
+      ? secondBad ? `${topBad.heading} · ${secondBad.heading}` : topBad.heading
+      : null;
+  }
+
+  return { status, label, detail };
+};
+
 // Returns badge colours matching the rating dial thresholds
 const ratingBadge = (score) =>
   score >= 7.0
@@ -1984,38 +2024,33 @@ export default function JobTriagePage() {
             const hasBackground = Object.keys(profileBackground).length > 0;
             const hasWorkStyle = Object.keys(workStylePrefs).length > 0;
 
-            // Filter out background signals — handled by the background card
-            const findingSignal = job.signals.find(s => !s.isBackgroundSignal);
+            // ── Card 1: Findings & reviews synthesis ────────────────────────────
+            const synth = synthSignal(job);
+            const synthCard = (
+              <Signal
+                status={synth.status}
+                label={synth.label}
+                detail={synth.detail}
+                subtext={`Based on ${job.quizCount.toLocaleString()} Breakroom Quiz responses`}
+                isLast={false}
+              />
+            );
 
-            // ── Render a single job finding signal ──────────────────────────────
-            const renderFindingSignal = (sig) => {
-              if (!sig) return null;
-              if (sig.isFltLicenceSignal) {
+            // ── Card 2: Experience & qualifications ─────────────────────────────
+            const bgCard = hasBackground ? (() => {
+              // FLT licence takes priority if the job requires it
+              if (job.requiresFltLicence) {
                 return (
                   <Signal
                     status={userLicences.has("flt") ? "good" : "bad"}
-                    label={userLicences.has("flt") ? "Forklift licence: you have the required licence" : "Forklift licence required (RTITB or ITSSAR)"}
+                    label={userLicences.has("flt") ? "You have the required forklift licence" : "Forklift licence required (RTITB or ITSSAR)"}
                     detail="A valid counterbalance forklift licence is required. Reach truck licence is desirable."
-                    subtext={userLicences.has("flt") ? "✓ You told us you have an FLT licence" : "Tell us if you have a forklift licence"}
+                    subtext={userLicences.has("flt") ? "✓ You told us you hold an FLT licence" : "Tell us if you have a forklift licence"}
                     subtextClick={userLicences.has("flt") ? null : () => setLicenceModalOpen(true)}
                     isLast={false}
                   />
                 );
               }
-              return (
-                <Signal
-                  status={sig.status}
-                  label={sig.label}
-                  detail={sig.detail}
-                  subtext={sig.subtext}
-                  labelClick={sig.findingLabel ? () => handlePillClick(sig.findingLabel) : null}
-                  isLast={false}
-                />
-              );
-            };
-
-            // ── Card 1: Experience & qualifications ─────────────────────────────
-            const bgCard = hasBackground ? (() => {
               let bgSignal = { status: "good", label: "Your background suits this role", detail: "Based on what you've told us, this looks like a good fit." };
               if ((profileBackground.qualifications || []).includes("food-hygiene")) bgSignal = { status: "good", label: "Your food hygiene certificate is relevant here", detail: "Level 2 food hygiene certificates are valued in this type of role." };
               else if (profileBackground.experience === "none") bgSignal = { status: "good", label: "No prior experience required", detail: "This employer offers full training — your background fits." };
@@ -2127,7 +2162,7 @@ export default function JobTriagePage() {
 
             return (
               <>
-                {renderFindingSignal(findingSignal)}
+                {synthCard}
                 {bgCard}
                 {wsCard}
 </>
