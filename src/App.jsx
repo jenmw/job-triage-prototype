@@ -3016,7 +3016,7 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
         <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginBottom: S.m2 }}>
           {PRIORITIES.map((p) => (
             <button key={p} onClick={() => { if (priorities.has(p) || priorities.size < 3) togglePriority(p); }}
-              style={{ padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${priorities.has(p) ? COLORS.green : COLORS.border}`, background: priorities.has(p) ? COLORS.greenBg : COLORS.card, ...T.body1, cursor: "pointer", fontFamily: FONT, color: priorities.has(p) ? COLORS.green : COLORS.muted, fontWeight: priorities.has(p) ? 700 : 400 }}>
+              style={{ padding: `${S.xs}px ${S.s2}px`, borderRadius: 20, border: `${priorities.has(p) ? "2px" : "1px"} solid ${priorities.has(p) ? COLORS.green : COLORS.border}`, background: COLORS.card, ...T.body2Bold, cursor: "pointer", fontFamily: FONT, color: priorities.has(p) ? COLORS.greenText : COLORS.text }}>
               {p}
             </button>
           ))}
