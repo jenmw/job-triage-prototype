@@ -2823,10 +2823,13 @@ const AltJob = ({ job, viewedJob, onClick }) => {
   }
   const showPayBadge = (altBadge && altBadge !== "Better rated" && job.payType !== "annual") || !!computedAnnualBadge;
   const displayBadge = computedAnnualBadge ?? altBadge;
+  // Suppress pay-related diffs if we're showing a badge, or if the similar job
+  // doesn't actually pay more than the viewed job (avoids misleading "Higher pay" chips)
+  const altPaysMore = computedAnnualBadge !== null || (altBadge && altBadge !== "Better rated" && job.payType !== "annual");
   const visibleDiffs = (findingDiffs ?? []).filter(d => {
     const l = d.toLowerCase();
     if (l.includes("better rated")) return false;
-    if (showPayBadge && (l.includes("pay") || l.includes("wage") || l.includes("salary"))) return false;
+    if ((showPayBadge || !altPaysMore) && (l.includes("pay") || l.includes("wage") || l.includes("salary"))) return false;
     return true;
   });
   const hasDiffs = visibleDiffs.length > 0;
