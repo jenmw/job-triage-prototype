@@ -3523,8 +3523,8 @@ const AlternativesList = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawe
             display: "flex", justifyContent: "space-between", alignItems: "center",
           }}>
             <div>
-              <div style={{ ...T.body1Bold, color: COLORS.accent, fontFamily: FONT, marginBottom: S.xs }}>What matters most to you?</div>
-              <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>Set your priorities to see better-matched jobs</div>
+              <div style={{ ...T.body1Bold, color: COLORS.accent, fontFamily: FONT, marginBottom: S.xs }}>Set your priorities</div>
+              <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>We'll highlight what matters to you on every job</div>
             </div>
             <span style={{ color: COLORS.accent, fontSize: 20, lineHeight: 1 }}>›</span>
           </button>
