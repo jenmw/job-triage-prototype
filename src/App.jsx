@@ -4345,13 +4345,19 @@ export default function JobTriagePage() {
                 bgSignal = { status: "good", label: "Your background looks right for this job", detail: note };
               }
               return <Signal status={bgSignal.status} label={bgSignal.label} detail={bgSignal.detail} subtext="Update your background" subtextClick={() => setBackgroundDrawerOpen(true)} isLast={false} />;
-            })() : (
+            })() : (() => {
+              const needsExp = job?.matchCriteria?.experience?.required || job?.matchCriteria?.experience?.preferred;
+              const dotColor = needsExp ? COLORS.amber : COLORS.border;
+              const emptySubtext = needsExp
+                ? "This job asks for experience — add yours so we can check your fit"
+                : "When jobs require experience, we can easily tell you if you fit the bill";
+              return (
               <div style={{ fontSize: 16, lineHeight: "22px", fontWeight: 500, color: COLORS.text, padding: `${S.m}px 0`, borderBottom: `1px solid rgba(50,50,50,0.1)` }}>
                 <div style={{ display: "flex", alignItems: "flex-start", gap: S.s }}>
-                  <span style={{ width: 15, height: 15, borderRadius: "50%", background: COLORS.border, border: "2px solid #fff", flexShrink: 0, marginTop: 3 }} />
+                  <span style={{ width: 15, height: 15, borderRadius: "50%", background: dotColor, border: "2px solid #fff", flexShrink: 0, marginTop: 3 }} />
                   <div style={{ flex: 1, fontFamily: FONT }}>
                     <div style={{ ...T.body1Bold, fontWeight: 500, color: COLORS.text, marginBottom: S.xs }}>What's your most recent job title?</div>
-                    <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginBottom: S.s }}>When jobs require experience, we can easily tell you if you fit the bill</div>
+                    <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginBottom: S.s }}>{emptySubtext}</div>
                     <div
                       onClick={() => { setBgDrawerFocusTitle(true); setBackgroundDrawerOpen(true); }}
                       style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1px solid ${COLORS.border}`, background: COLORS.card, cursor: "text", userSelect: "none" }}
@@ -4361,7 +4367,8 @@ export default function JobTriagePage() {
                   </div>
                 </div>
               </div>
-            );
+              );
+            })()
 
             // ── Card 2: Work style ──────────────────────────────────────────────
             const wsCard = hasWorkStyle ? (() => {
