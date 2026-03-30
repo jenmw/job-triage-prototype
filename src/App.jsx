@@ -3163,13 +3163,13 @@ const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initial
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>Work history <span style={{ fontWeight: 400, color: COLORS.muted }}>(optional)</span></div>
         <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m}px` }}>Add your most recent roles. Leave blank if you're new to work.</p>
         {prevJobs.map((job, i) => (
-          <div key={i} style={{ marginBottom: S.m, maxWidth: isDesktop ? "70%" : "100%" }}>
+          <div key={i} style={{ marginBottom: S.m }}>
             <div style={{ display: "flex", gap: S.s, alignItems: "flex-end" }}>
               <div style={{ flex: "1 1 0" }}>
                 <label style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, display: "block", marginBottom: S.xs }}>Job title</label>
                 <input ref={i === 0 ? jobTitleRef : null} value={job.title} onChange={e => updateJob(i, "title", e.target.value)} placeholder="e.g. Warehouse Operative" style={{ ...inputStyle, marginBottom: 0 }} />
               </div>
-              <div style={{ flex: "0 0 120px" }}>
+              <div style={{ flex: "0 0 160px" }}>
                 <label style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, display: "block", marginBottom: S.xs }}>How long?</label>
                 <select value={job.duration || ""} onChange={e => updateJob(i, "duration", e.target.value)}
                   style={{ ...inputStyle, marginBottom: 0, appearance: "none", backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: `right ${S.s2}px center`, paddingRight: 32 }}>
@@ -3196,7 +3196,7 @@ const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initial
 
         {/* Qualifications summary row */}
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>Qualifications & certificates</div>
-        <button onClick={() => setQualifSubSheetOpen(true)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: isDesktop ? "70%" : "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 8, border: `1px solid ${COLORS.border}`, background: COLORS.card, cursor: "pointer", fontFamily: FONT, textAlign: "left", marginBottom: S.m2, boxSizing: "border-box" }}>
+        <button onClick={() => setQualifSubSheetOpen(true)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 8, border: `1px solid ${COLORS.border}`, background: COLORS.card, cursor: "pointer", fontFamily: FONT, textAlign: "left", marginBottom: S.m2, boxSizing: "border-box" }}>
           <span style={{ ...T.body1, color: qualifSummary.length > 0 ? COLORS.text : COLORS.muted, fontFamily: FONT, flex: 1, marginRight: S.m }}>
             {qualifSummary.length > 0 ? qualifSummary.join(", ") : "None added"}
           </span>
@@ -3205,7 +3205,7 @@ const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initial
 
         {/* Licences summary row */}
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>Licences</div>
-        <button onClick={() => setLicenceSubSheetOpen(true)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: isDesktop ? "70%" : "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 8, border: `1px solid ${COLORS.border}`, background: COLORS.card, cursor: "pointer", fontFamily: FONT, textAlign: "left", marginBottom: S.m2, boxSizing: "border-box" }}>
+        <button onClick={() => setLicenceSubSheetOpen(true)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 8, border: `1px solid ${COLORS.border}`, background: COLORS.card, cursor: "pointer", fontFamily: FONT, textAlign: "left", marginBottom: S.m2, boxSizing: "border-box" }}>
           <span style={{ ...T.body1, color: licenceSummary.length > 0 ? COLORS.text : COLORS.muted, fontFamily: FONT, flex: 1, marginRight: S.m }}>
             {licenceSummary.length > 0 ? licenceSummary.join(", ") : "None added"}
           </span>
