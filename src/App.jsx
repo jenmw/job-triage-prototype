@@ -88,41 +88,6 @@ const WORK_STYLE_QUESTIONS = [
 
 const PRIORITIES = ["Good shift notice", "Well rated employer", "Good team mates", "Career progression", "Recommended by students", "Recommended by parents", "Good managers", "No experience required"];
 
-// Returns up to 3 objective highlights for a job card — no user data required.
-// 1. Pay vs benchmark (explicit £/hr above average)
-// 2. No experience required
-// 3. Top good findings from workers
-const getJobHighlights = (job) => {
-  const chips = [];
-
-  // Pay vs benchmark — normalize both to hourly (benchmark values >100 are annual)
-  if (job.payBenchmark && job.pay) {
-    const num = parseFloat(job.pay.replace(/[£,]/g, "").match(/[\d.]+/)?.[0] ?? 0);
-    const jobHourly = job.pay.includes("/yr") ? num / 2080 : num;
-    const toHourly = v => v > 100 ? v / 2080 : v;
-    const benchmarkMid = (toHourly(job.payBenchmark.rangeLow) + toHourly(job.payBenchmark.rangeHigh)) / 2;
-    const diff = jobHourly - benchmarkMid;
-    if (diff >= 0.5) {
-      chips.push(`£${(Math.round(diff * 10) / 10).toFixed(2)}/hr above average`);
-    }
-  }
-
-  // No experience required — objective eligibility fact
-  if (chips.length < 3 && (
-    job.matchCriteria?.experience?.required === false ||
-    (job.findingDiffs || []).some(d => d.toLowerCase().includes("no experience"))
-  )) {
-    chips.push("No experience required");
-  }
-
-  // Top good findings from workers
-  for (const f of (job.findings?.good || [])) {
-    if (chips.length >= 3) break;
-    chips.push(f.label);
-  }
-
-  return chips;
-};
 
 // Three transport modes — matches Breakroom onboarding options
 const TRANSPORT_MODES = [
@@ -3571,6 +3536,37 @@ const AlternativesList = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawe
 
 // ─── Search results ────────────────────────────────────────────────────────────
 
+const PAY_VERDICT_LABEL = { above: "Pays well", fair: "Pays fairly" };
+
+// Returns up to 3 objective highlights for a job card — no user data required.
+// Uses the same pay verdict logic as the job detail page (computePayVerdict).
+// "Underpays" is intentionally omitted — not a reason to click through.
+const getJobHighlights = (job) => {
+  const chips = [];
+
+  // Pay verdict — short label only, no roleLabel suffix
+  if (job.payBenchmark && job.pay) {
+    const verdict = computePayVerdict(job.pay, job.payType, job.payBenchmark);
+    if (verdict && PAY_VERDICT_LABEL[verdict.verdict]) chips.push(PAY_VERDICT_LABEL[verdict.verdict]);
+  }
+
+  // No experience required — objective eligibility fact
+  if (chips.length < 3 && (
+    job.matchCriteria?.experience?.required === false ||
+    (job.findingDiffs || []).some(d => d.toLowerCase().includes("no experience"))
+  )) {
+    chips.push("No experience required");
+  }
+
+  // Top good findings from workers
+  for (const f of (job.findings?.good || [])) {
+    if (chips.length >= 3) break;
+    chips.push(f.label);
+  }
+
+  return chips;
+};
+
 const SearchResultCard = ({ job, onClick }) => {
   const chips = getJobHighlights(job);
   return (
@@ -3583,8 +3579,10 @@ const SearchResultCard = ({ job, onClick }) => {
       </div>
       <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, marginBottom: chips.length > 0 ? S.xs : 0 }}>{job.pay} · {job.location}</div>
       {chips.length > 0 && (
-        <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: S.xs }}>
-          {chips.map(c => <VacancyHighlight key={c} label={c} />)}
+        <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginTop: S.s }}>
+          {chips.map(c => (
+            <span key={c} style={{ ...T.body2Bold, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT }}>{c}</span>
+          ))}
         </div>
       )}
     </div>
