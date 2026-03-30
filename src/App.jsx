@@ -3116,7 +3116,7 @@ const LicencesSubSheet = ({ open, onClose, selected, other, onSave }) => {
   );
 };
 
-const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initialLicences = new Set(), autoFocusJobTitle = false }) => {
+const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initialLicences = new Set(), autoFocusJobTitle = false, isDesktop = false }) => {
   const [prevJobs, setPrevJobs] = useState(initialValues.prevJobs || [{ title: "", duration: "" }]);
   const [experience, setExperience] = useState(initialValues.experience || null);
   const [qualifications, setQualifications] = useState(new Set(initialValues.qualifications || []));
@@ -3163,17 +3163,23 @@ const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initial
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>Work history <span style={{ fontWeight: 400, color: COLORS.muted }}>(optional)</span></div>
         <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m}px` }}>Add your most recent roles. Leave blank if you're new to work.</p>
         {prevJobs.map((job, i) => (
-          <div key={i} style={{ marginBottom: S.m }}>
-            <label style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, display: "block", marginBottom: S.xs }}>Job title</label>
-            <input ref={i === 0 ? jobTitleRef : null} value={job.title} onChange={e => updateJob(i, "title", e.target.value)} placeholder="e.g. Warehouse Operative" style={{ ...inputStyle, marginBottom: S.s }} />
-            <label style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, display: "block", marginBottom: S.xs }}>How long were you in this role?</label>
-            <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap" }}>
-              {["< 1 year", "1–2 years", "3–5 years", "5+ years"].map(d => (
-                <button key={d} onClick={() => updateJob(i, "duration", job.duration === d ? "" : d)}
-                  style={{ ...T.body2, padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${job.duration === d ? COLORS.green : COLORS.border}`, background: job.duration === d ? COLORS.greenBg : COLORS.card, color: job.duration === d ? COLORS.green : COLORS.muted, fontWeight: job.duration === d ? 700 : 400, cursor: "pointer", fontFamily: FONT }}>
-                  {d}
-                </button>
-              ))}
+          <div key={i} style={{ marginBottom: S.m, maxWidth: isDesktop ? "70%" : "100%" }}>
+            <div style={{ display: "flex", gap: S.s, alignItems: "flex-end" }}>
+              <div style={{ flex: "1 1 0" }}>
+                <label style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, display: "block", marginBottom: S.xs }}>Job title</label>
+                <input ref={i === 0 ? jobTitleRef : null} value={job.title} onChange={e => updateJob(i, "title", e.target.value)} placeholder="e.g. Warehouse Operative" style={{ ...inputStyle, marginBottom: 0 }} />
+              </div>
+              <div style={{ flex: "0 0 120px" }}>
+                <label style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, display: "block", marginBottom: S.xs }}>How long?</label>
+                <select value={job.duration || ""} onChange={e => updateJob(i, "duration", e.target.value)}
+                  style={{ ...inputStyle, marginBottom: 0, appearance: "none", backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: `right ${S.s2}px center`, paddingRight: 32 }}>
+                  <option value="">—</option>
+                  <option value="< 1 year">&lt; 1 year</option>
+                  <option value="1–2 years">1–2 years</option>
+                  <option value="3–5 years">3–5 years</option>
+                  <option value="5+ years">5+ years</option>
+                </select>
+              </div>
             </div>
             {prevJobs.length > 1 && (
               <div onClick={() => removeJob(i)} style={{ ...T.body2, color: COLORS.muted, textDecoration: "underline", cursor: "pointer", fontFamily: FONT, marginTop: S.xs }}>
@@ -3183,24 +3189,14 @@ const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initial
           </div>
         ))}
         {prevJobs.length < 3 && (
-          <div onClick={() => setPrevJobs(jobs => [...jobs, { title: "", employer: "" }])} style={{ ...T.body2, color: COLORS.accent, textDecoration: "underline", cursor: "pointer", fontFamily: FONT, marginBottom: S.m2 }}>
+          <div onClick={() => setPrevJobs(jobs => [...jobs, { title: "", duration: "" }])} style={{ ...T.body2, color: COLORS.accent, textDecoration: "underline", cursor: "pointer", fontFamily: FONT, marginBottom: S.m2 }}>
             + Add another role
           </div>
         )}
 
-        <label style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, display: "block", marginBottom: S.xs }}>How much experience do you have in this kind of work?</label>
-        <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginBottom: S.m2 }}>
-          {[["none", "None — this is new to me"], ["some", "Some — a year or two"], ["lots", "Lots — several years"]].map(([val, label]) => (
-            <button key={val} onClick={() => setExperience(experience === val ? null : val)}
-              style={{ ...T.body2, padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${experience === val ? COLORS.green : COLORS.border}`, background: experience === val ? COLORS.greenBg : COLORS.card, color: experience === val ? COLORS.green : COLORS.muted, fontWeight: experience === val ? 700 : 400, cursor: "pointer", fontFamily: FONT }}>
-              {label}
-            </button>
-          ))}
-        </div>
-
         {/* Qualifications summary row */}
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>Qualifications & certificates</div>
-        <button onClick={() => setQualifSubSheetOpen(true)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 8, border: `1px solid ${COLORS.border}`, background: COLORS.card, cursor: "pointer", fontFamily: FONT, textAlign: "left", marginBottom: S.m2, boxSizing: "border-box" }}>
+        <button onClick={() => setQualifSubSheetOpen(true)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: isDesktop ? "70%" : "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 8, border: `1px solid ${COLORS.border}`, background: COLORS.card, cursor: "pointer", fontFamily: FONT, textAlign: "left", marginBottom: S.m2, boxSizing: "border-box" }}>
           <span style={{ ...T.body1, color: qualifSummary.length > 0 ? COLORS.text : COLORS.muted, fontFamily: FONT, flex: 1, marginRight: S.m }}>
             {qualifSummary.length > 0 ? qualifSummary.join(", ") : "None added"}
           </span>
@@ -3209,14 +3205,18 @@ const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initial
 
         {/* Licences summary row */}
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>Licences</div>
-        <button onClick={() => setLicenceSubSheetOpen(true)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 8, border: `1px solid ${COLORS.border}`, background: COLORS.card, cursor: "pointer", fontFamily: FONT, textAlign: "left", marginBottom: S.m2, boxSizing: "border-box" }}>
+        <button onClick={() => setLicenceSubSheetOpen(true)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: isDesktop ? "70%" : "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 8, border: `1px solid ${COLORS.border}`, background: COLORS.card, cursor: "pointer", fontFamily: FONT, textAlign: "left", marginBottom: S.m2, boxSizing: "border-box" }}>
           <span style={{ ...T.body1, color: licenceSummary.length > 0 ? COLORS.text : COLORS.muted, fontFamily: FONT, flex: 1, marginRight: S.m }}>
             {licenceSummary.length > 0 ? licenceSummary.join(", ") : "None added"}
           </span>
           <span style={{ color: COLORS.muted, fontSize: 18, flexShrink: 0 }}>›</span>
         </button>
 
-        <button onClick={() => onSubmit({ prevJobs, experience, qualifications: [...qualifications], qualifOther, licences, licenceOther })}
+        <button onClick={() => {
+          const durations = prevJobs.map(j => j.duration).filter(Boolean);
+          const derivedExp = durations.length === 0 ? null : durations.some(d => d === "3–5 years" || d === "5+ years") ? "lots" : "some";
+          onSubmit({ prevJobs, experience: derivedExp, qualifications: [...qualifications], qualifOther, licences, licenceOther });
+        }}
           style={{ width: "100%", padding: S.m, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
           Save
         </button>
@@ -4652,6 +4652,7 @@ export default function JobTriagePage() {
         initialValues={profileBackground}
         initialLicences={userLicences}
         autoFocusJobTitle={bgDrawerFocusTitle}
+        isDesktop={isDesktop}
         onSubmit={(data) => { const { licences, licenceOther, ...bgData } = data; setProfileBackground(bgData); setUserLicences(licences); setBackgroundDrawerOpen(false); setBgDrawerFocusTitle(false); }} />
 
       <WorkStyleDrawer open={workStyleDrawerOpen} onClose={() => setWorkStyleDrawerOpen(false)}
