@@ -320,6 +320,12 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse operatives in Northamptonshire" },
     findingDiffs: ["Better sick pay cover", "Less unpaid overtime"],
     requiresFltLicence: false,
+    matchCriteria: {
+      licences: [],
+      qualifications: [],
+      experience: { preferred: true, required: false, keywords: ["warehouse", "logistics", "picking", "packing"] },
+      note: "Warehouse or logistics experience",
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -399,6 +405,12 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    matchCriteria: {
+      licences: [],
+      qualifications: [],
+      experience: { preferred: true, required: false, keywords: ["warehouse", "distribution", "logistics"] },
+      note: "Warehouse or distribution experience",
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -648,6 +660,12 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 15, roleLabel: "production operatives in Northamptonshire" },
     findingDiffs: ["Better rated employer", "Above average pay"],
     requiresFltLicence: false,
+    matchCriteria: {
+      licences: [],
+      qualifications: ["Level 2 Food Hygiene certificate preferred"],
+      experience: { preferred: false, required: false, keywords: [] },
+      note: null,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -967,6 +985,12 @@ const JOBS = [
     payBenchmark: { rangeLow: 27000, rangeHigh: 32000, roleLabel: "warehouse operatives in Leicestershire" },
     findingDiffs: ["Better rated employer", "Higher pay"],
     requiresFltLicence: false,
+    matchCriteria: {
+      licences: [],
+      qualifications: [],
+      experience: { preferred: true, required: false, keywords: ["warehouse", "logistics"] },
+      note: "Warehouse experience",
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -1211,6 +1235,12 @@ const JOBS = [
     payBenchmark: { rangeLow: 27000, rangeHigh: 32000, roleLabel: "warehouse operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    matchCriteria: {
+      licences: [],
+      qualifications: [],
+      experience: { preferred: true, required: false, keywords: ["warehouse", "logistics"] },
+      note: "Warehouse experience",
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -1461,6 +1491,12 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    matchCriteria: {
+      licences: [],
+      qualifications: [],
+      experience: { preferred: true, required: false, keywords: ["warehouse", "logistics"] },
+      note: "Warehouse experience",
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -1593,6 +1629,12 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    matchCriteria: {
+      licences: [],
+      qualifications: [],
+      experience: { preferred: true, required: false, keywords: ["warehouse", "logistics"] },
+      note: "Warehouse experience",
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -1713,6 +1755,12 @@ const JOBS = [
     payBenchmark: { rangeLow: 27000, rangeHigh: 32000, roleLabel: "warehouse operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    matchCriteria: {
+      licences: [],
+      qualifications: [],
+      experience: { preferred: true, required: false, keywords: ["quality", "QC", "inventory", "stock control"] },
+      note: "QC or inventory management experience",
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -1773,6 +1821,12 @@ const JOBS = [
     payBenchmark: { rangeLow: 27000, rangeHigh: 32000, roleLabel: "warehouse operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    matchCriteria: {
+      licences: [],
+      qualifications: [],
+      experience: { preferred: true, required: false, keywords: ["warehouse", "logistics"] },
+      note: "Warehouse experience",
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -1832,6 +1886,12 @@ const JOBS = [
     payBenchmark: { rangeLow: 25000, rangeHigh: 30000, roleLabel: "warehouse administrators in the East Midlands" },
     findingDiffs: [],
     requiresFltLicence: false,
+    matchCriteria: {
+      licences: [],
+      qualifications: ["Good IT skills including Excel"],
+      experience: { preferred: true, required: false, keywords: ["admin", "administration", "office"] },
+      note: "Admin experience",
+    },
     workStyle: { activity: "sitting", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -1892,6 +1952,12 @@ const JOBS = [
     payBenchmark: { rangeLow: 27000, rangeHigh: 35000, roleLabel: "warehouse maintenance operatives in the East Midlands" },
     findingDiffs: ["Better rated employer"],
     requiresFltLicence: false,
+    matchCriteria: {
+      licences: [],
+      qualifications: [],
+      experience: { preferred: true, required: false, keywords: ["maintenance", "engineering", "mechanical"] },
+      note: "Maintenance or engineering experience",
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -1952,6 +2018,12 @@ const JOBS = [
     payBenchmark: { rangeLow: 25000, rangeHigh: 30000, roleLabel: "warehouse administrators in the East Midlands" },
     findingDiffs: [],
     requiresFltLicence: false,
+    matchCriteria: {
+      licences: [],
+      qualifications: ["Strong Excel skills"],
+      experience: { preferred: true, required: false, keywords: ["admin", "warehouse admin", "logistics admin"] },
+      note: "Warehouse admin experience",
+    },
     workStyle: { activity: "sitting", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -2012,6 +2084,12 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse operatives in the East Midlands" },
     findingDiffs: [],
     requiresFltLicence: false,
+    matchCriteria: {
+      licences: [],
+      qualifications: [],
+      experience: { preferred: true, required: false, keywords: ["training", "coaching", "trainer"] },
+      note: "Warehouse training or coaching experience",
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -2188,6 +2266,12 @@ const JOBS = [
     payBenchmark: { rangeLow: 27000, rangeHigh: 35000, roleLabel: "warehouse team leaders in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    matchCriteria: {
+      licences: [],
+      qualifications: [],
+      experience: { preferred: true, required: false, keywords: ["team leader", "supervisor", "supervisory"] },
+      note: "Warehouse team leader or supervisor experience",
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
