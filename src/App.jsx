@@ -2528,8 +2528,17 @@ const AnimatedRatingDial = ({ score }) => {
     };
     el.style.strokeDashoffset = circumference;
     el.style.stroke = COLORS.red;
-    const id = setTimeout(() => requestAnimationFrame(animate), 200);
-    return () => clearTimeout(id);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          observer.disconnect();
+          requestAnimationFrame(animate);
+        }
+      },
+      { threshold: 0.5 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
   }, [score]);
 
   return (
