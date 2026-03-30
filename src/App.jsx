@@ -3104,7 +3104,7 @@ const LicencesSubSheet = ({ open, onClose, selected, other, onSave }) => {
   );
 };
 
-const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initialLicences = new Set() }) => {
+const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initialLicences = new Set(), autoFocusJobTitle = false }) => {
   const [prevJobs, setPrevJobs] = useState(initialValues.prevJobs || [{ title: "", employer: "" }]);
   const [experience, setExperience] = useState(initialValues.experience || null);
   const [qualifications, setQualifications] = useState(new Set(initialValues.qualifications || []));
@@ -3113,6 +3113,13 @@ const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initial
   const [licenceOther, setLicenceOther] = useState(initialValues.licenceOther || "");
   const [qualifSubSheetOpen, setQualifSubSheetOpen] = useState(false);
   const [licenceSubSheetOpen, setLicenceSubSheetOpen] = useState(false);
+  const jobTitleRef = useRef(null);
+
+  useEffect(() => {
+    if (open && autoFocusJobTitle) {
+      setTimeout(() => jobTitleRef.current?.focus(), 380);
+    }
+  }, [open, autoFocusJobTitle]);
 
   useEffect(() => {
     if (open) {
@@ -3148,7 +3155,7 @@ const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initial
             <div style={{ display: "flex", gap: S.m, flexWrap: "wrap" }}>
               <div style={{ flex: "1 1 140px" }}>
                 <label style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, display: "block", marginBottom: S.xs }}>Job title</label>
-                <input value={job.title} onChange={e => updateJob(i, "title", e.target.value)} placeholder="e.g. Warehouse Operative" style={{ ...inputStyle, marginBottom: 0 }} />
+                <input ref={i === 0 ? jobTitleRef : null} value={job.title} onChange={e => updateJob(i, "title", e.target.value)} placeholder="e.g. Warehouse Operative" style={{ ...inputStyle, marginBottom: 0 }} />
               </div>
               <div style={{ flex: "1 1 140px" }}>
                 <label style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, display: "block", marginBottom: S.xs }}>Employer</label>
@@ -3874,6 +3881,7 @@ function MapThumbnail({ coords, onExpand, height = 180, label }) {
 export default function JobTriagePage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [backgroundDrawerOpen, setBackgroundDrawerOpen] = useState(false);
+  const [bgDrawerFocusTitle, setBgDrawerFocusTitle] = useState(false);
   const [profileBackground, setProfileBackground] = useState({});
   const [matchWhyOpen, setMatchWhyOpen] = useState(false);
   const [workStyleDrawerOpen, setWorkStyleDrawerOpen] = useState(false);
@@ -4274,23 +4282,13 @@ export default function JobTriagePage() {
                 <div style={{ display: "flex", alignItems: "flex-start", gap: S.s }}>
                   <span style={{ width: 15, height: 15, borderRadius: "50%", background: COLORS.border, border: "2px solid #fff", flexShrink: 0, marginTop: 3 }} />
                   <div style={{ flex: 1, fontFamily: FONT }}>
-                    <div>Are you suited for this role?</div>
-                    <div style={{ ...T.body1, color: COLORS.muted, marginTop: S.xs, fontWeight: 400 }}>
-                      Tell us about your experience and qualifications — we'll flag your fit on every job.
-                    </div>
-                    <div style={{ margin: `${S.s}px 0` }}>
-                      {[
-                        "Your experience level vs. what's required",
-                        "Whether your qualifications are relevant",
-                      ].map((text, j) => (
-                        <div key={j} style={{ display: "flex", alignItems: "flex-start", gap: S.s, padding: `${S.xs}px 0` }}>
-                          <span style={{ width: 10, height: 10, borderRadius: "50%", background: COLORS.border, flexShrink: 0, marginTop: 3 }} />
-                          <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{text}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <div onClick={() => setBackgroundDrawerOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", cursor: "pointer", fontFamily: FONT, marginTop: S.xs }}>
-                      Tell us about your background
+                    <div style={{ ...T.body1Bold, color: COLORS.text, marginBottom: S.xs }}>Are you suited for this role?</div>
+                    <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginBottom: S.s }}>What's your most recent job title?</div>
+                    <div
+                      onClick={() => { setBgDrawerFocusTitle(true); setBackgroundDrawerOpen(true); }}
+                      style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1px solid ${COLORS.border}`, background: COLORS.card, cursor: "text", userSelect: "none" }}
+                    >
+                      e.g. Warehouse Operative
                     </div>
                   </div>
                 </div>
@@ -4581,10 +4579,11 @@ export default function JobTriagePage() {
         initialValues={{ postcode: profilePostcode, currentPay: profileCurrentPay, payType: profilePayType, travel: profileTravel, priorities: profilePriorities }}
         onSubmit={(data) => { handleSavePrefs(data); setDrawerOpen(false); }} />
 
-      <BackgroundDrawer open={backgroundDrawerOpen} onClose={() => setBackgroundDrawerOpen(false)}
+      <BackgroundDrawer open={backgroundDrawerOpen} onClose={() => { setBackgroundDrawerOpen(false); setBgDrawerFocusTitle(false); }}
         initialValues={profileBackground}
         initialLicences={userLicences}
-        onSubmit={(data) => { const { licences, licenceOther, ...bgData } = data; setProfileBackground(bgData); setUserLicences(licences); setBackgroundDrawerOpen(false); }} />
+        autoFocusJobTitle={bgDrawerFocusTitle}
+        onSubmit={(data) => { const { licences, licenceOther, ...bgData } = data; setProfileBackground(bgData); setUserLicences(licences); setBackgroundDrawerOpen(false); setBgDrawerFocusTitle(false); }} />
 
       <WorkStyleDrawer open={workStyleDrawerOpen} onClose={() => setWorkStyleDrawerOpen(false)}
         initialValues={workStylePrefs}
