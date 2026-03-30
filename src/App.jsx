@@ -4319,20 +4319,14 @@ export default function JobTriagePage() {
           </div>
         );
         return (
-          <div style={{ borderTop: "1px solid rgba(50,50,50,0.1)", borderBottom: isDesktop ? "1px solid rgba(50,50,50,0.1)" : "none", marginTop: S.m, marginBottom: S.m, paddingTop: S.m, paddingBottom: S.s }}>
+          <div style={{ borderTop: `1px solid ${COLORS.border}`, borderBottom: isDesktop ? `1px solid ${COLORS.border}` : "none", marginTop: S.m, marginBottom: S.m2, paddingTop: S.m, paddingBottom: S.m }}>
             {renderRow({ icon: <IconPay />, text: job.pay, benchmark: job.payBenchmark })}
             {renderRow({ icon: <IconLocation />, text: job.location, commuteRow: true })}
             {renderRow({ icon: <IconClock />, text: [job.hours, job.hoursSub ? `(${job.hoursSub})` : null, job.shifts].filter(Boolean).join(" · ") })}
-            {!isDesktop && (
-              <div style={{ marginTop: S.m }}>
-                <MapThumbnail coords={job.coords} onExpand={() => setMapModalOpen(true)} height={180} />
-              </div>
-            )}
           </div>
         );
       })()}
 
-      {/* The Breakroom Take — rating + AI synthesis */}
       {/* The Breakroom Take — card with brand accent top border */}
       <div style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", borderTop: `3px solid ${COLORS.accent}`, padding: S.m, marginBottom: S.m2 }}>
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.m }}>The Breakroom Take</div>
@@ -4359,6 +4353,13 @@ export default function JobTriagePage() {
           </div>
         )}
       </div>
+
+      {/* Map — mobile only, after Breakroom Take */}
+      {!isDesktop && (
+        <div style={{ marginBottom: S.m2 }}>
+          <MapThumbnail coords={job.coords} onExpand={() => setMapModalOpen(true)} height={180} />
+        </div>
+      )}
     </div>
   );
 
@@ -4521,7 +4522,7 @@ export default function JobTriagePage() {
     <>
       {matchCard}
       {/* "What you need to know" — always visible, no accordion */}
-      <div style={{ borderBottom: `1px solid ${COLORS.border}`, paddingBottom: S.m }}>
+      <div style={{ borderBottom: `1px solid ${COLORS.border}`, paddingBottom: S.m2 }}>
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, padding: `${S.m}px 0` }}>What you need to know</div>
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `0 ${S.m}px` }}>
           {(() => {
