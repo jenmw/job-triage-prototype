@@ -88,44 +88,40 @@ const WORK_STYLE_QUESTIONS = [
 
 const PRIORITIES = ["Good shift notice", "Well rated employer", "Good team mates", "Career progression", "Recommended by students", "Recommended by parents", "Good managers", "No experience required"];
 
-// Maps priority chips to relevant findings on a job.
-// Green = job meets it AND user selected it. Grey = job meets it but user didn't prioritise it.
-// Chips are omitted when the job doesn't qualify at all.
-const getPriorityChips = (job, priorities) => {
-  const selected = new Set(priorities || []);
-  const noPriorities = selected.size === 0;
-  const goodF = (kw) => job.findings.good.find(f => f.label.toLowerCase().includes(kw));
+// Returns up to 3 objective highlights for a job card — no user data required.
+// 1. Pay vs benchmark (explicit £/hr above average)
+// 2. No experience required
+// 3. Top good findings from workers
+const getJobHighlights = (job) => {
+  const chips = [];
 
-  // Check each known priority against the job's findings
-  const allChips = [];
-  const check = (p, met) => {
-    if (!met) return;
-    allChips.push({ label: p, status: selected.has(p) ? "good" : "neutral" });
-  };
-
-  check("Good shift notice",       goodF("shift"));
-  check("Well rated employer",     job.rating >= 7.0);
-  check("Good team mates",         goodF("team"));
-  check("Career progression",      goodF("progress"));
-  check("Good managers",           goodF("respect") || goodF("manager"));
-  check("No experience required",
-    job.matchCriteria?.experience?.required === false ||
-    (job.findingDiffs || []).some(d => d.toLowerCase().includes("no experience"))
-  );
-  // "Recommended by students" and "Recommended by parents" need recommendation data — skip for now
-
-  // Sort: selected priorities first, then neutral
-  allChips.sort((a, b) => {
-    if (a.status === b.status) return 0;
-    return a.status === "good" ? -1 : 1;
-  });
-
-  // When no priorities set, fall back to highlights for the grey chips
-  if (noPriorities && allChips.length === 0) {
-    return (job.highlights || []).slice(0, 3).map(h => ({ label: h, status: "neutral" }));
+  // Pay vs benchmark — normalize both to hourly (benchmark values >100 are annual)
+  if (job.payBenchmark && job.pay) {
+    const num = parseFloat(job.pay.replace(/[£,]/g, "").match(/[\d.]+/)?.[0] ?? 0);
+    const jobHourly = job.pay.includes("/yr") ? num / 2080 : num;
+    const toHourly = v => v > 100 ? v / 2080 : v;
+    const benchmarkMid = (toHourly(job.payBenchmark.rangeLow) + toHourly(job.payBenchmark.rangeHigh)) / 2;
+    const diff = jobHourly - benchmarkMid;
+    if (diff >= 0.5) {
+      chips.push(`£${(Math.round(diff * 10) / 10).toFixed(2)}/hr above average`);
+    }
   }
 
-  return allChips.slice(0, 4);
+  // No experience required — objective eligibility fact
+  if (chips.length < 3 && (
+    job.matchCriteria?.experience?.required === false ||
+    (job.findingDiffs || []).some(d => d.toLowerCase().includes("no experience"))
+  )) {
+    chips.push("No experience required");
+  }
+
+  // Top good findings from workers
+  for (const f of (job.findings?.good || [])) {
+    if (chips.length >= 3) break;
+    chips.push(f.label);
+  }
+
+  return chips;
 };
 
 // Three transport modes — matches Breakroom onboarding options
@@ -3575,17 +3571,8 @@ const AlternativesList = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawe
 
 // ─── Search results ────────────────────────────────────────────────────────────
 
-const SearchResultCard = ({ job, onClick, profilePriorities }) => {
-  const priorityChips = getPriorityChips(job, profilePriorities);
-  const greenChips = priorityChips.filter(c => c.status === "good");
-
-  // Job-specific grey chips: findingDiffs + altReason, deduplicated against green labels
-  const greenLabels = new Set(greenChips.map(c => c.label.toLowerCase()));
-  const greyChipStyle = { ...T.body2Bold, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT, whiteSpace: "nowrap" };
-  const diffChips = (job.findingDiffs ?? []).filter(d => !greenLabels.has(d.toLowerCase()));
-  const reasonChip = job.altReason?.text && !greenLabels.has(job.altReason.text.toLowerCase()) ? job.altReason.text : null;
-
-  const hasChips = greenChips.length > 0 || diffChips.length > 0 || reasonChip;
+const SearchResultCard = ({ job, onClick }) => {
+  const chips = getJobHighlights(job);
   return (
     <div onClick={onClick} style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: S.m, cursor: "pointer" }}>
       <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>{job.title}</div>
@@ -3594,12 +3581,10 @@ const SearchResultCard = ({ job, onClick, profilePriorities }) => {
         <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{job.rating.toFixed(1)}</span>
         <span style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>{job.company}</span>
       </div>
-      <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, marginBottom: hasChips ? S.xs : 0 }}>{job.pay} · {job.location}</div>
-      {hasChips && (
+      <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, marginBottom: chips.length > 0 ? S.xs : 0 }}>{job.pay} · {job.location}</div>
+      {chips.length > 0 && (
         <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: S.xs }}>
-          {greenChips.map(c => <VacancyHighlight key={c.label} label={c.label} />)}
-          {diffChips.map(d => <span key={d} style={greyChipStyle}>{d}</span>)}
-          {reasonChip && <span style={greyChipStyle}>{reasonChip}</span>}
+          {chips.map(c => <VacancyHighlight key={c} label={c} />)}
         </div>
       )}
     </div>
