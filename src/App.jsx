@@ -3934,7 +3934,7 @@ const SearchResultsPage = ({ jobs, onJobSelect, isDesktop, profilePriorities }) 
 // ─── AI summary components ────────────────────────────────────────────────────
 
 const AISummaryBlock = ({ text }) => (
-  <div style={{ marginTop: S.m }}>
+  <div>
     <p style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, margin: `0 0 ${S.s}px` }}>{text}</p>
     <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>✦ AI summary · Based on Breakroom Quiz data and worker reviews</span>
   </div>
@@ -4333,20 +4333,31 @@ export default function JobTriagePage() {
       })()}
 
       {/* The Breakroom Take — rating + AI synthesis */}
-      <div style={{ borderBottom: `1px solid ${COLORS.border}`, paddingBottom: S.m2, marginBottom: S.m2 }}>
+      {/* The Breakroom Take — card with brand accent top border */}
+      <div style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", borderTop: `3px solid ${COLORS.accent}`, padding: S.m, marginBottom: S.m2 }}>
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.m }}>The Breakroom Take</div>
-        <div style={{ display: "flex", alignItems: "center", gap: S.m }}>
+
+        {/* Rating row */}
+        <div style={{ display: "flex", alignItems: "center", gap: S.m, marginBottom: S.m }}>
           <AnimatedRatingDial score={rating} large />
           <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT }}>
             Rated <strong>{rating.toFixed(1)}</strong> out of 10, based on {job.quizCount.toLocaleString("en-GB")} {job.quizCount === 1 ? "employee" : "employees"} who took the Breakroom Quiz
           </span>
         </div>
-        {job.aiSummary && <AISummaryBlock text={job.aiSummary.text} />}
-      </div>
 
-      {/* Vacancy highlights — matches .vacancy-highlights */}
-      <div style={{ display: "flex", gap: S.s, flexWrap: "wrap" }}>
-        {job.highlights.map((h) => <VacancyHighlight key={h} label={h} onClick={() => handlePillClick(h)} />)}
+        {/* Highlights */}
+        {job.highlights.length > 0 && (
+          <div style={{ display: "flex", gap: S.s, flexWrap: "wrap", marginBottom: S.m }}>
+            {job.highlights.map((h) => <VacancyHighlight key={h} label={h} onClick={() => handlePillClick(h)} />)}
+          </div>
+        )}
+
+        {/* AI summary — separated with a top border so it's clearly distinct from quiz data */}
+        {job.aiSummary && (
+          <div style={{ borderTop: `1px solid ${COLORS.border}`, paddingTop: S.m }}>
+            <AISummaryBlock text={job.aiSummary.text} />
+          </div>
+        )}
       </div>
     </div>
   );
