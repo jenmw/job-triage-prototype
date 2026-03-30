@@ -4365,7 +4365,7 @@ export default function JobTriagePage() {
                           {issue.detail && <span style={{ color: COLORS.muted }}> — {issue.detail}</span>}
                         </div>
                       ))}
-                      <div onClick={() => setWorkStyleDrawerOpen(true)} style={{ ...T.body2Bold, color: COLORS.text, textDecoration: "underline", cursor: "pointer", fontFamily: FONT, marginTop: S.xs }}>
+                      <div onClick={() => setWorkStyleDrawerOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", cursor: "pointer", fontFamily: FONT, marginTop: S.xs }}>
                         Update work style
                       </div>
                     </div>
