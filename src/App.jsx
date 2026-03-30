@@ -1509,6 +1509,12 @@ const JOBS = [
     payBenchmark: { rangeLow: 35000, rangeHigh: 48000, roleLabel: "warehouse operations managers in Leicestershire" },
     findingDiffs: ["Better rated employer"],
     requiresFltLicence: false,
+    matchCriteria: {
+      licences: [],
+      qualifications: ["WMS systems experience"],
+      experience: { preferred: false, required: true, keywords: ["warehouse", "management", "FMCG", "food", "WMS"] },
+      note: "Warehouse management experience in food or FMCG",
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
