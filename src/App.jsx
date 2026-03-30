@@ -3524,7 +3524,7 @@ const AlternativesList = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawe
           }}>
             <div>
               <div style={{ ...T.body1Bold, color: COLORS.accent, fontFamily: FONT, marginBottom: S.xs }}>Set your priorities</div>
-              <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>We'll highlight what matters to you on every job</div>
+              <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>Your priorities, flagged on every job</div>
             </div>
             <span style={{ color: COLORS.accent, fontSize: 20, lineHeight: 1 }}>›</span>
           </button>
