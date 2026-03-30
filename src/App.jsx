@@ -4326,7 +4326,7 @@ export default function JobTriagePage() {
           </div>
         );
         return (
-          <div style={{ borderTop: `1px solid ${COLORS.border}`, borderBottom: isDesktop ? `1px solid ${COLORS.border}` : "none", marginTop: S.m, marginBottom: S.m2, paddingTop: S.m, paddingBottom: isDesktop ? S.m : 0 }}>
+          <div style={{ borderTop: `1px solid ${COLORS.border}`, marginTop: S.m, marginBottom: S.m2, paddingTop: S.m, paddingBottom: 0 }}>
             {renderRow({ icon: <IconPay />, text: job.pay, benchmark: job.payBenchmark })}
             {renderRow({ icon: <IconLocation />, text: job.location, commuteRow: true })}
             {renderRow({ icon: <IconClock />, text: [job.hours, job.hoursSub ? `(${job.hoursSub})` : null, job.shifts].filter(Boolean).join(" · ") })}
@@ -4335,7 +4335,7 @@ export default function JobTriagePage() {
       })()}
 
       {/* The Breakroom Take — card with brand accent top border */}
-      <div style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", borderTop: `3px solid ${COLORS.accent}`, padding: S.m, marginBottom: S.m2 }}>
+      <div style={{ background: COLORS.card, borderRadius: "0 0 5px 5px", borderTop: `3px solid ${COLORS.accent}`, padding: S.m, marginBottom: S.m2 }}>
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.m }}>The Breakroom Take</div>
 
         {/* Rating row */}
@@ -4534,7 +4534,7 @@ export default function JobTriagePage() {
     <>
       {matchCard}
       {/* "What you need to know" — always visible, no accordion */}
-      <div style={{ borderBottom: `1px solid ${COLORS.border}`, paddingBottom: S.m2 }}>
+      <div style={{ paddingBottom: S.m2 }}>
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, padding: `0 0 ${S.m}px` }}>See how you fit</div>
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `0 ${S.m}px` }}>
           {(() => {
