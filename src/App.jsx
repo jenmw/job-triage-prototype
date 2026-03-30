@@ -3594,9 +3594,9 @@ const SearchResultCard = ({ job, onClick }) => {
 
 const SEARCH_FILTERS = ["Full time", "Part time", "Days", "Nights", "Weekends", "£11+/hr", "Permanent", "Temporary"];
 const SORT_OPTIONS = [
-  { key: "rating", label: "Best rated" },
-  { key: "pay",    label: "Highest pay" },
   { key: "relevant", label: "Most relevant" },
+  { key: "pay",      label: "Highest pay" },
+  { key: "rating",   label: "Best rated" },
 ];
 
 const parsePayToHourly = (pay) => {
@@ -3608,7 +3608,7 @@ const parsePayToHourly = (pay) => {
 };
 
 const SearchResultsPage = ({ jobs, onJobSelect, isDesktop, profilePriorities }) => {
-  const [sortKey, setSortKey] = useState("rating");
+  const [sortKey, setSortKey] = useState("relevant");
 
   const sorted = useMemo(() => {
     const arr = [...jobs];
