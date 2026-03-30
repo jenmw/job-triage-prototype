@@ -4368,6 +4368,7 @@ export default function JobTriagePage() {
                       <div onClick={() => setWorkStyleDrawerOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", cursor: "pointer", fontFamily: FONT, marginTop: S.xs }}>
                         Update work style
                       </div>
+                      <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginTop: S.xs }}>Based on what we typically know about roles like this — always check the job description.</div>
                     </div>
                   </div>
                 </div>
