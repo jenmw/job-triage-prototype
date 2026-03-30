@@ -4349,10 +4349,13 @@ export default function JobTriagePage() {
               }
               return <Signal status={bgSignal.status} label={bgSignal.label} detail={bgSignal.detail} subtext="Update your background" subtextClick={() => setBackgroundDrawerOpen(true)} isLast={false} />;
             })() : (() => {
-              const needsExp = job?.matchCriteria?.experience?.required || job?.matchCriteria?.experience?.preferred;
-              const dotColor = needsExp ? COLORS.amber : COLORS.border;
-              const emptySubtext = needsExp
-                ? "This job asks for experience — add yours so we can check your fit"
+              const expRequired = job?.matchCriteria?.experience?.required;
+              const expPreferred = job?.matchCriteria?.experience?.preferred;
+              const dotColor = expRequired ? COLORS.red : expPreferred ? COLORS.amber : COLORS.border;
+              const emptySubtext = expRequired
+                ? "This job requires experience — add yours so we can check your fit"
+                : expPreferred
+                ? "This job prefers experienced candidates — add yours so we can check your fit"
                 : "When jobs require experience, we can easily tell you if you fit the bill";
               return (
               <div style={{ fontSize: 16, lineHeight: "22px", fontWeight: 500, color: COLORS.text, padding: `${S.m}px 0`, borderBottom: `1px solid rgba(50,50,50,0.1)` }}>
