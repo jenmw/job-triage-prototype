@@ -3988,6 +3988,12 @@ export default function JobTriagePage() {
   };
   const findingsSectionRef = useRef(null);
   const isDesktop = useIsDesktop();
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 4);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const job = JOBS[selectedJobIdx];
   const { rating } = job;
@@ -4561,7 +4567,7 @@ export default function JobTriagePage() {
   return (
     <div style={{ minHeight: "100vh", background: COLORS.bg, fontFamily: FONT, color: COLORS.text }}>
       {/* .header — matches header.scss */}
-      <div style={{ position: "sticky", top: 0, zIndex: 50, background: COLORS.card, borderBottom: `1px solid ${COLORS.border}`, height: 70 }}>
+      <div style={{ position: "sticky", top: 0, zIndex: 50, background: COLORS.card, boxShadow: scrolled ? "0 2px 8px rgba(0,0,0,0.08)" : "none", transition: "box-shadow 0.2s ease", height: 70 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "100%", maxWidth: 1032, margin: "0 auto", padding: `0 ${S.m}px` }}>
           {/* .header__identity */}
           <a href="#" onClick={e => { e.preventDefault(); handleBackToSearch(); }} style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
@@ -4620,7 +4626,7 @@ export default function JobTriagePage() {
 
           {/* Mobile sticky bottom bar */}
           {!isDesktop && (
-        <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 40, background: COLORS.bg, borderTop: `1px solid ${COLORS.border}`, padding: `${S.s2}px ${S.m}px` }}>
+        <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 40, background: COLORS.card, boxShadow: "0 -2px 8px rgba(0,0,0,0.08)", padding: `${S.s2}px ${S.m}px` }}>
           <div style={{ maxWidth: 480, margin: "0 auto" }}>
             {hardReqs.length > 0 && (
               <div style={{ marginBottom: S.s }}>
