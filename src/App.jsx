@@ -2628,11 +2628,11 @@ const TinyRatingDial = ({ score }) => {
 };
 
 // ─── Animated rating dial — fills from empty on mount, colour transitions through thresholds ─
-const AnimatedRatingDial = ({ score }) => {
+const AnimatedRatingDial = ({ score, large = false }) => {
   const arcRef = useRef(null);
   const svgRef = useRef(null);
-  const displaySize = 19;
-  const svgStrokeWidth = 16;
+  const displaySize = large ? 62 : 19;
+  const svgStrokeWidth = large ? 10 : 16;
   const halfSize = 50;
   const halfWidth = Math.round((100 - svgStrokeWidth) / 2);
   const circumference = Math.round((2 * Math.PI * halfWidth - svgStrokeWidth) * 1000) / 1000;
@@ -2681,6 +2681,12 @@ const AnimatedRatingDial = ({ score }) => {
         strokeLinecap="round"
         transform={`rotate(-82,${halfSize},${halfSize})`}
         style={{ transition: "stroke 0.25s ease" }} />
+      {large && (
+        <text x="50" y="50" textAnchor="middle" dominantBaseline="central"
+          style={{ fontSize: 28, fontWeight: 700, fontFamily: FONT, fill: COLORS.text }}>
+          {score.toFixed(1)}
+        </text>
+      )}
     </svg>
   );
 };
@@ -4329,15 +4335,11 @@ export default function JobTriagePage() {
       {/* The Breakroom Take — rating + AI synthesis */}
       <div style={{ borderBottom: `1px solid ${COLORS.border}`, paddingBottom: S.m2, marginBottom: S.m2 }}>
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.m }}>The Breakroom Take</div>
-        <div style={{ display: "flex", alignItems: "center", gap: S.s, marginBottom: S.xs }}>
-          <AnimatedRatingDial score={rating} />
-          <span style={{ fontFamily: FONT }}>
-            <span style={{ ...T.body1Bold, color: COLORS.text }}>{rating.toFixed(1)}</span>
-            <span style={{ ...T.body1, color: COLORS.muted }}> out of 10</span>
+        <div style={{ display: "flex", alignItems: "center", gap: S.m }}>
+          <AnimatedRatingDial score={rating} large />
+          <span style={{ ...T.body1, color: COLORS.text, fontFamily: FONT }}>
+            Rated <strong>{rating.toFixed(1)}</strong> out of 10, based on {job.quizCount.toLocaleString("en-GB")} {job.quizCount === 1 ? "employee" : "employees"} who took the Breakroom Quiz
           </span>
-        </div>
-        <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginBottom: job.aiSummary ? 0 : 0 }}>
-          Based on {job.quizCount.toLocaleString("en-GB")} employees who took The Breakroom Quiz
         </div>
         {job.aiSummary && <AISummaryBlock text={job.aiSummary.text} />}
       </div>
