@@ -3117,7 +3117,7 @@ const LicencesSubSheet = ({ open, onClose, selected, other, onSave }) => {
 };
 
 const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initialLicences = new Set(), autoFocusJobTitle = false }) => {
-  const [prevJobs, setPrevJobs] = useState(initialValues.prevJobs || [{ title: "", employer: "" }]);
+  const [prevJobs, setPrevJobs] = useState(initialValues.prevJobs || [{ title: "", duration: "" }]);
   const [experience, setExperience] = useState(initialValues.experience || null);
   const [qualifications, setQualifications] = useState(new Set(initialValues.qualifications || []));
   const [qualifOther, setQualifOther] = useState(initialValues.qualifOther || "");
@@ -3135,7 +3135,7 @@ const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initial
 
   useEffect(() => {
     if (open) {
-      setPrevJobs(initialValues.prevJobs || [{ title: "", employer: "" }]);
+      setPrevJobs(initialValues.prevJobs || [{ title: "", duration: "" }]);
       setExperience(initialValues.experience || null);
       setQualifications(new Set(initialValues.qualifications || []));
       setQualifOther(initialValues.qualifOther || "");
@@ -3164,15 +3164,16 @@ const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initial
         <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m}px` }}>Add your most recent roles. Leave blank if you're new to work.</p>
         {prevJobs.map((job, i) => (
           <div key={i} style={{ marginBottom: S.m }}>
-            <div style={{ display: "flex", gap: S.m, flexWrap: "wrap" }}>
-              <div style={{ flex: "1 1 140px" }}>
-                <label style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, display: "block", marginBottom: S.xs }}>Job title</label>
-                <input ref={i === 0 ? jobTitleRef : null} value={job.title} onChange={e => updateJob(i, "title", e.target.value)} placeholder="e.g. Warehouse Operative" style={{ ...inputStyle, marginBottom: 0 }} />
-              </div>
-              <div style={{ flex: "1 1 140px" }}>
-                <label style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, display: "block", marginBottom: S.xs }}>Employer</label>
-                <input value={job.employer} onChange={e => updateJob(i, "employer", e.target.value)} placeholder="e.g. Amazon" style={{ ...inputStyle, marginBottom: 0 }} />
-              </div>
+            <label style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, display: "block", marginBottom: S.xs }}>Job title</label>
+            <input ref={i === 0 ? jobTitleRef : null} value={job.title} onChange={e => updateJob(i, "title", e.target.value)} placeholder="e.g. Warehouse Operative" style={{ ...inputStyle, marginBottom: S.s }} />
+            <label style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, display: "block", marginBottom: S.xs }}>How long were you in this role?</label>
+            <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap" }}>
+              {["< 1 year", "1–2 years", "3–5 years", "5+ years"].map(d => (
+                <button key={d} onClick={() => updateJob(i, "duration", job.duration === d ? "" : d)}
+                  style={{ ...T.body2, padding: `${S.xs}px ${S.s2}px`, borderRadius: 100, border: `1px solid ${job.duration === d ? COLORS.green : COLORS.border}`, background: job.duration === d ? COLORS.greenBg : COLORS.card, color: job.duration === d ? COLORS.green : COLORS.muted, fontWeight: job.duration === d ? 700 : 400, cursor: "pointer", fontFamily: FONT }}>
+                  {d}
+                </button>
+              ))}
             </div>
             {prevJobs.length > 1 && (
               <div onClick={() => removeJob(i)} style={{ ...T.body2, color: COLORS.muted, textDecoration: "underline", cursor: "pointer", fontFamily: FONT, marginTop: S.xs }}>
