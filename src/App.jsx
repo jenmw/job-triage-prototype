@@ -4354,7 +4354,7 @@ export default function JobTriagePage() {
         )}
 
         <div style={{ marginBottom: S.m }}>
-          <span onClick={scrollToFindings} style={{ ...T.body2, color: COLORS.accent, fontFamily: FONT, cursor: "pointer", textDecoration: "underline" }}>See full breakdown →</span>
+          <span onClick={scrollToFindings} style={{ ...T.body2, color: COLORS.text, fontFamily: FONT, cursor: "pointer", textDecoration: "underline" }}>See full breakdown</span>
         </div>
 
         {/* AI summary — separated with a top border so it's clearly distinct from quiz data */}
