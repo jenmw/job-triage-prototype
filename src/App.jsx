@@ -2906,11 +2906,11 @@ const Signal = ({ status, label, detail, subtext, subtextClick, labelClick, isLa
 };
 
 // ─── Collapsible section ───────────────────────────────────────────────────────
-const Section = ({ title, children, defaultOpen = false, badge, badgeEl, forceOpen, sectionRef, subtext }) => {
+const Section = ({ title, children, defaultOpen = false, badge, badgeEl, forceOpen, sectionRef, subtext, noBorder = false }) => {
   const [open, setOpen] = useState(defaultOpen);
   useEffect(() => { if (forceOpen) setOpen(true); }, [forceOpen]);
   return (
-    <div ref={sectionRef} style={{ borderBottom: `1px solid ${COLORS.border}` }}>
+    <div ref={sectionRef} style={{ borderBottom: noBorder ? "none" : `1px solid ${COLORS.border}` }}>
       <button onClick={() => setOpen(!open)} style={{ width: "100%", padding: `${S.m}px 0`, background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: S.s, fontFamily: FONT }}>
         <span style={{ ...T.body1Bold, color: COLORS.text, flex: 1, textAlign: "left", fontFamily: FONT }}>{title}</span>
         {badgeEl ?? (badge && <span style={{ ...T.smallcaps, padding: `${S.xs}px ${S.s}px`, borderRadius: 100, background: badge.bg, color: badge.textColor }}>{badge.text}</span>)}
@@ -4813,7 +4813,7 @@ export default function JobTriagePage() {
         <div style={{ ...T.body1, color: COLORS.text, textDecoration: "underline", cursor: "pointer", textAlign: "left", padding: `${S.xs}px 0`, fontFamily: FONT, marginTop: S.s }}>See all {job.quizCount} reviews</div>
       </Section>
 
-      <Section title={`Job description from ${job.company}`}>
+      <Section title={`Job description from ${job.company}`} noBorder>
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.m}px ${S.m}px ${S.xs}px` }}>
           <div style={{ ...T.body1, color: COLORS.muted, lineHeight: 1.7, fontFamily: FONT }}>
             {job.jd.map(({ label, text }, i) => (
