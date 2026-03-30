@@ -334,6 +334,10 @@ const JOBS = [
       experience: { preferred: true, required: false, keywords: ["warehouse", "logistics", "picking", "packing"] },
       note: "Warehouse or logistics experience",
     },
+    aiSummary: {
+      text: "DHL is reliable on hours and shifts — 94% of workers don't worry about getting enough work and rotas rarely change at the last minute. Breaks aren't paid and you have little say over shift patterns, but it's a more stable option than most in this comparison.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -418,6 +422,10 @@ const JOBS = [
       qualifications: [],
       experience: { preferred: true, required: false, keywords: ["warehouse", "distribution", "logistics"] },
       note: "Warehouse or distribution experience",
+    },
+    aiSummary: {
+      text: "Hours are consistently available at Wincanton and shifts don't tend to change at the last minute — but that's where the positives end for many workers. Pay is below average for the area, there's no sick pay, and communication from above is a recurring frustration.",
+      quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
@@ -766,6 +774,10 @@ const JOBS = [
     payBenchmark: { rangeLow: 11.5, rangeHigh: 14, roleLabel: "parcel sorters in Northamptonshire" },
     findingDiffs: ["Better sick pay cover"],
     requiresFltLicence: false,
+    aiSummary: {
+      text: "Royal Mail offers secure hours, a living wage, and the benefit of finishing early — typically before the afternoon — which suits people who value predictable, unsociable-free evenings. The early starts are demanding and management at the top are widely seen as out of touch with what the job is actually like.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -845,6 +857,10 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "parcel hub operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    aiSummary: {
+      text: "Evri scores poorly overall — it's one of the lowest-rated employers in this search — with high stress levels, almost no sick pay, and over a third of workers on zero-hours contracts. Hours are reasonably available but the pace and working conditions are consistently described as difficult.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -925,6 +941,10 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "pick & pack operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    aiSummary: {
+      text: "Clipper's main strength is predictability — shifts don't tend to change at the last minute and most workers get proper breaks. There's no sick pay, pay is below the area average, and stress is a regular problem for over two thirds of workers.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -1011,6 +1031,10 @@ const JOBS = [
       experience: { preferred: true, required: false, keywords: ["warehouse", "logistics"] },
       note: "Warehouse experience",
     },
+    aiSummary: {
+      text: "PepsiCo stands out as one of the best-paid warehouse employers in this search, and workers value the predictable rotas and secure hours that come with a well-established direct employer. The notable gap is sick pay — most workers don't have it, which is a surprising omission at this pay level.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -1072,6 +1096,10 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    aiSummary: {
+      text: "Hours are available and shifts are reasonably stable, but as an agency placement The Best Connection comes with the usual limitations — no sick pay, no paid breaks, and a communication gap between the agency and conditions on site. Workers don't tend to recommend the team atmosphere either.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -1135,6 +1163,10 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    aiSummary: {
+      text: "Group Nexus offer reliable hours with no unpaid overtime and workers tend to get proper breaks. Agency conditions apply throughout: no sick pay, no paid breaks in your earnings, and a management structure workers say has little connection to what happens on site.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -1195,6 +1227,10 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    aiSummary: {
+      text: "Group Nexus offer consistent hours and you're not expected to do unpaid overtime, which workers flag as a genuine positive. As with all agency work here, there's no sick pay and pay varies significantly depending on which shifts you're assigned — confirm your rota before accepting.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -1260,6 +1296,10 @@ const JOBS = [
       qualifications: [],
       experience: { preferred: true, required: false, keywords: ["warehouse", "logistics"] },
       note: "Warehouse experience",
+    },
+    aiSummary: {
+      text: "Yusen is a stable, direct-employed role with reliable hours and a rota that stays predictable — good conditions for people who value routine over variety. No sick pay is the standout weakness, and workers note that head office are essentially invisible when it comes to understanding day-to-day conditions.",
+      quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
@@ -1327,6 +1367,10 @@ const JOBS = [
       experience: { preferred: false, required: true, keywords: ["warehouse", "supervisor", "supervisory", "team leader"] },
       note: "Warehouse supervisory experience",
     },
+    aiSummary: {
+      text: "Rhenus runs a predictable operation where hours are secure and shifts don't get changed last-minute — a genuine positive for supervisors who need to plan ahead. No sick pay at supervisory level is a recurring frustration, and most workers feel head office doesn't understand what it's really like on site.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -1393,6 +1437,10 @@ const JOBS = [
       experience: { preferred: false, required: true, keywords: ["warehouse", "management", "manager", "WMS"] },
       note: "Warehouse management experience",
     },
+    aiSummary: {
+      text: "Rhenus offers a stable management role with genuine operational autonomy and a team that tends to work well day to day. The main frustrations echo the rest of the company — no sick pay even at manager level, and a head office that workers say is out of touch with site realities.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -1451,6 +1499,10 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    aiSummary: {
+      text: "Reed-placed workers get consistent hours and shifts that don't tend to change at the last minute, providing some stability in an agency role. No sick pay, no paid breaks, and higher-than-average stress are the consistent concerns — workers put this down to a lack of real support on site.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -1518,7 +1570,7 @@ const JOBS = [
       note: "Warehouse experience",
     },
     aiSummary: {
-      text: "Samworth Brothers stands out for how organised the day-to-day feels — shifts are predictable, communication is better than most, and people generally feel treated with respect. The no paid breaks policy is an unusual gap for a company of this size, but it's a stable and reasonably well-run place to work.",
+      text: "Millbrook stands out for the meaningful nature of the work — you're supporting the supply of medical equipment to patients — and the day-to-day fundamentals are solid, with reliable hours, predictable rotas, and no unpaid overtime expected. No sick pay is the main concern workers raise, alongside a sense that head office management are removed from realities on site.",
       quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
@@ -1586,6 +1638,10 @@ const JOBS = [
       qualifications: ["WMS systems experience"],
       experience: { preferred: false, required: true, keywords: ["warehouse", "management", "FMCG", "food", "WMS"] },
       note: "Warehouse management experience in food or FMCG",
+    },
+    aiSummary: {
+      text: "Samworth Brothers stands out for how organised the day-to-day feels — shifts are very predictable, communication is better than most in this sector, and people generally feel treated with respect. No paid breaks is an unusual gap for a company of this rating, but overall it's one of the stronger employers in this search.",
+      quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
@@ -1659,6 +1715,10 @@ const JOBS = [
       experience: { preferred: true, required: false, keywords: ["warehouse", "logistics"] },
       note: "Warehouse experience",
     },
+    aiSummary: {
+      text: "Movianto is a healthcare logistics company where the work feels more purposeful than standard warehouse roles, and the hours are reliable with rotas that don't change at the last minute. No sick pay is the persistent concern, and workers note that head office can feel very disconnected from UK depot realities.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -1719,6 +1779,10 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse operatives in Cambridgeshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    aiSummary: {
+      text: "Hours are available through Gi Group and workers tend to get proper breaks, but that's about where the positives stop — no sick pay, no paid breaks in earnings, high stress, and a poor team atmosphere are all regularly raised. Gi Group scores among the lowest-rated employers in this search.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -1784,6 +1848,10 @@ const JOBS = [
       qualifications: [],
       experience: { preferred: true, required: false, keywords: ["quality", "QC", "inventory", "stock control"] },
       note: "QC or inventory management experience",
+    },
+    aiSummary: {
+      text: "Newcold is a specialised cold chain employer with excellent hours security and shifts that rarely change — the fundamentals are reliable. No sick pay remains the main concern, and workers note that the Dutch-based head office can feel very disconnected from what's happening in UK sites.",
+      quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
@@ -1851,6 +1919,10 @@ const JOBS = [
       experience: { preferred: true, required: false, keywords: ["warehouse", "logistics"] },
       note: "Warehouse experience",
     },
+    aiSummary: {
+      text: "GXO Logistics pays significantly more than most warehouse employers in this area, and shift stability is exceptional — 96% of workers don't worry about hours and 94% say rotas don't change at the last minute. No sick pay is the main let-down given the pay level, and workers say head office are out of touch with the reality on the ground.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -1915,6 +1987,10 @@ const JOBS = [
       qualifications: ["Good IT skills including Excel"],
       experience: { preferred: true, required: false, keywords: ["admin", "administration", "office"] },
       note: "Admin experience",
+    },
+    aiSummary: {
+      text: "Great Bear provides a desk-based admin role with reliable hours and predictable shifts — a quieter and less physical environment than operative roles. No sick pay and a management layer described as disconnected from site realities are consistent concerns alongside moderate stress levels.",
+      quoteIdx: 0,
     },
     workStyle: { activity: "sitting", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
@@ -1982,6 +2058,10 @@ const JOBS = [
       experience: { preferred: true, required: false, keywords: ["maintenance", "engineering", "mechanical"] },
       note: "Maintenance or engineering experience",
     },
+    aiSummary: {
+      text: "Lidl is one of the strongest employers in this search — pay is above average, hours are rock solid, and the working environment is well-organised with proper breaks and no unpaid overtime. No sick pay is the surprising gap, and workers consistently raise it as a frustration given Lidl's overall reputation.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -2047,6 +2127,10 @@ const JOBS = [
       qualifications: ["Strong Excel skills"],
       experience: { preferred: true, required: false, keywords: ["admin", "warehouse admin", "logistics admin"] },
       note: "Warehouse admin experience",
+    },
+    aiSummary: {
+      text: "Culina is a stable admin role at a large food logistics business with reliable hours and a predictable day-to-day — conditions that workers who value routine appreciate. No sick pay and a management culture described as disconnected from site are the main concerns, alongside some unpaid breaks for a portion of staff.",
+      quoteIdx: 0,
     },
     workStyle: { activity: "sitting", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
@@ -2114,6 +2198,10 @@ const JOBS = [
       experience: { preferred: true, required: false, keywords: ["training", "coaching", "trainer"] },
       note: "Warehouse training or coaching experience",
     },
+    aiSummary: {
+      text: "DHL is reliable on the fundamentals — hours are secure, shift changes are rare, and the training role adds more purpose and variety than standard operative work. The main frustrations are no paid breaks and very little say over shift patterns, which can feel restrictive in a role that requires some forward planning.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -2173,6 +2261,10 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse operatives in Cambridgeshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    aiSummary: {
+      text: "Hours are the one consistent positive through Berry Recruitment — you'll get shifts and they tend to be stable. Beyond that it follows the typical agency pattern: no sick pay, no paid breaks, high stress, and a management structure workers say doesn't engage meaningfully with conditions on site.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -2232,6 +2324,10 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    aiSummary: {
+      text: "GSF Car Parts offers steady, predictable work with reliable hours and shift rotas that don't tend to change at the last minute. At £10/hr it pays the lowest of any employer in this search — well below the area average for warehouse work — and there's no sick pay on top of that.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -2296,6 +2392,10 @@ const JOBS = [
       experience: { preferred: true, required: false, keywords: ["team leader", "supervisor", "supervisory"] },
       note: "Warehouse team leader or supervisor experience",
     },
+    aiSummary: {
+      text: "GXO offers exceptional shift stability — almost no one worries about their hours and rotas rarely change — and the team leader role comes with real supervisory responsibility alongside a meaningful pay uplift. No sick pay even at team leader level is the main frustration, and most workers say head office don't understand what it's actually like managing a team on site.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -2355,6 +2455,10 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    aiSummary: {
+      text: "GXO Logistics is one of the more reliable employers in this area — nearly all workers don't worry about their hours and shifts rarely change at the last minute. No sick pay is the standout weakness, and workers consistently describe a head office that feels distant from the reality of day-to-day warehouse life.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -2414,6 +2518,10 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    aiSummary: {
+      text: "DHL is well-organised and reliable — hours are secure, shift changes are rare, and there's no unpaid overtime expected. The night shift commitment is worth thinking through carefully for lifestyle fit, and workers note that breaks aren't paid and there's very little say over which shifts you work.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -2473,6 +2581,10 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse operatives in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    aiSummary: {
+      text: "Group Nexus's night rate is very competitive and hours are reliable, but the day rate is close to minimum wage — your actual earnings depend entirely on which shifts you're assigned. Agency conditions apply throughout: no sick pay, no paid breaks, and a management structure workers say has little connection to what happens on site.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -3960,7 +4072,7 @@ const RequirementsNotice = ({ reqs }) => {
   const visible = reqs.length > 3 ? [...reqs.slice(0, 2), { label: "And more…", required: true }] : reqs;
   return (
     <div style={{ marginBottom: S.s }}>
-      <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>You'll need</div>
+      <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>What you'll need to apply</div>
       {visible.map(r => (
         <div key={r.label} style={{ display: "flex", alignItems: "flex-start", gap: S.xs, marginBottom: 4 }}>
           <span style={{ width: 8, height: 8, borderRadius: "50%", background: r.required ? COLORS.red : COLORS.amber, flexShrink: 0, marginTop: 5 }} />
