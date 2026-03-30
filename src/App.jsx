@@ -3536,26 +3536,29 @@ const AlternativesList = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawe
 
 // ─── Search results ────────────────────────────────────────────────────────────
 
-const PAY_VERDICT_LABEL = { above: "Pays well", fair: "Pays fairly" };
-
-// Returns up to 3 objective highlights for a job card — no user data required.
-// Uses the same pay verdict logic as the job detail page (computePayVerdict).
-// "Underpays" is intentionally omitted — not a reason to click through.
+// Returns highlights only for standout jobs (rating >= 7.0).
+// Chips are a quality signal, not a default decoration — reserved for the best jobs.
+// "Pays well" = above benchmark high. "Pays fairly" is dropped (not distinctive enough).
+// "No experience required" is factual/eligibility and shown regardless of rating.
 const getJobHighlights = (job) => {
   const chips = [];
+  const isStandout = job.rating >= 7.0;
 
-  // Pay verdict — short label only, no roleLabel suffix
-  if (job.payBenchmark && job.pay) {
-    const verdict = computePayVerdict(job.pay, job.payType, job.payBenchmark);
-    if (verdict && PAY_VERDICT_LABEL[verdict.verdict]) chips.push(PAY_VERDICT_LABEL[verdict.verdict]);
-  }
-
-  // No experience required — objective eligibility fact
-  if (chips.length < 3 && (
+  // No experience required — eligibility fact, always shown
+  if (
     job.matchCriteria?.experience?.required === false ||
     (job.findingDiffs || []).some(d => d.toLowerCase().includes("no experience"))
-  )) {
+  ) {
     chips.push("No experience required");
+  }
+
+  // Remaining chips only for standout employers
+  if (!isStandout) return chips;
+
+  // "Pays well" only — above benchmark high
+  if (chips.length < 3 && job.payBenchmark && job.pay) {
+    const verdict = computePayVerdict(job.pay, job.payType, job.payBenchmark);
+    if (verdict?.verdict === "above") chips.push("Pays well");
   }
 
   // Top good findings from workers
