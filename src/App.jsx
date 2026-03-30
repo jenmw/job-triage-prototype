@@ -4635,12 +4635,8 @@ export default function JobTriagePage() {
   return (
     <div style={{ minHeight: "100vh", background: COLORS.bg, fontFamily: FONT, color: COLORS.text }}>
       <style>{`
-        @keyframes badge-pop { 0% { transform: scale(1); } 40% { transform: scale(1.45); } 70% { transform: scale(0.9); } 100% { transform: scale(1); } }
-        @keyframes badge-ripple { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(2.8); opacity: 0; } }
-        @keyframes profile-flash { 0% { opacity: 0; } 15% { opacity: 1; } 100% { opacity: 0; } }
-        .badge-pop { animation: badge-pop 0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
-        .badge-ripple { animation: badge-ripple 0.6s ease-out both; }
-        .profile-flash { animation: profile-flash 1.2s ease-out both; }
+        @keyframes badge-bounce { 0%, 100% { transform: translateY(0); } 25% { transform: translateY(-6px); } 55% { transform: translateY(-3px); } 75% { transform: translateY(-5px); } 90% { transform: translateY(-1px); } }
+        .badge-bounce { animation: badge-bounce 0.6s ease both; }
       `}</style>
       {/* .header — matches header.scss */}
       <div style={{ position: "sticky", top: 0, zIndex: 50, background: COLORS.card, boxShadow: scrolled ? "0 2px 8px rgba(0,0,0,0.08)" : "none", transition: "box-shadow 0.2s ease", height: 70 }}>
@@ -4662,15 +4658,9 @@ export default function JobTriagePage() {
               {hasPersonalisation && !isSignedIn && (() => {
                 const count = [profilePostcode, profileCurrentPay, profileTravel, profilePriorities.length > 0, userLicences.size > 0, Object.keys(profileBackground).length > 0, Object.keys(workStylePrefs).length > 0].filter(Boolean).length;
                 return (
-                  <>
-                  <span key={`flash-${count}`} className="profile-flash" style={{ position: "absolute", inset: 0, background: COLORS.accentBg, borderRadius: 6, pointerEvents: "none" }} />
-                  <span key={count} style={{ position: "absolute", top: 8, right: 2 }}>
-                    <span className="badge-ripple" style={{ position: "absolute", inset: 0, borderRadius: 8, background: COLORS.accent, display: "block" }} />
-                    <span className="badge-pop" style={{ position: "relative", minWidth: 16, height: 16, borderRadius: 8, background: COLORS.accent, border: `2px solid ${COLORS.card}`, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 3px", boxSizing: "border-box" }}>
-                      <span style={{ fontSize: 10, fontWeight: 700, color: "#fff", fontFamily: FONT, lineHeight: 1 }}>{count}</span>
-                    </span>
+                  <span key={count} className="badge-bounce" style={{ position: "absolute", top: 8, right: 2, minWidth: 16, height: 16, borderRadius: 8, background: COLORS.accent, border: `2px solid ${COLORS.card}`, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 3px", boxSizing: "border-box" }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: "#fff", fontFamily: FONT, lineHeight: 1 }}>{count}</span>
                   </span>
-                  </>
                 );
               })()}
               <span style={{ fontSize: 12, fontWeight: 700, color: COLORS.text, fontFamily: FONT, lineHeight: 1 }}>Profile</span>
