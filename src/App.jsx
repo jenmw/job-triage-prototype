@@ -4488,7 +4488,7 @@ export default function JobTriagePage() {
                   <div style={{ display: "flex", alignItems: "flex-start", gap: S.s }}>
                     <span style={{ width: 15, height: 15, borderRadius: "50%", background: dot, border: "2px solid #fff", flexShrink: 0, marginTop: 3 }} />
                     <div style={{ flex: 1, fontFamily: FONT }}>
-                      <div style={{ ...T.body1Bold, color: COLORS.text, marginBottom: S.xs }}>{heading}</div>
+                      <div style={{ ...T.body1Bold, fontWeight: 500, color: COLORS.text, marginBottom: S.xs }}>{heading}</div>
                       <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginBottom: matchLabels.length > 0 || issues.length > 0 ? S.s : S.xs }}>Based on what we typically know about roles like this — always check the job description.</div>
                       {matchLabels.length > 0 && (
                         <div style={{ display: "flex", flexWrap: "wrap", gap: `${S.xs}px ${S.m}px`, marginBottom: issues.length > 0 ? S.s : S.xs }}>
