@@ -4357,6 +4357,7 @@ export default function JobTriagePage() {
       {/* Map — mobile only, after Breakroom Take */}
       {!isDesktop && (
         <div style={{ marginBottom: S.m2 }}>
+          <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.s }}>Where it is</div>
           <MapThumbnail coords={job.coords} onExpand={() => setMapModalOpen(true)} height={180} />
         </div>
       )}
@@ -4523,7 +4524,7 @@ export default function JobTriagePage() {
       {matchCard}
       {/* "What you need to know" — always visible, no accordion */}
       <div style={{ borderBottom: `1px solid ${COLORS.border}`, paddingBottom: S.m2 }}>
-        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, padding: `${S.m}px 0` }}>What you need to know</div>
+        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, padding: `${S.m}px 0` }}>See how you fit</div>
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `0 ${S.m}px` }}>
           {(() => {
             const hasBackground = Object.keys(profileBackground).length > 0;
