@@ -4515,19 +4515,17 @@ export default function JobTriagePage() {
                 <div style={{ display: "flex", alignItems: "flex-start", gap: S.s }}>
                   <span style={{ width: 15, height: 15, borderRadius: "50%", background: COLORS.border, border: "2px solid #fff", flexShrink: 0, marginTop: 3 }} />
                   <div style={{ flex: 1, fontFamily: FONT }}>
-                    <div>Does the day-to-day work suit you?</div>
-                    <div style={{ ...T.body1, color: COLORS.muted, marginTop: S.xs, fontWeight: 400 }}>
+                    <div style={{ ...T.body1Bold, fontWeight: 500, color: COLORS.text, marginBottom: S.xs }}>How active do you want to be at work?</div>
+                    <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginBottom: S.s }}>
                       Tell us your preferences and we'll flag them on every job.
                     </div>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: S.xs, margin: `${S.s}px 0` }}>
-                      {["Activity level", "Working style", "Environment", "Children"].map((chip, j) => (
-                        <span key={j} style={{ ...T.body2, fontFamily: FONT, color: COLORS.muted, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: `2px ${S.s2}px`, fontSize: 13 }}>
-                          {chip}
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: S.xs }}>
+                      {[["sitting", "Mostly sitting down"], ["feet", "On my feet"], ["active", "Very physically active"], ["either", "I don't mind"]].map(([value, label]) => (
+                        <span key={value} onClick={() => { setWorkStylePrefs(prev => ({ ...prev, activity: value })); setWorkStyleDrawerOpen(true); }}
+                          style={{ ...T.body2, fontFamily: FONT, color: COLORS.text, background: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: `4px ${S.s2}px`, cursor: "pointer" }}>
+                          {label}
                         </span>
                       ))}
-                    </div>
-                    <div onClick={() => setWorkStyleDrawerOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", cursor: "pointer", fontFamily: FONT, marginTop: S.xs }}>
-                      Tell us your work style
                     </div>
                   </div>
                 </div>
