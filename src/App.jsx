@@ -2751,7 +2751,7 @@ const Signal = ({ status, label, detail, subtext, subtextClick, labelClick, isLa
           </div>
           {detail && <div style={{ ...T.body1, color: COLORS.muted, marginTop: S.xs, fontWeight: 400 }}>{detail}</div>}
           {subtext && (
-            <div onClick={subtextClick} style={{ ...T.body2Bold, color: subtextClick ? COLORS.accent : COLORS.muted, marginTop: S.xs, cursor: subtextClick ? "pointer" : "default" }}>
+            <div onClick={subtextClick} style={{ ...T.body2, fontWeight: 400, color: subtextClick ? COLORS.text : COLORS.muted, textDecoration: subtextClick ? "underline" : "none", marginTop: S.xs, cursor: subtextClick ? "pointer" : "default" }}>
               {subtext}
             </div>
           )}
