@@ -478,6 +478,12 @@ const JOBS = [
     payBenchmark: { rangeLow: 14, rangeHigh: 17, roleLabel: "FLT drivers in Northamptonshire" },
     findingDiffs: ["Higher pay rate"],
     requiresFltLicence: true,
+    matchCriteria: {
+      licences: [],
+      qualifications: [],
+      experience: { preferred: false, required: true, keywords: ["FLT", "forklift", "counterbalance"] },
+      note: "Minimum 1 year FLT operating experience required.",
+    },
     workStyle: { activity: "active", teamwork: "solo", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -557,6 +563,12 @@ const JOBS = [
     payBenchmark: { rangeLow: 30000, rangeHigh: 38000, roleLabel: "warehouse team leaders in Northamptonshire" },
     findingDiffs: ["Higher pay", "Better rated employer"],
     requiresFltLicence: false,
+    matchCriteria: {
+      licences: [],
+      qualifications: [],
+      experience: { preferred: false, required: true, keywords: ["team leader", "supervisor", "management"] },
+      note: "Previous team leader or supervisory experience required.",
+    },
     workStyle: { activity: "feet", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -3732,9 +3744,37 @@ const SearchResultsPage = ({ jobs, onJobSelect, isDesktop, profilePriorities }) 
   );
 };
 
+// ─── Hard requirements helpers ────────────────────────────────────────────────
+
+const getHardRequirements = (job) => {
+  const reqs = [];
+  if (job.requiresFltLicence) reqs.push("Valid FLT licence");
+  for (const lic of (job.matchCriteria?.licences ?? [])) reqs.push(lic);
+  for (const qual of (job.matchCriteria?.qualifications ?? [])) reqs.push(qual);
+  if (job.matchCriteria?.experience?.required === true) {
+    reqs.push(job.matchCriteria.note ?? "Relevant experience required");
+  }
+  return reqs;
+};
+
+const RequirementsNotice = ({ reqs }) => {
+  if (!reqs.length) return null;
+  return (
+    <div style={{ marginBottom: S.s }}>
+      <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>You'll need</div>
+      {reqs.map(r => (
+        <div key={r} style={{ display: "flex", alignItems: "flex-start", gap: S.xs, marginBottom: 4 }}>
+          <span style={{ width: 8, height: 8, borderRadius: "50%", background: COLORS.red, flexShrink: 0, marginTop: 5 }} />
+          <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{r}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 // ─── Desktop sidebar ───────────────────────────────────────────────────────────
 
-const DesktopSidebar = ({ currentJobIdx, rating, personalised, isSignedIn, onOpenDrawer, onJobSelect, onOpenProfile, coords, location, onMapExpand }) => (
+const DesktopSidebar = ({ currentJobIdx, rating, personalised, isSignedIn, onOpenDrawer, onJobSelect, onOpenProfile, coords, location, onMapExpand, hardReqs }) => (
   <div style={{ display: "flex", flexDirection: "column", gap: S.l2, paddingTop: S.m2 }}>
     {/* CTA card — sticky below header (70px) + S.m gap */}
     <div style={{ position: "sticky", top: 70 + S.m, zIndex: 10 }}>
@@ -3743,6 +3783,7 @@ const DesktopSidebar = ({ currentJobIdx, rating, personalised, isSignedIn, onOpe
       {/* Fade below — at zIndex 1 so the card's box-shadow (at zIndex 2) paints on top of it cleanly */}
       <div style={{ position: "absolute", top: "100%", left: 0, right: 0, height: 40, background: `linear-gradient(to bottom, ${COLORS.bg}, transparent)`, pointerEvents: "none", zIndex: 1 }} />
 <div style={{ position: "relative", zIndex: 2, background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: `${S.m}px ${S.m2}px` }}>
+      <RequirementsNotice reqs={hardReqs ?? []} />
 <button style={{ width: "100%", padding: "6px 22px", borderRadius: 4, border: "2px solid transparent", background: COLORS.accent, color: "#fff", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, marginBottom: S.s, transition: "background-color 0.25s ease" }}>
         Apply on external site
       </button>
@@ -3977,6 +4018,8 @@ export default function JobTriagePage() {
     // Clear highlight after 2s
     setTimeout(() => setHighlightFinding(null), 2400);
   };
+
+  const hardReqs = getHardRequirements(job);
 
   const heroBlock = (
     <div style={{ paddingTop: S.m2, paddingBottom: S.m }}>
@@ -4562,10 +4605,10 @@ export default function JobTriagePage() {
                 {heroBlock}
                 {sectionsBlock}
               </div>
-              <DesktopSidebar currentJobIdx={selectedJobIdx} rating={JOBS[selectedJobIdx].rating} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} onOpenProfile={() => setProfileOpen(true)} coords={JOBS[selectedJobIdx].coords} location={JOBS[selectedJobIdx].location} onMapExpand={() => setMapModalOpen(true)} />
+              <DesktopSidebar currentJobIdx={selectedJobIdx} rating={JOBS[selectedJobIdx].rating} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} onOpenProfile={() => setProfileOpen(true)} coords={JOBS[selectedJobIdx].coords} location={JOBS[selectedJobIdx].location} onMapExpand={() => setMapModalOpen(true)} hardReqs={hardReqs} />
             </div>
           ) : (
-            <div style={{ padding: `0 ${S.m}px ${S.xxl}px` }}>
+            <div style={{ padding: `0 ${S.m}px ${hardReqs.length > 0 ? S.xxl + hardReqs.length * 28 : S.xxl}px` }}>
               {heroBlock}
               {sectionsBlock}
               <div style={{ marginTop: S.m2, marginBottom: S.s }}>
@@ -4577,16 +4620,23 @@ export default function JobTriagePage() {
           {/* Mobile sticky bottom bar */}
           {!isDesktop && (
         <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 40, background: COLORS.bg, borderTop: `1px solid ${COLORS.border}`, padding: `${S.s2}px ${S.m}px` }}>
-          <div style={{ maxWidth: 480, margin: "0 auto", display: "flex", gap: S.s2 }}>
-            <button style={{ flex: 1, padding: "6px 22px", borderRadius: 4, border: "2px solid transparent", background: COLORS.accent, color: "#fff", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT }}>
-              Apply
-            </button>
-            <button style={{ padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.text}`, background: "transparent", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
-              Save
-            </button>
-            <button onClick={() => setDrawerOpen(true)} style={{ padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.accent, whiteSpace: "nowrap" }}>
-              Match me
-            </button>
+          <div style={{ maxWidth: 480, margin: "0 auto" }}>
+            {hardReqs.length > 0 && (
+              <div style={{ marginBottom: S.s }}>
+                <RequirementsNotice reqs={hardReqs} />
+              </div>
+            )}
+            <div style={{ display: "flex", gap: S.s2 }}>
+              <button style={{ flex: 1, padding: "6px 22px", borderRadius: 4, border: "2px solid transparent", background: COLORS.accent, color: "#fff", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT }}>
+                Apply
+              </button>
+              <button style={{ padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.text}`, background: "transparent", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
+                Save
+              </button>
+              <button onClick={() => setDrawerOpen(true)} style={{ padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.accent, whiteSpace: "nowrap" }}>
+                Match me
+              </button>
+            </div>
           </div>
         </div>
         )}
