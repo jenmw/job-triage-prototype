@@ -1271,6 +1271,12 @@ const JOBS = [
     payBenchmark: { rangeLow: 27000, rangeHigh: 35000, roleLabel: "warehouse supervisors in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    matchCriteria: {
+      licences: [],
+      qualifications: [],
+      experience: { preferred: false, required: true, keywords: ["warehouse", "supervisor", "supervisory", "team leader"] },
+      note: "Warehouse supervisory experience",
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -1331,6 +1337,12 @@ const JOBS = [
     payBenchmark: { rangeLow: 35000, rangeHigh: 45000, roleLabel: "warehouse managers in Northamptonshire" },
     findingDiffs: [],
     requiresFltLicence: false,
+    matchCriteria: {
+      licences: [],
+      qualifications: ["WMS systems experience"],
+      experience: { preferred: false, required: true, keywords: ["warehouse", "management", "manager", "WMS"] },
+      note: "Warehouse management experience",
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
