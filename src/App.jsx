@@ -4350,7 +4350,7 @@ export default function JobTriagePage() {
                 <div style={{ display: "flex", alignItems: "flex-start", gap: S.s }}>
                   <span style={{ width: 15, height: 15, borderRadius: "50%", background: COLORS.border, border: "2px solid #fff", flexShrink: 0, marginTop: 3 }} />
                   <div style={{ flex: 1, fontFamily: FONT }}>
-                    <div style={{ ...T.body1Bold, color: COLORS.text, marginBottom: S.xs }}>What's your most recent job title?</div>
+                    <div style={{ ...T.body1Bold, fontWeight: 500, color: COLORS.text, marginBottom: S.xs }}>What's your most recent job title?</div>
                     <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginBottom: S.s }}>When jobs require experience, we can easily tell you if you fit the bill</div>
                     <div
                       onClick={() => { setBgDrawerFocusTitle(true); setBackgroundDrawerOpen(true); }}
