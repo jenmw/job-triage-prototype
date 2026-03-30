@@ -3764,11 +3764,13 @@ const SearchResultsPage = ({ jobs, onJobSelect, isDesktop, profilePriorities }) 
 
 const getHardRequirements = (job) => {
   const reqs = [];
-  if (job.requiresFltLicence) reqs.push("Valid FLT licence");
-  for (const lic of (job.matchCriteria?.licences ?? [])) reqs.push(lic);
-  for (const qual of (job.matchCriteria?.qualifications ?? [])) reqs.push(qual);
+  if (job.requiresFltLicence) reqs.push({ label: "Valid FLT licence", required: true });
+  for (const lic of (job.matchCriteria?.licences ?? [])) reqs.push({ label: lic, required: true });
+  for (const qual of (job.matchCriteria?.qualifications ?? [])) reqs.push({ label: qual, required: true });
   if (job.matchCriteria?.experience?.required === true) {
-    reqs.push(job.matchCriteria.note ?? "Relevant experience required");
+    reqs.push({ label: job.matchCriteria.note ?? "Relevant experience required", required: true });
+  } else if (job.matchCriteria?.experience?.preferred === true) {
+    reqs.push({ label: job.matchCriteria.note ?? "Experience preferred", required: false });
   }
   return reqs;
 };
@@ -3779,9 +3781,9 @@ const RequirementsNotice = ({ reqs }) => {
     <div style={{ marginBottom: S.s }}>
       <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>You'll need</div>
       {reqs.map(r => (
-        <div key={r} style={{ display: "flex", alignItems: "flex-start", gap: S.xs, marginBottom: 4 }}>
-          <span style={{ width: 8, height: 8, borderRadius: "50%", background: COLORS.red, flexShrink: 0, marginTop: 5 }} />
-          <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{r}</span>
+        <div key={r.label} style={{ display: "flex", alignItems: "flex-start", gap: S.xs, marginBottom: 4 }}>
+          <span style={{ width: 8, height: 8, borderRadius: "50%", background: r.required ? COLORS.red : COLORS.amber, flexShrink: 0, marginTop: 5 }} />
+          <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{r.label}</span>
         </div>
       ))}
     </div>
