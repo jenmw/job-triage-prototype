@@ -4269,12 +4269,30 @@ export default function JobTriagePage() {
                   />
                 );
               }
-              let bgSignal = { status: "good", label: "Your background suits this role", detail: "Based on what you've told us, this looks like a good fit." };
-              if ((profileBackground.qualifications || []).includes("food-hygiene")) bgSignal = { status: "good", label: "Your food hygiene certificate is relevant here", detail: "Level 2 food hygiene certificates are valued in this type of role." };
-              else if (profileBackground.experience === "none") bgSignal = { status: "good", label: "No prior experience required", detail: "This employer offers full training — your background fits." };
-              else if (profileBackground.experience === "lots") {
-                const firstJob = (profileBackground.prevJobs || [])[0];
-                bgSignal = { status: "good", label: "Your experience suits this role", detail: firstJob?.title ? `Your background as ${firstJob.title} is directly relevant.` : "Several years of relevant experience — you're well placed for this." };
+              const firstJob = (profileBackground.prevJobs || [])[0];
+              const jobTitle = firstJob?.title;
+              const exp = profileBackground.experience;
+              const quals = profileBackground.qualifications || [];
+              const expRequired = job.matchCriteria?.experience?.required === true;
+              const note = job.matchCriteria?.note || null;
+
+              let bgSignal;
+              if (quals.includes("Food hygiene certificate (Level 2)") && job.title?.toLowerCase().includes("food")) {
+                bgSignal = { status: "good", label: "Your food hygiene certificate is relevant here", detail: note };
+              } else if (exp === "none" && !expRequired) {
+                bgSignal = { status: "good", label: "No previous experience needed — you're good to apply", detail: note };
+              } else if (exp === "none" && expRequired) {
+                bgSignal = { status: "warning", label: "This role usually requires some prior experience", detail: note };
+              } else if (exp === "lots" && jobTitle) {
+                bgSignal = { status: "good", label: `Your experience as ${jobTitle} is a strong match`, detail: note };
+              } else if (exp === "lots") {
+                bgSignal = { status: "good", label: "You have the right experience for this job", detail: note };
+              } else if (exp === "some" && jobTitle) {
+                bgSignal = { status: "good", label: `Your experience as ${jobTitle} should be helpful here`, detail: note };
+              } else if (exp === "some") {
+                bgSignal = { status: "good", label: "You have some relevant experience — that helps here", detail: note };
+              } else {
+                bgSignal = { status: "good", label: "Your background looks right for this job", detail: note };
               }
               return <Signal status={bgSignal.status} label={bgSignal.label} detail={bgSignal.detail} subtext="Update your background" subtextClick={() => setBackgroundDrawerOpen(true)} isLast={false} />;
             })() : (
