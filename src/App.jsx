@@ -30,6 +30,8 @@ const S = { xs: 4, s: 8, s2: 12, m: 16, m2: 24, l: 32, l2: 40, xl: 64, xxl: 96 }
 
 // Breakroom type scale — /assets/css/shared/helpers/_typography.scss
 const T = {
+  heading1:  { fontSize: 28, lineHeight: "36px", fontWeight: 700 },
+  heading1Lg:{ fontSize: 44, lineHeight: "52px", fontWeight: 700 },
   heading2:  { fontSize: 24, lineHeight: "32px", fontWeight: 700 },
   heading2Lg:{ fontSize: 34, lineHeight: "42px", fontWeight: 700 },
   lead1:     { fontSize: 20, lineHeight: "24px", fontWeight: 700 },
@@ -3977,7 +3979,7 @@ export default function JobTriagePage() {
         {job.companyUrl ? <a href={job.companyUrl} style={{ color: "inherit", fontWeight: "inherit", textDecoration: "underline" }}>{job.company}</a> : job.company}
       </div>
 
-      <h1 style={{ ...(isDesktop ? T.heading2Lg : T.heading2), margin: `0 0 ${S.xs}px`, fontFamily: FONT, color: COLORS.text }}>{job.title}</h1>
+      <h1 style={{ ...(isDesktop ? T.heading1Lg : T.heading1), margin: `0 0 ${S.xs}px`, fontFamily: FONT, color: COLORS.text }}>{job.title}</h1>
 
       {job.occupationDesc && <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.s2}px` }}>{job.occupationDesc}</p>}
 
