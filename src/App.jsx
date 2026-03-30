@@ -2740,11 +2740,11 @@ const TinyRatingDial = ({ score }) => {
 };
 
 // ─── Animated rating dial — fills from empty on mount, colour transitions through thresholds ─
-const AnimatedRatingDial = ({ score, large = false }) => {
+const AnimatedRatingDial = ({ score, large = false, displaySize: displaySizeProp }) => {
   const arcRef = useRef(null);
   const svgRef = useRef(null);
-  const displaySize = large ? 62 : 19;
-  const svgStrokeWidth = large ? 10 : 16;
+  const displaySize = displaySizeProp ?? (large ? 62 : 19);
+  const svgStrokeWidth = displaySize >= 44 ? 10 : 16;
   const halfSize = 50;
   const halfWidth = Math.round((100 - svgStrokeWidth) / 2);
   const circumference = Math.round((2 * Math.PI * halfWidth - svgStrokeWidth) * 1000) / 1000;
@@ -2793,7 +2793,7 @@ const AnimatedRatingDial = ({ score, large = false }) => {
         strokeLinecap="round"
         transform={`rotate(-82,${halfSize},${halfSize})`}
         style={{ transition: "stroke 0.25s ease" }} />
-      {large && (
+      {displaySize >= 44 && (
         <text x="50" y="50" textAnchor="middle" dominantBaseline="central"
           style={{ fontSize: 28, fontWeight: 700, fontFamily: FONT, fill: COLORS.text }}>
           {score.toFixed(1)}
@@ -4452,7 +4452,7 @@ export default function JobTriagePage() {
 
         {/* Rating row */}
         <div style={{ display: "flex", alignItems: "center", gap: S.m, marginBottom: S.m }}>
-          <AnimatedRatingDial score={rating} large />
+          <AnimatedRatingDial score={rating} displaySize={44} />
           <span style={{ ...T.body2, color: COLORS.text, fontFamily: FONT }}>
             Rated <strong>{rating.toFixed(1)}</strong> out of 10, based on {job.quizCount.toLocaleString("en-GB")} {job.quizCount === 1 ? "employee" : "employees"} who took The Breakroom&nbsp;Quiz
           </span>
