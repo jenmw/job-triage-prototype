@@ -4294,14 +4294,12 @@ export default function JobTriagePage() {
               const ws = job.workStyle || {};
               const prefs = workStylePrefs;
               const issues = [];
-              let relevant = 0;
-              let matches = 0;
+              const matchLabels = [];
 
-              const check = (hasDim, isMismatch, issue) => {
+              const check = (hasDim, isMismatch, issue, matchLabel) => {
                 if (!hasDim) return;
-                relevant++;
                 if (isMismatch) issues.push(issue);
-                else matches++;
+                else if (matchLabel) matchLabels.push(matchLabel);
               };
 
               check(ws.activity !== undefined,
@@ -4312,32 +4310,68 @@ export default function JobTriagePage() {
                   ? { label: "Very physical role — lifting and moving for the full shift", detail: "You said you prefer desk-based work" }
                   : prefs.activity === "feet"
                   ? { label: "Very physically demanding role", detail: "You said you prefer to be on your feet — this goes further than that" }
-                  : { label: "Mainly desk-based work", detail: "You said you prefer very active work" });
+                  : { label: "Mainly desk-based work", detail: "You said you prefer very active work" },
+                prefs.activity === "sitting" ? "Desk-based work" : prefs.activity === "feet" ? "On your feet" : prefs.activity === "active" ? "Physically active" : null
+              );
 
               check(ws.teamwork !== undefined,
                 prefs.teamwork === "solo" && ws.teamwork === "team",
-                { label: "Team-based work — you'll work closely with others all shift", detail: "You said you prefer working on your own" });
+                { label: "Team-based work — you'll work closely with others all shift", detail: "You said you prefer working on your own" },
+                prefs.teamwork === "team" ? "Works in a team" : prefs.teamwork === "solo" ? "Independent work" : null
+              );
 
               check(ws.public !== undefined,
                 prefs.public === "no" && ws.public === true,
-                { label: "Customer-facing role", detail: "You said you'd prefer not to work with the public" });
+                { label: "Customer-facing role", detail: "You said you'd prefer not to work with the public" },
+                prefs.public === "yes" ? "Customer-facing" : prefs.public === "no" ? "No public contact" : null
+              );
 
               check(ws.outdoors !== undefined,
                 (prefs.outdoors === "outdoors" && ws.outdoors === false) || (prefs.outdoors === "indoors" && ws.outdoors === true),
                 prefs.outdoors === "outdoors"
                   ? { label: "Mainly indoor work", detail: "You said you prefer working outdoors" }
-                  : { label: "Mainly outdoor work", detail: "You said you prefer working indoors" });
+                  : { label: "Mainly outdoor work", detail: "You said you prefer working indoors" },
+                prefs.outdoors === "indoors" ? "Indoors" : prefs.outdoors === "outdoors" ? "Outdoors" : null
+              );
 
               check(ws.children !== undefined,
                 prefs.children === "no" && ws.children === true,
-                { label: "Involves working with children", detail: "You said you'd rather not work with children" });
+                { label: "Involves working with children", detail: "You said you'd rather not work with children" },
+                prefs.children === "yes" && ws.children ? "Works with children" : null
+              );
 
-              const badge = relevant > 0 ? `${matches}/${relevant} match` : null;
-              const wsSignal = issues.length === 0
-                ? { status: "good", label: "The day-to-day work suits your preferences", detail: null }
-                : { status: "warning", label: issues[0].label, detail: issues[0].detail + (issues.length > 1 ? ` · plus ${issues.length - 1} other thing${issues.length > 2 ? "s" : ""} to consider` : "") };
+              const status = issues.length === 0 ? "good" : "warning";
+              const dot = status === "good" ? COLORS.green : COLORS.amber;
+              const heading = issues.length === 0
+                ? "The day-to-day work suits your preferences"
+                : issues.length === 1 ? "One thing about this role to consider" : `${issues.length} things about this role to consider`;
 
-              return <Signal status={wsSignal.status} label={wsSignal.label} detail={wsSignal.detail} badge={badge} subtext="Update work style" subtextClick={() => setWorkStyleDrawerOpen(true)} isLast={true} />;
+              return (
+                <div style={{ fontSize: 16, lineHeight: "22px", fontWeight: 500, color: COLORS.text, padding: `${S.m}px 0`, position: "relative" }}>
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: S.s }}>
+                    <span style={{ width: 15, height: 15, borderRadius: "50%", background: dot, border: "2px solid #fff", flexShrink: 0, marginTop: 3 }} />
+                    <div style={{ flex: 1, fontFamily: FONT }}>
+                      <div style={{ ...T.body1Bold, color: COLORS.text, marginBottom: matchLabels.length > 0 || issues.length > 0 ? S.xs : 0 }}>{heading}</div>
+                      {matchLabels.length > 0 && (
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: `${S.xs}px ${S.m}px`, marginBottom: issues.length > 0 ? S.s : S.xs }}>
+                          {matchLabels.map(m => (
+                            <span key={m} style={{ ...T.body2, color: COLORS.green, fontFamily: FONT }}>✓ {m}</span>
+                          ))}
+                        </div>
+                      )}
+                      {issues.map((issue, i) => (
+                        <div key={i} style={{ ...T.body2, color: COLORS.amberText, fontFamily: FONT, marginBottom: S.xs }}>
+                          ⚠ {issue.label}
+                          {issue.detail && <span style={{ color: COLORS.muted }}> — {issue.detail}</span>}
+                        </div>
+                      ))}
+                      <div onClick={() => setWorkStyleDrawerOpen(true)} style={{ ...T.body2Bold, color: COLORS.accent, cursor: "pointer", fontFamily: FONT, marginTop: S.xs }}>
+                        Update work style
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
             })() : (
               <div style={{ fontSize: 16, lineHeight: "22px", fontWeight: 500, color: COLORS.text, padding: `${S.m}px 0` }}>
                 <div style={{ display: "flex", alignItems: "flex-start", gap: S.s }}>
