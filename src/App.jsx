@@ -3928,8 +3928,7 @@ const SearchResultsPage = ({ jobs, onJobSelect, isDesktop, profilePriorities }) 
 // ─── AI summary components ────────────────────────────────────────────────────
 
 const AISummaryBlock = ({ text }) => (
-  <div style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: S.m, marginBottom: S.m2 }}>
-    <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>In a nutshell</div>
+  <div style={{ marginTop: S.m }}>
     <p style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, margin: `0 0 ${S.s}px` }}>{text}</p>
     <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>✦ AI summary · Based on Breakroom Quiz data and worker reviews</span>
   </div>
@@ -4327,19 +4326,20 @@ export default function JobTriagePage() {
         );
       })()}
 
-      {/* Breakroom Rating — matches rating--tiny pattern from employer pages */}
-      <div style={{ marginBottom: S.s2 }}>
+      {/* The Breakroom Take — rating + AI synthesis */}
+      <div style={{ borderBottom: `1px solid ${COLORS.border}`, paddingBottom: S.m2, marginBottom: S.m2 }}>
+        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.m }}>The Breakroom Take</div>
         <div style={{ display: "flex", alignItems: "center", gap: S.s, marginBottom: S.xs }}>
-          <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>Breakroom Rating</span>
           <AnimatedRatingDial score={rating} />
           <span style={{ fontFamily: FONT }}>
             <span style={{ ...T.body1Bold, color: COLORS.text }}>{rating.toFixed(1)}</span>
             <span style={{ ...T.body1, color: COLORS.muted }}> out of 10</span>
           </span>
         </div>
-        <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>
-          Rating based on {job.quizCount} employees who took The Breakroom Quiz
+        <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginBottom: job.aiSummary ? 0 : 0 }}>
+          Based on {job.quizCount.toLocaleString("en-GB")} employees who took The Breakroom Quiz
         </div>
+        {job.aiSummary && <AISummaryBlock text={job.aiSummary.text} />}
       </div>
 
       {/* Vacancy highlights — matches .vacancy-highlights */}
@@ -4718,8 +4718,6 @@ export default function JobTriagePage() {
           })()}
         </div>
       </div>
-
-      {job.aiSummary && <AISummaryBlock text={job.aiSummary.text} />}
 
       <Section title="What it's really like here" badgeEl={<span style={{ display: "inline-flex", alignItems: "center", gap: S.xs }}><TinyRatingDial score={rating} /><span style={{ fontFamily: FONT }}><span style={{ ...T.body1Bold, color: COLORS.text }}>{rating.toFixed(1)}</span><span style={{ ...T.body1, color: COLORS.muted }}> out of 10</span></span></span>} forceOpen={findingsForceOpen} sectionRef={findingsSectionRef} subtext={`Based on ${job.quizCount.toLocaleString("en-GB")} employees who took The Breakroom Quiz`}>
         {/* Red flags group — .finding-group */}
