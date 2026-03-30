@@ -4337,6 +4337,9 @@ export default function JobTriagePage() {
               const quals = profileBackground.qualifications || [];
               const expRequired = job.matchCriteria?.experience?.required === true;
               const note = job.matchCriteria?.note || null;
+              const keywords = job.matchCriteria?.experience?.keywords || [];
+              const titleLower = (jobTitle || "").toLowerCase();
+              const isRelevant = keywords.length === 0 || keywords.some(k => titleLower.includes(k.toLowerCase()));
 
               let bgSignal;
               if (quals.includes("Food hygiene certificate (Level 2)") && job.title?.toLowerCase().includes("food")) {
@@ -4345,6 +4348,8 @@ export default function JobTriagePage() {
                 bgSignal = { status: "good", label: "No previous experience needed — you're good to apply", detail: note };
               } else if (exp === "none" && expRequired) {
                 bgSignal = { status: "warning", label: "This role usually requires some prior experience", detail: note };
+              } else if ((exp === "lots" || exp === "some") && jobTitle && !isRelevant) {
+                bgSignal = { status: "warning", label: "This job may suit someone with different experience", detail: "Got relevant experience elsewhere? Add it to your history" };
               } else if (exp === "lots" && jobTitle) {
                 bgSignal = { status: "good", label: `Your experience as ${jobTitle} is a strong match`, detail: note };
               } else if (exp === "lots") {
