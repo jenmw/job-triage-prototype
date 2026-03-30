@@ -2845,12 +2845,12 @@ const AltJob = ({ job, onClick }) => {
       {(hasDiffs || hasReason) && (
         <div style={{ marginTop: S.s, display: "flex", flexWrap: "wrap", alignItems: "center", gap: S.xs }}>
           {visibleDiffs.map((diff, i) => (
-            <span key={i} style={{ ...T.body2Bold, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT, whiteSpace: "nowrap" }}>
+            <span key={i} style={{ ...T.body2, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT, whiteSpace: "nowrap" }}>
               {diff}
             </span>
           ))}
           {hasReason && (
-            <span style={{ ...T.body2Bold, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT, whiteSpace: "nowrap" }}>
+            <span style={{ ...T.body2, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT, whiteSpace: "nowrap" }}>
               {reason.text}
             </span>
           )}
@@ -3584,7 +3584,7 @@ const SearchResultCard = ({ job, onClick }) => {
       {chips.length > 0 && (
         <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginTop: S.s }}>
           {chips.map(c => (
-            <span key={c} style={{ ...T.body2Bold, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT }}>{c}</span>
+            <span key={c} style={{ ...T.body2, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT }}>{c}</span>
           ))}
         </div>
       )}
