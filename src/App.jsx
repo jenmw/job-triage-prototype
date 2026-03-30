@@ -4326,7 +4326,7 @@ export default function JobTriagePage() {
           </div>
         );
         return (
-          <div style={{ borderTop: `1px solid ${COLORS.border}`, borderBottom: isDesktop ? `1px solid ${COLORS.border}` : "none", marginTop: S.m, marginBottom: S.m2, paddingTop: S.m, paddingBottom: S.m }}>
+          <div style={{ borderTop: `1px solid ${COLORS.border}`, borderBottom: isDesktop ? `1px solid ${COLORS.border}` : "none", marginTop: S.m, marginBottom: S.m2, paddingTop: S.m, paddingBottom: isDesktop ? S.m : 0 }}>
             {renderRow({ icon: <IconPay />, text: job.pay, benchmark: job.payBenchmark })}
             {renderRow({ icon: <IconLocation />, text: job.location, commuteRow: true })}
             {renderRow({ icon: <IconClock />, text: [job.hours, job.hoursSub ? `(${job.hoursSub})` : null, job.shifts].filter(Boolean).join(" · ") })}
