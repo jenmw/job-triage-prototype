@@ -2504,6 +2504,7 @@ const TinyRatingDial = ({ score }) => {
 // ─── Animated rating dial — fills from empty on mount, colour transitions through thresholds ─
 const AnimatedRatingDial = ({ score }) => {
   const arcRef = useRef(null);
+  const svgRef = useRef(null);
   const displaySize = 19;
   const svgStrokeWidth = 16;
   const halfSize = 50;
@@ -2513,7 +2514,8 @@ const AnimatedRatingDial = ({ score }) => {
 
   useEffect(() => {
     const el = arcRef.current;
-    if (!el) return;
+    const container = svgRef.current;
+    if (!el || !container) return;
     const duration = 1400;
     let start = null;
     const animate = (ts) => {
@@ -2528,6 +2530,7 @@ const AnimatedRatingDial = ({ score }) => {
     };
     el.style.strokeDashoffset = circumference;
     el.style.stroke = COLORS.red;
+    // Observe the SVG element (not the circle) — Safari doesn't support IO on SVG children
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
@@ -2535,14 +2538,14 @@ const AnimatedRatingDial = ({ score }) => {
           requestAnimationFrame(animate);
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.1 }
     );
-    observer.observe(el);
+    observer.observe(container);
     return () => observer.disconnect();
   }, [score]);
 
   return (
-    <svg viewBox="0 0 100 100" width={displaySize} height={displaySize} style={{ flexShrink: 0, display: "block" }}>
+    <svg ref={svgRef} viewBox="0 0 100 100" width={displaySize} height={displaySize} style={{ flexShrink: 0, display: "block" }}>
       <circle cx={halfSize} cy={halfSize} r={halfWidth} fill="none" stroke="rgba(50,50,50,0.1)" strokeWidth={svgStrokeWidth} />
       <circle ref={arcRef}
         cx={halfSize} cy={halfSize} r={halfWidth} fill="none"
@@ -3944,8 +3947,14 @@ export default function JobTriagePage() {
   const [allFindingsModalOpen, setAllFindingsModalOpen] = useState(false);
   const [mapModalOpen, setMapModalOpen] = useState(false);
   const [personalised, setPersonalised] = useState(false);
-  const [view, setView] = useState("search");
-  const [selectedJobIdx, setSelectedJobIdx] = useState(0);
+  const [view, setView] = useState(() => {
+    const m = location.hash.match(/#job-(\d+)/);
+    return m ? "job" : "search";
+  });
+  const [selectedJobIdx, setSelectedJobIdx] = useState(() => {
+    const m = location.hash.match(/#job-(\d+)/);
+    return m ? parseInt(m[1]) : 0;
+  });
   const [findingsForceOpen, setFindingsForceOpen] = useState(false);
   const [highlightFinding, setHighlightFinding] = useState(null);
   const [benchmarkPopoverOpen, setBenchmarkPopoverOpen] = useState(false);
@@ -4017,12 +4026,37 @@ export default function JobTriagePage() {
     setFindingsForceOpen(false);
     setHighlightFinding(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
+    history.pushState({ view: "job", idx }, "", `#job-${idx}`);
   };
 
   const handleBackToSearch = () => {
     setView("search");
     window.scrollTo({ top: 0, behavior: "smooth" });
+    history.pushState({ view: "search" }, "", location.pathname + location.search);
   };
+
+  // Back/forward button support
+  useEffect(() => {
+    const onPopState = (e) => {
+      const state = e.state;
+      if (state?.view === "job") {
+        setSelectedJobIdx(state.idx);
+        setView("job");
+        setFindingsForceOpen(false);
+        window.scrollTo({ top: 0 });
+      } else {
+        setView("search");
+        window.scrollTo({ top: 0 });
+      }
+    };
+    // Stamp the initial history entry so popstate has state to read
+    history.replaceState(
+      location.hash.match(/#job-(\d+)/) ? { view: "job", idx: parseInt(location.hash.match(/#job-(\d+)/)[1]) } : { view: "search" },
+      ""
+    );
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
 
   const handlePillClick = (label) => {
     setFindingsForceOpen(true);
