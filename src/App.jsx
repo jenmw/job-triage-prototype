@@ -4538,7 +4538,7 @@ export default function JobTriagePage() {
         })()}
       </Section>
 
-      <Section title="What workers actually said">
+      <Section title="Worker reviews">
         <ReviewCard
           best="Flexible when needed, good team atmosphere"
           worst="The managers, the stress levels — it gets to you"
