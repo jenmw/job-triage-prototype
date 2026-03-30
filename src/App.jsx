@@ -158,7 +158,7 @@ const JOBS = [
       licences: [],
       qualifications: [],
       experience: { preferred: true, required: false, keywords: ["warehouse", "logistics", "picking", "packing", "distribution", "stock", "forklift"] },
-      note: "Warehouse or logistics experience is preferred but not essential — GXO train you on the job.",
+      note: "Warehouse or logistics experience",
     },
     findingDiffs: [],
     requiresFltLicence: false,
@@ -482,7 +482,7 @@ const JOBS = [
       licences: [],
       qualifications: [],
       experience: { preferred: false, required: true, keywords: ["FLT", "forklift", "counterbalance"] },
-      note: "1 year FLT experience is required",
+      note: "1 year FLT experience",
     },
     workStyle: { activity: "active", teamwork: "solo", public: false, outdoors: false, children: false },
     findings: {
@@ -567,7 +567,7 @@ const JOBS = [
       licences: [],
       qualifications: [],
       experience: { preferred: false, required: true, keywords: ["team leader", "supervisor", "management"] },
-      note: "Team leader experience is required",
+      note: "Team leader experience",
     },
     workStyle: { activity: "feet", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
@@ -3764,13 +3764,13 @@ const SearchResultsPage = ({ jobs, onJobSelect, isDesktop, profilePriorities }) 
 
 const getHardRequirements = (job) => {
   const reqs = [];
-  if (job.requiresFltLicence) reqs.push({ label: "A valid FLT licence is required", required: true });
+  if (job.requiresFltLicence) reqs.push({ label: "A valid FLT licence", required: true });
   for (const lic of (job.matchCriteria?.licences ?? [])) reqs.push({ label: lic, required: true });
   for (const qual of (job.matchCriteria?.qualifications ?? [])) reqs.push({ label: qual, required: true });
   if (job.matchCriteria?.experience?.required === true) {
-    reqs.push({ label: job.matchCriteria.note ?? "Relevant experience is required", required: true });
+    reqs.push({ label: job.matchCriteria.note ?? "Relevant experience", required: true });
   } else if (job.matchCriteria?.experience?.preferred === true) {
-    reqs.push({ label: job.matchCriteria.note ?? "Experience is preferred", required: false });
+    reqs.push({ label: (job.matchCriteria.note ?? "Experience") + " preferred", required: false });
   }
   return reqs;
 };
