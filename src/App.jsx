@@ -2803,11 +2803,26 @@ const ReviewCard = ({ best, worst, score, role, date }) => (
 );
 
 // ─── Alternative job card ──────────────────────────────────────────────────────
-const AltJob = ({ job, onClick }) => {
+const AltJob = ({ job, viewedJob, onClick }) => {
   const { title, company, pay, rating, location, altBadge, altReason: reason, findingDiffs } = job;
-  // Only show the explicit £/hr badge for hourly-paid jobs — annual jobs would
-  // require a hours-per-week assumption that we can't reliably make.
-  const showPayBadge = altBadge && altBadge !== "Better rated" && job.payType !== "annual";
+  // For hourly jobs: show the pre-computed altBadge (e.g. "↑ £0.67/hr")
+  // For annual similar jobs viewed from an annual job: compute pay difference vs the viewed job
+  let computedAnnualBadge = null;
+  if (job.payType === "annual" && viewedJob?.payType === "annual" && job.pay && viewedJob?.pay) {
+    const parseAnnual = (s) => {
+      const nums = [...s.replace(/[£\s]/g, "").matchAll(/[\d,]+/g)].map(m => parseFloat(m[0].replace(/,/g, "")));
+      return nums.length >= 2 ? { val: (nums[0] + nums[1]) / 2, isRange: true } : { val: nums[0] ?? 0, isRange: false };
+    };
+    const alt = parseAnnual(job.pay);
+    const viewed = parseAnnual(viewedJob.pay);
+    if (alt.val > viewed.val) {
+      const diff = Math.round(alt.val - viewed.val);
+      const approx = alt.isRange || viewed.isRange;
+      computedAnnualBadge = `↑ ${approx ? "About " : ""}£${diff.toLocaleString("en-GB")}/yr`;
+    }
+  }
+  const showPayBadge = (altBadge && altBadge !== "Better rated" && job.payType !== "annual") || !!computedAnnualBadge;
+  const displayBadge = computedAnnualBadge ?? altBadge;
   const visibleDiffs = (findingDiffs ?? []).filter(d => {
     const l = d.toLowerCase();
     if (l.includes("better rated")) return false;
@@ -2831,7 +2846,7 @@ const AltJob = ({ job, onClick }) => {
       {/* Title row with optional pay badge */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: S.s, marginBottom: S.xs }}>
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{title}</div>
-        {showPayBadge && <span style={badgeStyle}>{altBadge}</span>}
+        {showPayBadge && <span style={badgeStyle}>{displayBadge}</span>}
       </div>
       {/* .vacancy-card-list__rating-container — dial + score + employer name */}
       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: S.xs }}>
@@ -3530,7 +3545,7 @@ const AlternativesList = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawe
           </button>
         )}
         {altJobs.map((j) => (
-          <AltJob key={j.id} job={j} onClick={() => onJobSelect(j.id)} />
+          <AltJob key={j.id} job={j} viewedJob={currentJob} onClick={() => onJobSelect(j.id)} />
         ))}
       </div>
     </div>
