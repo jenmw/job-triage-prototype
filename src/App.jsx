@@ -4282,8 +4282,8 @@ export default function JobTriagePage() {
                 <div style={{ display: "flex", alignItems: "flex-start", gap: S.s }}>
                   <span style={{ width: 15, height: 15, borderRadius: "50%", background: COLORS.border, border: "2px solid #fff", flexShrink: 0, marginTop: 3 }} />
                   <div style={{ flex: 1, fontFamily: FONT }}>
-                    <div style={{ ...T.body1Bold, color: COLORS.text, marginBottom: S.xs }}>Are you suited for this role?</div>
-                    <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginBottom: S.s }}>What's your most recent job title?</div>
+                    <div style={{ ...T.body1Bold, color: COLORS.text, marginBottom: S.xs }}>What's your most recent job title?</div>
+                    <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginBottom: S.s }}>On any job we'll be able to tell you when your experience is a match</div>
                     <div
                       onClick={() => { setBgDrawerFocusTitle(true); setBackgroundDrawerOpen(true); }}
                       style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, padding: `${S.s2}px ${S.m}px`, borderRadius: 4, border: `1px solid ${COLORS.border}`, background: COLORS.card, cursor: "text", userSelect: "none" }}
