@@ -4257,8 +4257,15 @@ export default function JobTriagePage() {
 
   const hardReqs = getHardRequirements(job);
 
+  const scrollToFindings = () => {
+    if (!findingsSectionRef.current) return;
+    const y = findingsSectionRef.current.getBoundingClientRect().top + window.scrollY - 70;
+    window.scrollTo({ top: y, behavior: "smooth" });
+    setFindingsForceOpen(true);
+  };
+
   const heroBlock = (
-    <div style={{ paddingTop: S.m2, paddingBottom: S.m }}>
+    <div style={{ paddingTop: S.m2, paddingBottom: 0 }}>
       <div style={{ marginBottom: S.s }}>
         <span onClick={handleBackToSearch} style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, cursor: "pointer" }}>← Search results</span>
       </div>
@@ -4341,10 +4348,14 @@ export default function JobTriagePage() {
 
         {/* Highlights */}
         {job.highlights.length > 0 && (
-          <div style={{ display: "flex", gap: S.s, flexWrap: "wrap", marginBottom: S.m }}>
+          <div style={{ display: "flex", gap: S.s, flexWrap: "wrap", marginBottom: S.s }}>
             {job.highlights.map((h) => <VacancyHighlight key={h} label={h} onClick={() => handlePillClick(h)} />)}
           </div>
         )}
+
+        <div style={{ marginBottom: S.m }}>
+          <span onClick={scrollToFindings} style={{ ...T.body2, color: COLORS.accent, fontFamily: FONT, cursor: "pointer", textDecoration: "underline" }}>See full breakdown →</span>
+        </div>
 
         {/* AI summary — separated with a top border so it's clearly distinct from quiz data */}
         {job.aiSummary && (
@@ -4524,7 +4535,7 @@ export default function JobTriagePage() {
       {matchCard}
       {/* "What you need to know" — always visible, no accordion */}
       <div style={{ borderBottom: `1px solid ${COLORS.border}`, paddingBottom: S.m2 }}>
-        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, padding: `${S.m}px 0` }}>See how you fit</div>
+        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, padding: `0 0 ${S.m}px` }}>See how you fit</div>
         <div style={{ background: COLORS.card, borderRadius: 5, padding: `0 ${S.m}px` }}>
           {(() => {
             const hasBackground = Object.keys(profileBackground).length > 0;
