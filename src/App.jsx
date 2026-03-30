@@ -3364,8 +3364,13 @@ const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initial
 const WorkStyleDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState(initialValues);
-  const touchStartX = useRef(null);
-  const touchStartY = useRef(null);
+  const drawerRef = useRef(null);
+  // Refs so native event listeners always see current values without stale closures
+  const stepRef = useRef(step);
+  const answersRef = useRef(answers);
+  const isLastRef = useRef(false);
+  useEffect(() => { stepRef.current = step; }, [step]);
+  useEffect(() => { answersRef.current = answers; }, [answers]);
 
   useEffect(() => {
     if (open) { setStep(0); setAnswers(initialValues); }
@@ -3373,31 +3378,48 @@ const WorkStyleDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
 
   const q = WORK_STYLE_QUESTIONS[step];
   const isLast = step === WORK_STYLE_QUESTIONS.length - 1;
+  isLastRef.current = isLast;
   const current = answers[q.id] || null;
 
   const select = (val) => setAnswers(a => ({ ...a, [q.id]: val }));
   const next = () => isLast ? onSubmit(answers) : setStep(s => s + 1);
   const skip = () => isLast ? onSubmit(answers) : setStep(s => s + 1);
 
-  const handleTouchStart = (e) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
-  };
-  const handleTouchEnd = (e) => {
-    if (touchStartX.current === null) return;
-    const dx = e.changedTouches[0].clientX - touchStartX.current;
-    const dy = e.changedTouches[0].clientY - touchStartY.current;
-    touchStartX.current = null;
-    touchStartY.current = null;
-    if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy)) return; // snap back / ignore vertical
-    if (dx < 0) { next(); } // swipe left = next/save
-    else if (step > 0) { setStep(s => s - 1); } // swipe right = back (noop on first)
-  };
+  // Native touch listeners — needed so touchmove can be non-passive (prevents browser swipe-back)
+  useEffect(() => {
+    const el = drawerRef.current;
+    if (!el) return;
+    let startX = null, startY = null;
+    const onStart = (e) => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; };
+    const onMove = (e) => {
+      if (startX === null) return;
+      const dx = Math.abs(e.touches[0].clientX - startX);
+      const dy = Math.abs(e.touches[0].clientY - startY);
+      if (dx > dy && dx > 10) e.preventDefault();
+    };
+    const onEnd = (e) => {
+      if (startX === null) return;
+      const dx = e.changedTouches[0].clientX - startX;
+      const dy = e.changedTouches[0].clientY - startY;
+      startX = null; startY = null;
+      if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy)) return;
+      if (dx < 0) { isLastRef.current ? onSubmit(answersRef.current) : setStep(s => s + 1); }
+      else if (stepRef.current > 0) { setStep(s => s - 1); }
+    };
+    el.addEventListener('touchstart', onStart, { passive: true });
+    el.addEventListener('touchmove', onMove, { passive: false });
+    el.addEventListener('touchend', onEnd, { passive: true });
+    return () => {
+      el.removeEventListener('touchstart', onStart);
+      el.removeEventListener('touchmove', onMove);
+      el.removeEventListener('touchend', onEnd);
+    };
+  }, [onSubmit]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
       <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity 0.3s", zIndex: 100 }} />
-      <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, boxShadow: open ? "0 -8px 40px rgba(0,0,0,0.15)" : "none" }}>
+      <div ref={drawerRef} style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, boxShadow: open ? "0 -8px 40px rgba(0,0,0,0.15)" : "none", touchAction: "pan-y" }}>
         <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px` }} />
 
         {/* Progress dots */}
