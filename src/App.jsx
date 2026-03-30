@@ -3680,16 +3680,16 @@ const SearchResultsPage = ({ jobs, onJobSelect, isDesktop, profilePriorities }) 
       {/* Search form */}
       <div style={{ background: COLORS.card, borderBottom: `1px solid ${COLORS.border}`, padding: `${S.m}px` }}>
         <div style={{ maxWidth: 1032, margin: "0 auto" }}>
-          <div style={{ display: "flex", gap: S.s, marginBottom: S.s }}>
-            <div style={{ flex: 1, border: `1px solid ${COLORS.border}`, borderRadius: 4, padding: `8px ${S.m}px`, background: COLORS.bg }}>
+          <div style={{ display: "flex", flexDirection: isDesktop ? "row" : "column", gap: S.s, marginBottom: S.s }}>
+            <div style={{ flex: isDesktop ? 1 : undefined, minWidth: 0, border: `1px solid ${COLORS.border}`, borderRadius: 4, padding: `8px ${S.m}px`, background: COLORS.bg }}>
               <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>What</div>
               <div style={{ ...T.body1, color: COLORS.text, fontFamily: FONT }}>Warehouse</div>
             </div>
-            <div style={{ flex: 1, border: `1px solid ${COLORS.border}`, borderRadius: 4, padding: `8px ${S.m}px`, background: COLORS.bg }}>
+            <div style={{ flex: isDesktop ? 1 : undefined, minWidth: 0, border: `1px solid ${COLORS.border}`, borderRadius: 4, padding: `8px ${S.m}px`, background: COLORS.bg }}>
               <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>Where</div>
               <div style={{ ...T.body1, color: COLORS.text, fontFamily: FONT }}>Corby, Northamptonshire</div>
             </div>
-            <button style={{ background: COLORS.accent, color: "#fff", border: "none", borderRadius: 4, padding: `0 ${S.m2}px`, ...T.body1Bold, fontFamily: FONT, cursor: "pointer", whiteSpace: "nowrap" }}>Search</button>
+            <button style={{ background: COLORS.accent, color: "#fff", border: "none", borderRadius: 4, padding: isDesktop ? `0 ${S.m2}px` : `${S.s2}px ${S.m}px`, width: isDesktop ? undefined : "100%", ...T.body1Bold, fontFamily: FONT, cursor: "pointer" }}>Search</button>
           </div>
           <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap" }}>
             {SEARCH_FILTERS.map(f => (
