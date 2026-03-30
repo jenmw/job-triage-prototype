@@ -2805,7 +2805,9 @@ const ReviewCard = ({ best, worst, score, role, date }) => (
 // ─── Alternative job card ──────────────────────────────────────────────────────
 const AltJob = ({ job, onClick }) => {
   const { title, company, pay, rating, location, altBadge, altReason: reason, findingDiffs } = job;
-  const showPayBadge = altBadge && altBadge !== "Better rated";
+  // Only show the explicit £/hr badge for hourly-paid jobs — annual jobs would
+  // require a hours-per-week assumption that we can't reliably make.
+  const showPayBadge = altBadge && altBadge !== "Better rated" && job.payType !== "annual";
   const visibleDiffs = (findingDiffs ?? []).filter(d => {
     const l = d.toLowerCase();
     if (l.includes("better rated")) return false;
@@ -3555,10 +3557,14 @@ const getJobHighlights = (job) => {
   // Remaining chips only for standout employers
   if (!isStandout) return chips;
 
-  // "Pays well" only — above benchmark high
+  // "Pays well" only — above benchmark high, like-for-like units only
   if (chips.length < 3 && job.payBenchmark && job.pay) {
-    const verdict = computePayVerdict(job.pay, job.payType, job.payBenchmark);
-    if (verdict?.verdict === "above") chips.push("Pays well");
+    const benchmarkIsAnnual = job.payBenchmark.rangeLow > 100;
+    const payIsAnnual = job.payType === "annual";
+    if (benchmarkIsAnnual === payIsAnnual) {
+      const verdict = computePayVerdict(job.pay, job.payType, job.payBenchmark);
+      if (verdict?.verdict === "above") chips.push("Pays well");
+    }
   }
 
   // Top good findings from workers
