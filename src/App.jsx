@@ -482,7 +482,7 @@ const JOBS = [
       licences: [],
       qualifications: [],
       experience: { preferred: false, required: true, keywords: ["FLT", "forklift", "counterbalance"] },
-      note: "Minimum 1 year FLT operating experience required.",
+      note: "1 year FLT experience is required",
     },
     workStyle: { activity: "active", teamwork: "solo", public: false, outdoors: false, children: false },
     findings: {
@@ -567,7 +567,7 @@ const JOBS = [
       licences: [],
       qualifications: [],
       experience: { preferred: false, required: true, keywords: ["team leader", "supervisor", "management"] },
-      note: "Previous team leader or supervisory experience required.",
+      note: "Team leader experience is required",
     },
     workStyle: { activity: "feet", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
@@ -3764,23 +3764,24 @@ const SearchResultsPage = ({ jobs, onJobSelect, isDesktop, profilePriorities }) 
 
 const getHardRequirements = (job) => {
   const reqs = [];
-  if (job.requiresFltLicence) reqs.push({ label: "Valid FLT licence", required: true });
+  if (job.requiresFltLicence) reqs.push({ label: "A valid FLT licence is required", required: true });
   for (const lic of (job.matchCriteria?.licences ?? [])) reqs.push({ label: lic, required: true });
   for (const qual of (job.matchCriteria?.qualifications ?? [])) reqs.push({ label: qual, required: true });
   if (job.matchCriteria?.experience?.required === true) {
-    reqs.push({ label: job.matchCriteria.note ?? "Relevant experience required", required: true });
+    reqs.push({ label: job.matchCriteria.note ?? "Relevant experience is required", required: true });
   } else if (job.matchCriteria?.experience?.preferred === true) {
-    reqs.push({ label: job.matchCriteria.note ?? "Experience preferred", required: false });
+    reqs.push({ label: job.matchCriteria.note ?? "Experience is preferred", required: false });
   }
   return reqs;
 };
 
 const RequirementsNotice = ({ reqs }) => {
   if (!reqs.length) return null;
+  const visible = reqs.length > 3 ? [...reqs.slice(0, 2), { label: "And more…", required: true }] : reqs;
   return (
     <div style={{ marginBottom: S.s }}>
       <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>You'll need</div>
-      {reqs.map(r => (
+      {visible.map(r => (
         <div key={r.label} style={{ display: "flex", alignItems: "flex-start", gap: S.xs, marginBottom: 4 }}>
           <span style={{ width: 8, height: 8, borderRadius: "50%", background: r.required ? COLORS.red : COLORS.amber, flexShrink: 0, marginTop: 5 }} />
           <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{r.label}</span>
