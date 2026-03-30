@@ -3677,11 +3677,6 @@ const SearchResultsPage = ({ jobs, onJobSelect, isDesktop, profilePriorities }) 
             </div>
             <button style={{ background: COLORS.accent, color: "#fff", border: "none", borderRadius: 4, padding: isDesktop ? `0 ${S.m2}px` : `${S.s2}px ${S.m}px`, width: isDesktop ? undefined : "100%", ...T.body1Bold, fontFamily: FONT, cursor: "pointer" }}>Search</button>
           </div>
-          <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap" }}>
-            {SEARCH_FILTERS.map(f => (
-              <span key={f} style={{ ...T.body2, fontFamily: FONT, color: COLORS.text, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "4px 12px", cursor: "pointer", background: COLORS.bg, whiteSpace: "nowrap" }}>{f}</span>
-            ))}
-          </div>
         </div>
       </div>
       {/* Results */}
