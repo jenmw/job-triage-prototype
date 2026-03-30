@@ -162,6 +162,10 @@ const JOBS = [
     },
     findingDiffs: [],
     requiresFltLicence: false,
+    aiSummary: {
+      text: "Hours are steady and shifts rarely get moved around at short notice, which is what keeps most people here. The work is physical and management can feel out of touch, but if predictability matters to you, GXO delivers on that.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -241,6 +245,10 @@ const JOBS = [
     payBenchmark: { rangeLow: 12, rangeHigh: 14, roleLabel: "warehouse associates in Northamptonshire" },
     findingDiffs: ["No experience required", "Better rated employer"],
     requiresFltLicence: false,
+    aiSummary: {
+      text: "Amazon pays above the local average and genuinely doesn't require previous experience, making it one of the better entry points into warehouse work in the area. The pace is relentless and every minute is tracked, but hours are guaranteed and most people feel safe on site.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -496,6 +504,10 @@ const JOBS = [
       experience: { preferred: false, required: true, keywords: ["FLT", "forklift", "counterbalance"] },
       note: "1 year FLT experience",
     },
+    aiSummary: {
+      text: "The pay is fair for licence holders and overtime isn't expected, but last-minute shift notice is a real frustration that makes it hard to plan your life around work. Worth considering if steady money matters more to you than a predictable schedule.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "active", teamwork: "solo", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -581,6 +593,10 @@ const JOBS = [
       experience: { preferred: false, required: true, keywords: ["team leader", "supervisor", "management"] },
       note: "Team leader experience",
     },
+    aiSummary: {
+      text: "Amazon rewards team leaders well — pay is strong, hours are guaranteed, and there's real scope to progress if you engage with the systems. The targets trickle down relentlessly and the pace never drops, but most people say it compares well to other logistics employers.",
+      quoteIdx: 0,
+    },
     workStyle: { activity: "feet", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
       bad: [
@@ -665,6 +681,10 @@ const JOBS = [
       qualifications: ["Level 2 Food Hygiene certificate preferred"],
       experience: { preferred: false, required: false, keywords: [] },
       note: null,
+    },
+    aiSummary: {
+      text: "Greencore feels more settled than most production employers in the area — shifts are reliable, breaks are respected, and the team atmosphere is generally decent. The no sick pay policy is a real gap, but most people say it's a better place to work than the rating alone suggests.",
+      quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
@@ -1496,6 +1516,10 @@ const JOBS = [
       qualifications: [],
       experience: { preferred: true, required: false, keywords: ["warehouse", "logistics"] },
       note: "Warehouse experience",
+    },
+    aiSummary: {
+      text: "Samworth Brothers stands out for how organised the day-to-day feels — shifts are predictable, communication is better than most, and people generally feel treated with respect. The no paid breaks policy is an unusual gap for a company of this size, but it's a stable and reasonably well-run place to work.",
+      quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
     findings: {
@@ -3901,6 +3925,16 @@ const SearchResultsPage = ({ jobs, onJobSelect, isDesktop, profilePriorities }) 
   );
 };
 
+// ─── AI summary components ────────────────────────────────────────────────────
+
+const AISummaryBlock = ({ text }) => (
+  <div style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: S.m, marginBottom: S.m2 }}>
+    <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>In a nutshell</div>
+    <p style={{ ...T.body1, color: COLORS.text, fontFamily: FONT, margin: `0 0 ${S.s}px` }}>{text}</p>
+    <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>✦ AI summary · Based on Breakroom Quiz data and worker reviews</span>
+  </div>
+);
+
 // ─── Hard requirements helpers ────────────────────────────────────────────────
 
 const getHardRequirements = (job) => {
@@ -4684,6 +4718,8 @@ export default function JobTriagePage() {
           })()}
         </div>
       </div>
+
+      {job.aiSummary && <AISummaryBlock text={job.aiSummary.text} />}
 
       <Section title="What it's really like here" badgeEl={<span style={{ display: "inline-flex", alignItems: "center", gap: S.xs }}><TinyRatingDial score={rating} /><span style={{ fontFamily: FONT }}><span style={{ ...T.body1Bold, color: COLORS.text }}>{rating.toFixed(1)}</span><span style={{ ...T.body1, color: COLORS.muted }}> out of 10</span></span></span>} forceOpen={findingsForceOpen} sectionRef={findingsSectionRef} subtext={`Based on ${job.quizCount.toLocaleString("en-GB")} employees who took The Breakroom Quiz`}>
         {/* Red flags group — .finding-group */}
