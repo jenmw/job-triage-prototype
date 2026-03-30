@@ -3497,11 +3497,11 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
 
   // Summary row for read-only state
   const SummaryRow = ({ label, value, onClick, isLast }) => !value ? null : (
-    <div onClick={onClick} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: `${S.s}px 0`, borderBottom: isLast ? "none" : `1px solid ${COLORS.border}`, cursor: onClick ? "pointer" : "default" }}>
-      <span style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>{label}</span>
-      <div style={{ display: "flex", alignItems: "center", gap: S.s, flexShrink: 0 }}>
-        <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, textAlign: "right" }}>{value}</span>
-        {onClick && <IconChevronDown color={COLORS.accent} rotated={false} style={{ transform: "rotate(-90deg)" }} />}
+    <div onClick={onClick} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: S.m, padding: `${S.s}px 0`, borderBottom: isLast ? "none" : `1px solid ${COLORS.border}`, cursor: onClick ? "pointer" : "default" }}>
+      <span style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, flexShrink: 0 }}>{label}</span>
+      <div style={{ display: "flex", alignItems: "center", gap: S.s, minWidth: 0 }}>
+        <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, textAlign: "right", wordBreak: "break-word" }}>{value}</span>
+        {onClick && <IconChevronDown color={COLORS.accent} rotated={false} style={{ transform: "rotate(-90deg)", flexShrink: 0 }} />}
       </div>
     </div>
   );
@@ -3577,7 +3577,7 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
                   <SummaryRow label="Postcode" value={postcode || null} onClick={() => { onClose(); onOpenDrawer(); }} isLast={lastField === "postcode"} />
                   <SummaryRow label="Current pay" value={formatPay(currentPay)} onClick={() => { onClose(); onOpenDrawer(); }} isLast={lastField === "pay"} />
                   <SummaryRow label="Travel" value={travelDisplay} onClick={() => { onClose(); onOpenDrawer(); }} isLast={lastField === "travel"} />
-                  <SummaryRow label="Priorities" value={hasPriorities ? priorities.join(", ") : null} onClick={() => { onClose(); onOpenDrawer(); }} isLast={lastField === "priorities"} />
+                  <SummaryRow label="Priorities" value={hasPriorities ? (priorities.length === 1 ? priorities[0] : `${priorities[0]} + ${priorities.length - 1} more`) : null} onClick={() => { onClose(); onOpenDrawer(); }} isLast={lastField === "priorities"} />
                   {hasLicences && <SummaryRow label="Licences" value={[...userLicences].map(l => licenceLabels[l] || l).join(", ")} onClick={() => { onClose(); onOpenLicenceModal(); }} isLast={lastField === "licences"} />}
                   {hasBackground && <SummaryRow label="Background" value={backgroundDisplay} onClick={() => { onClose(); onOpenBackgroundDrawer(); }} isLast={lastField === "background"} />}
                   {hasWorkStyle && <SummaryRow label="Work style" value={workStyleDisplay} onClick={() => { onClose(); onOpenWorkStyleDrawer(); }} isLast={lastField === "workstyle"} />}
