@@ -4355,7 +4355,7 @@ export default function JobTriagePage() {
                       {matchLabels.length > 0 && (
                         <div style={{ display: "flex", flexWrap: "wrap", gap: `${S.xs}px ${S.m}px`, marginBottom: issues.length > 0 ? S.s : S.xs }}>
                           {matchLabels.map(m => (
-                            <span key={m} style={{ ...T.body2, color: COLORS.green, fontFamily: FONT }}>✓ {m}</span>
+                            <span key={m} style={{ ...T.body2, color: COLORS.greenText, fontFamily: FONT }}>✓ {m}</span>
                           ))}
                         </div>
                       )}
