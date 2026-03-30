@@ -3364,6 +3364,8 @@ const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initial
 const WorkStyleDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState(initialValues);
+  const touchStartX = useRef(null);
+  const touchStartY = useRef(null);
 
   useEffect(() => {
     if (open) { setStep(0); setAnswers(initialValues); }
@@ -3377,10 +3379,25 @@ const WorkStyleDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
   const next = () => isLast ? onSubmit(answers) : setStep(s => s + 1);
   const skip = () => isLast ? onSubmit(answers) : setStep(s => s + 1);
 
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    const dy = e.changedTouches[0].clientY - touchStartY.current;
+    touchStartX.current = null;
+    touchStartY.current = null;
+    if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy)) return; // snap back / ignore vertical
+    if (dx < 0) { next(); } // swipe left = next/save
+    else if (step > 0) { setStep(s => s - 1); } // swipe right = back (noop on first)
+  };
+
   return (
     <>
       <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity 0.3s", zIndex: 100 }} />
-      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, boxShadow: open ? "0 -8px 40px rgba(0,0,0,0.15)" : "none" }}>
+      <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, boxShadow: open ? "0 -8px 40px rgba(0,0,0,0.15)" : "none" }}>
         <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px` }} />
 
         {/* Progress dots */}
