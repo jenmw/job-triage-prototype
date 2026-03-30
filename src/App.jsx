@@ -2762,7 +2762,7 @@ const Signal = ({ status, label, detail, subtext, subtextClick, labelClick, isLa
 };
 
 // ─── Collapsible section ───────────────────────────────────────────────────────
-const Section = ({ title, children, defaultOpen = false, badge, badgeEl, forceOpen, sectionRef }) => {
+const Section = ({ title, children, defaultOpen = false, badge, badgeEl, forceOpen, sectionRef, subtext }) => {
   const [open, setOpen] = useState(defaultOpen);
   useEffect(() => { if (forceOpen) setOpen(true); }, [forceOpen]);
   return (
@@ -2773,7 +2773,10 @@ const Section = ({ title, children, defaultOpen = false, badge, badgeEl, forceOp
         <IconChevronDown rotated={open} />
       </button>
       <div style={{ maxHeight: open ? 2000 : 0, overflow: "hidden", transition: "max-height 0.35s ease" }}>
-        <div style={{ paddingBottom: S.m, display: "flex", flexDirection: "column", gap: S.s }}>{children}</div>
+        <div style={{ paddingBottom: S.m, display: "flex", flexDirection: "column", gap: S.s }}>
+          {subtext && <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginTop: -S.xs }}>{subtext}</p>}
+          {children}
+        </div>
       </div>
     </div>
   );
@@ -4489,7 +4492,7 @@ export default function JobTriagePage() {
         </div>
       </div>
 
-      <Section title="What it's really like here" badgeEl={<span style={{ display: "inline-flex", alignItems: "center", gap: S.xs }}><TinyRatingDial score={rating} /><span style={{ fontFamily: FONT }}><span style={{ ...T.body1Bold, color: COLORS.text }}>{rating.toFixed(1)}</span><span style={{ ...T.body1, color: COLORS.muted }}> out of 10</span></span></span>} forceOpen={findingsForceOpen} sectionRef={findingsSectionRef}>
+      <Section title="What it's really like here" badgeEl={<span style={{ display: "inline-flex", alignItems: "center", gap: S.xs }}><TinyRatingDial score={rating} /><span style={{ fontFamily: FONT }}><span style={{ ...T.body1Bold, color: COLORS.text }}>{rating.toFixed(1)}</span><span style={{ ...T.body1, color: COLORS.muted }}> out of 10</span></span></span>} forceOpen={findingsForceOpen} sectionRef={findingsSectionRef} subtext={`Based on ${job.quizCount.toLocaleString("en-GB")} employees who took The Breakroom Quiz`}>
         {/* Red flags group — .finding-group */}
         {(() => {
           const bad = job.findings.bad;
