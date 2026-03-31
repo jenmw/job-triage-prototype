@@ -4082,7 +4082,7 @@ const RequirementsNotice = ({ reqs }) => {
       <div style={{ ...T.body2Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>What you'll need to apply</div>
       {visible.map(r => (
         <div key={r.label} style={{ display: "flex", alignItems: "flex-start", gap: S.xs, marginBottom: 4 }}>
-          <span style={{ width: 8, height: 8, borderRadius: "50%", background: r.required ? COLORS.red : COLORS.amber, flexShrink: 0, marginTop: 5 }} />
+          <span style={{ width: 8, height: 8, borderRadius: "50%", background: r.met ? COLORS.green : r.required ? COLORS.red : COLORS.amber, flexShrink: 0, marginTop: 5 }} />
           <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{r.label}</span>
         </div>
       ))}
@@ -4374,7 +4374,26 @@ export default function JobTriagePage() {
     setTimeout(() => setHighlightFinding(null), 2400);
   };
 
-  const hardReqs = getHardRequirements(job);
+  const hardReqs = (() => {
+    const reqs = getHardRequirements(job);
+    const jobTitle = ((profileBackground.prevJobs || [])[0]?.title || "").toLowerCase();
+    const bgQuals = profileBackground.qualifications || [];
+    const keywords = job.matchCriteria?.experience?.keywords || [];
+    const expRelevant = jobTitle && (keywords.length === 0 || keywords.some(k => jobTitle.includes(k.toLowerCase())));
+    return reqs.map(r => {
+      if (r.label.toLowerCase().includes("experience") || (job.matchCriteria?.note && r.label.includes(job.matchCriteria.note))) {
+        return { ...r, met: !!expRelevant };
+      }
+      if (job.matchCriteria?.licences?.includes(r.label) || (r.label.includes("FLT") && job.requiresFltLicence)) {
+        const licId = r.label.includes("FLT") ? "flt" : null;
+        return { ...r, met: licId ? userLicences.has(licId) : false };
+      }
+      if (job.matchCriteria?.qualifications?.includes(r.label)) {
+        return { ...r, met: bgQuals.includes(r.label) };
+      }
+      return { ...r, met: false };
+    });
+  })();
 
   const PRIORITY_FINDING_KW = {
     "Good shift notice":        "last-minute",
