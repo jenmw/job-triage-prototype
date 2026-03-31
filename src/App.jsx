@@ -335,7 +335,7 @@ const JOBS = [
       note: "Warehouse or logistics experience",
     },
     aiSummary: {
-      text: "DHL is reliable on hours and shifts — 94% of workers don't worry about getting enough work and rotas rarely change at the last minute. Breaks aren't paid and you have little say over shift patterns, but it's a more stable option than most in this comparison.",
+      text: "DHL is reliable on hours and shifts — 94% of workers don't worry about getting enough work and rotas rarely change at the last minute. Breaks aren't paid and most workers have little say over which shift patterns they work.",
       quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
@@ -858,7 +858,7 @@ const JOBS = [
     findingDiffs: [],
     requiresFltLicence: false,
     aiSummary: {
-      text: "Evri scores poorly overall — it's one of the lowest-rated employers in this search — with high stress levels, almost no sick pay, and over a third of workers on zero-hours contracts. Hours are reasonably available but the pace and working conditions are consistently described as difficult.",
+      text: "Evri scores poorly overall, with high stress levels, almost no sick pay, and over a third of workers on zero-hours contracts. Hours are reasonably available but the pace and working conditions are consistently described as difficult.",
       quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
@@ -1032,7 +1032,7 @@ const JOBS = [
       note: "Warehouse experience",
     },
     aiSummary: {
-      text: "PepsiCo stands out as one of the best-paid warehouse employers in this search, and workers value the predictable rotas and secure hours that come with a well-established direct employer. The notable gap is sick pay — most workers don't have it, which is a surprising omission at this pay level.",
+      text: "PepsiCo pays well above the local average for warehouse work and workers value the predictable rotas and secure hours that come with a well-established direct employer. The notable gap is sick pay — most workers don't have it, which is a surprising omission at this pay level.",
       quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
@@ -1640,7 +1640,7 @@ const JOBS = [
       note: "Warehouse management experience in food or FMCG",
     },
     aiSummary: {
-      text: "Samworth Brothers stands out for how organised the day-to-day feels — shifts are very predictable, communication is better than most in this sector, and people generally feel treated with respect. No paid breaks is an unusual gap for a company of this rating, but overall it's one of the stronger employers in this search.",
+      text: "Samworth Brothers stands out for how organised the day-to-day feels — shifts are very predictable, communication is good, and people generally feel treated with respect. No paid breaks is the main gap for an otherwise well-rated employer.",
       quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
@@ -1780,7 +1780,7 @@ const JOBS = [
     findingDiffs: [],
     requiresFltLicence: false,
     aiSummary: {
-      text: "Hours are available through Gi Group and workers tend to get proper breaks, but that's about where the positives stop — no sick pay, no paid breaks in earnings, high stress, and a poor team atmosphere are all regularly raised. Gi Group scores among the lowest-rated employers in this search.",
+      text: "Hours are available through Gi Group and workers tend to get proper breaks, but that's about where the positives stop — no sick pay, high stress, and a poor team atmosphere are all regularly raised by workers. Gi Group's overall rating is low.",
       quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
@@ -2059,7 +2059,7 @@ const JOBS = [
       note: "Maintenance or engineering experience",
     },
     aiSummary: {
-      text: "Lidl is one of the strongest employers in this search — pay is above average, hours are rock solid, and the working environment is well-organised with proper breaks and no unpaid overtime. No sick pay is the surprising gap, and workers consistently raise it as a frustration given Lidl's overall reputation.",
+      text: "Lidl pays above average, hours are rock solid, and the working environment is well-organised with proper breaks and no unpaid overtime. No sick pay is the surprising gap, and workers consistently raise it as a frustration given Lidl's overall reputation.",
       quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
@@ -2325,7 +2325,7 @@ const JOBS = [
     findingDiffs: [],
     requiresFltLicence: false,
     aiSummary: {
-      text: "GSF Car Parts offers steady, predictable work with reliable hours and shift rotas that don't tend to change at the last minute. At £10/hr it pays the lowest of any employer in this search — well below the area average for warehouse work — and there's no sick pay on top of that.",
+      text: "GSF Car Parts offers steady, predictable work with reliable hours and shift rotas that don't tend to change at the last minute. At £10/hr it pays well below the area average for warehouse work, and there's no sick pay on top of that.",
       quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
