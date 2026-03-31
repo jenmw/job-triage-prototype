@@ -4451,7 +4451,7 @@ export default function JobTriagePage() {
         <div style={{ display: "flex", alignItems: "center", gap: S.m, marginBottom: S.m }}>
           <AnimatedRatingDial score={rating} displaySize={44} />
           <span style={{ ...T.body2, color: COLORS.text, fontFamily: FONT }}>
-            Rated <strong>{rating.toFixed(1)}</strong> out of 10, based on {job.quizCount.toLocaleString("en-GB")} {job.quizCount === 1 ? "employee" : "employees"} who took The Breakroom&nbsp;Quiz
+            Rated <strong>{rating.toFixed(1)}</strong> out of 10, based on {job.quizCount.toLocaleString("en-GB")} {job.quizCount === 1 ? "employee" : "employees"} at {job.company} who took The Breakroom&nbsp;Quiz
           </span>
         </div>
 
