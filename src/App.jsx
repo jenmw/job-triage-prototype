@@ -4185,7 +4185,7 @@ const DesktopSidebar = ({ currentJobIdx, rating, personalised, isSignedIn, onOpe
         </div>
         {/* Job cards */}
         <div style={{ display: "flex", flexDirection: "column", gap: S.s2 }}>
-          {!personalised && (
+          {!personalised ? (
             <button onClick={onOpenDrawer} style={{
               background: COLORS.accentBg, borderRadius: 5, border: `2px solid ${COLORS.accent}`,
               padding: S.m, cursor: "pointer", fontFamily: FONT, textAlign: "left", width: "100%",
@@ -4197,6 +4197,10 @@ const DesktopSidebar = ({ currentJobIdx, rating, personalised, isSignedIn, onOpe
               </div>
               <span style={{ color: COLORS.accent, fontSize: 20, lineHeight: 1 }}>›</span>
             </button>
+          ) : (
+            <p style={{ ...T.body2, color: COLORS.muted, margin: `0 0 ${S.xs}px`, fontFamily: FONT }}>
+              Personalised for you · <span onClick={onOpenDrawer} style={{ textDecoration: "underline", cursor: "pointer", color: COLORS.accent }}>Edit</span>
+            </p>
           )}
           {pageJobs.map(job => (
             <SearchResultCard key={job.id} job={job} onClick={() => onJobSelect(job.id)} profilePriorities={profilePriorities} viewedJob={viewedJob} />
