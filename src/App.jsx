@@ -2690,15 +2690,12 @@ const RatingDial = ({ score, displaySize = 62 }) => {
   const color = score >= 7.0 ? COLORS.green : score >= 5.5 ? COLORS.amber : COLORS.red;
 
   const [intPart, decPart] = score.toFixed(1).split(".");
-  const fontSize = displaySize >= 90 ? 24 : displaySize >= 62 ? 18 : 14;
-  const decSize = fontSize * 0.78;
+  const fontSize = displaySize >= 90 ? 24 : displaySize >= 62 ? 20 : 16;
 
   return (
     <div style={{ position: "relative", width: displaySize, height: displaySize, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
       <svg viewBox="0 0 100 100" width={displaySize} height={displaySize} style={{ position: "absolute", top: 0, left: 0 }}>
-        {/* Background disc — matches .background-disc { stroke: rgba(50,50,50,0.1) } */}
-        <circle cx={halfSize} cy={halfSize} r={halfWidth} fill="none" stroke="rgba(50,50,50,0.1)" strokeWidth={svgStrokeWidth} />
-        {/* Rating arc */}
+        <circle cx={halfSize} cy={halfSize} r={halfWidth} fill="none" stroke="rgba(50,50,50,0.1)" strokeWidth={svgStrokeWidth} className="background-disc" />
         <circle
           cx={halfSize} cy={halfSize} r={halfWidth}
           fill="none"
@@ -2708,12 +2705,12 @@ const RatingDial = ({ score, displaySize = 62 }) => {
           strokeDashoffset={strokeOffset}
           strokeLinecap="round"
           transform={`rotate(-82,${halfSize},${halfSize})`}
+          className="rating-disc"
         />
       </svg>
-      {/* .rating__score overlay */}
-      <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "baseline", fontWeight: 700, color: COLORS.text, fontFamily: FONT }}>
-        <span style={{ fontSize }}>{intPart}</span>
-        <span style={{ fontSize: decSize }}>.{decPart}</span>
+      {/* .rating__score */}
+      <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "baseline", fontSize, fontWeight: 700, color: COLORS.text, fontFamily: FONT }}>
+        {intPart}<span>.{decPart}</span>
       </div>
     </div>
   );
@@ -2795,7 +2792,7 @@ const AnimatedRatingDial = ({ score, large = false, displaySize: displaySizeProp
         style={{ transition: "stroke 0.25s ease" }} />
       {displaySize >= 44 && (
         <text x="50" y="50" textAnchor="middle" dominantBaseline="central"
-          style={{ fontSize: 28, fontWeight: 700, fontFamily: FONT, fill: COLORS.text }}>
+          style={{ fontSize: Math.round(16 * 100 / displaySize), fontWeight: 700, fontFamily: FONT, fill: COLORS.text }}>
           {score.toFixed(1)}
         </text>
       )}
@@ -4647,8 +4644,8 @@ export default function JobTriagePage() {
       {matchCard}
       {/* "What you need to know" — always visible, no accordion */}
       <div style={{ paddingBottom: S.m2 }}>
-        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, padding: `0 0 ${S.m}px` }}>See how you fit</div>
-        <div style={{ background: COLORS.card, borderRadius: 5, padding: `0 ${S.m}px` }}>
+        <div style={{ background: COLORS.card, borderRadius: "0 0 5px 5px", borderTop: `3px solid ${COLORS.accent}`, padding: `${S.m}px ${S.m}px 0` }}>
+        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>See how you fit</div>
           {(() => {
             const hasBackground = Object.keys(profileBackground).length > 0;
             const hasWorkStyle = Object.keys(workStylePrefs).length > 0;
