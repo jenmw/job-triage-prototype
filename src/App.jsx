@@ -280,6 +280,8 @@ const JOBS = [
         { pct: 85, label: "Easy to book holiday", subtext: "Based on 3,798 Breakroom Quiz responses", heading: "Most people find it easy to book holiday", primary: "Most people find it easy to book holiday.", secondary: "85% of people say it's easy to book holiday.", why: "A good job should let you take time off when you need it, and it shouldn't be a nightmare to arrange." },
         { pct: 85, label: "Easy to take sick leave", subtext: "Based on 3,798 Breakroom Quiz responses", heading: "Most people find it easy to take sick leave", primary: "Most people find it easy to take sick leave.", secondary: "85% of people say it's easy to take sick leave when they need it.", why: "Being able to take sick leave when you need it is important for your health and wellbeing." },
         { pct: 83, label: "Hours match contract", subtext: "Based on 3,798 Breakroom Quiz responses", heading: "Most people work the same hours as their contract", primary: "Most people work the same hours as their contract.", secondary: "83% of people say they work the same number of hours as stated in their contract.", why: "Your contract should accurately reflect the hours you work. Working significantly more than your contracted hours without pay is unfair." },
+        { pct: 72, label: "Recommended by students", subtext: "Based on 3,798 Breakroom Quiz responses", heading: "Most students recommend Amazon", primary: "Most students recommend working at Amazon.", secondary: "72% of students say they would recommend Amazon to other students looking for work.", why: "A recommendation from people in a similar situation to you is a reliable signal that a job is worth considering." },
+        { pct: 70, label: "Recommended by parents", subtext: "Based on 3,798 Breakroom Quiz responses", heading: "Most parents recommend Amazon", primary: "Most parents recommend working at Amazon.", secondary: "70% of parents say they would recommend Amazon to someone they care about.", why: "When parents recommend a job, it's usually because they believe it's safe, fair, and worth your time." },
       ],
     },
     reviews: [
@@ -636,6 +638,8 @@ const JOBS = [
         { pct: 85, label: "Easy to book holiday", subtext: "Based on 3,798 Breakroom Quiz responses", heading: "Most people find it easy to book holiday", primary: "Most people find it easy to book holiday.", secondary: "85% of people say it's easy to book holiday.", why: "A good job should let you take time off when you need it." },
         { pct: 85, label: "Easy to take sick leave", subtext: "Based on 3,798 Breakroom Quiz responses", heading: "Most people find it easy to take sick leave", primary: "Most people find it easy to take sick leave.", secondary: "85% of people say it's easy to take sick leave when they need it.", why: "Being able to take sick leave when you need it is important for your health and wellbeing." },
         { pct: 83, label: "Hours match contract", subtext: "Based on 3,798 Breakroom Quiz responses", heading: "Most people work the same hours as their contract", primary: "Most people work the same hours as their contract.", secondary: "83% of people say they work the same number of hours as stated in their contract.", why: "Your contract should accurately reflect the hours you work." },
+        { pct: 72, label: "Recommended by students", subtext: "Based on 3,798 Breakroom Quiz responses", heading: "Most students recommend Amazon", primary: "Most students recommend working at Amazon.", secondary: "72% of students say they would recommend Amazon to other students looking for work.", why: "A recommendation from people in a similar situation to you is a reliable signal that a job is worth considering." },
+        { pct: 70, label: "Recommended by parents", subtext: "Based on 3,798 Breakroom Quiz responses", heading: "Most parents recommend Amazon", primary: "Most parents recommend working at Amazon.", secondary: "70% of parents say they would recommend Amazon to someone they care about.", why: "When parents recommend a job, it's usually because they believe it's safe, fair, and worth your time." },
       ],
     },
     reviews: [
@@ -727,6 +731,7 @@ const JOBS = [
         { pct: 71, label: "Easy to take sick leave", subtext: "Based on 320 Breakroom Quiz responses", heading: "Most people find it easy to take sick leave", primary: "Most people find it easy to take sick leave.", secondary: "71% of people say it's easy to take sick leave when they need it.", why: "Being able to take sick leave when you need it is important for your health and wellbeing." },
         { pct: 80, label: "Hours match contract", subtext: "Based on 320 Breakroom Quiz responses", heading: "Most people work the same hours as their contract", primary: "Most people work the same hours as their contract.", secondary: "80% of people say they work the same number of hours as stated in their contract.", why: "Your contract should accurately reflect the hours you work." },
         { pct: 69, label: "Treated with respect", subtext: "Based on 320 Breakroom Quiz responses", heading: "Most people feel treated with respect by their managers", primary: "Most people feel treated with respect by their managers.", secondary: "69% of people feel treated with respect by their managers.", why: "Everyone deserves to be treated with respect at work." },
+        { pct: 71, label: "Recommended by students", subtext: "Based on 320 Breakroom Quiz responses", heading: "Most students recommend Greencore", primary: "Most students recommend working at Greencore.", secondary: "71% of students say they would recommend Greencore to other students looking for work.", why: "A recommendation from people in a similar situation to you is a reliable signal that a job is worth considering." },
       ],
     },
     reviews: [
@@ -1052,6 +1057,8 @@ const JOBS = [
         { pct: 88, label: "Hours security", subtext: "Based on 412 Breakroom Quiz responses", heading: "Most people don't worry about their hours", primary: "Most people don't worry about their hours.", secondary: "88% of people report they don't worry about getting enough hours.", why: "At a good job, you shouldn't have to worry about getting enough hours each week." },
         { pct: 85, label: "No unpaid overtime", subtext: "Based on 412 Breakroom Quiz responses", heading: "Most people don't do unpaid extra work", primary: "Most people don't do unpaid extra work.", secondary: "85% of people report that they don't do extra unpaid work.", why: "Everyone should get paid for any extra work they do." },
         { pct: 83, label: "Proper breaks", subtext: "Based on 412 Breakroom Quiz responses", heading: "Most people get proper breaks", primary: "Most people get proper breaks.", secondary: "83% of people report that they get to take proper breaks.", why: "When you take a break it should be a proper rest." },
+        { pct: 76, label: "Recommended by students", subtext: "Based on 412 Breakroom Quiz responses", heading: "Most students recommend PepsiCo", primary: "Most students recommend working at PepsiCo.", secondary: "76% of students say they would recommend PepsiCo to other students looking for work.", why: "A recommendation from people in a similar situation to you is a reliable signal that a job is worth considering." },
+        { pct: 73, label: "Recommended by parents", subtext: "Based on 412 Breakroom Quiz responses", heading: "Most parents recommend PepsiCo", primary: "Most parents recommend working at PepsiCo.", secondary: "73% of parents say they would recommend PepsiCo to someone they care about.", why: "When parents recommend a job, it's usually because they believe it's safe, fair, and worth your time." },
       ],
     },
     reviews: [
@@ -1665,6 +1672,7 @@ const JOBS = [
         { pct: 75, label: "Good communication", subtext: "Based on 54 Breakroom Quiz responses", heading: "Most people feel well informed about the company", primary: "Most people feel well informed about how the company is doing.", secondary: "75% of people feel well informed about how the company is doing as a whole.", why: "Being kept informed about the company helps you feel like a valued part of the business." },
         { pct: 74, label: "Easy holiday booking", subtext: "Based on 54 Breakroom Quiz responses", heading: "Most people find it easy to book holiday", primary: "Most people find it easy to book holiday.", secondary: "74% of people report it's easy to book holiday.", why: "A good job should let you take time off when you need it, without it being a nightmare to arrange." },
         { pct: 71, label: "Treated with respect", subtext: "Based on 54 Breakroom Quiz responses", heading: "Most people feel treated with respect", primary: "Most people feel treated with respect by their managers.", secondary: "71% of people feel treated with respect by their managers.", why: "Everyone deserves to be treated with respect at work." },
+        { pct: 70, label: "Recommended by students", subtext: "Based on 54 Breakroom Quiz responses", heading: "Most students recommend Samworth Brothers", primary: "Most students recommend working at Samworth Brothers.", secondary: "70% of students say they would recommend Samworth Brothers to other students looking for work.", why: "A recommendation from people in a similar situation to you is a reliable signal that a job is worth considering." },
       ],
     },
     reviews: [
@@ -2078,6 +2086,8 @@ const JOBS = [
         { pct: 88, label: "No last-minute shift changes", subtext: "Based on 1,243 Breakroom Quiz responses", heading: "Shifts don't get changed at short notice", primary: "Shifts don't get changed at short notice.", secondary: "88% of people say their manager doesn't change their shifts at the last minute.", why: "At a good job you won't be messed around at the last minute." },
         { pct: 84, label: "No unpaid overtime", subtext: "Based on 1,243 Breakroom Quiz responses", heading: "Most people don't do unpaid extra work", primary: "Most people don't do unpaid extra work.", secondary: "84% of people report that they don't do extra unpaid work.", why: "Everyone should get paid for any extra work they do." },
         { pct: 83, label: "Proper breaks", subtext: "Based on 1,243 Breakroom Quiz responses", heading: "Most people get proper breaks", primary: "Most people get proper breaks.", secondary: "83% of people report that they get to take proper breaks.", why: "When you take a break it should be a proper rest." },
+        { pct: 73, label: "Recommended by students", subtext: "Based on 1,243 Breakroom Quiz responses", heading: "Most students recommend Lidl", primary: "Most students recommend working at Lidl.", secondary: "73% of students say they would recommend Lidl to other students looking for work.", why: "A recommendation from people in a similar situation to you is a reliable signal that a job is worth considering." },
+        { pct: 71, label: "Recommended by parents", subtext: "Based on 1,243 Breakroom Quiz responses", heading: "Most parents recommend Lidl", primary: "Most parents recommend working at Lidl.", secondary: "71% of parents say they would recommend Lidl to someone they care about.", why: "When parents recommend a job, it's usually because they believe it's safe, fair, and worth your time." },
       ],
     },
     reviews: [
@@ -4366,6 +4376,24 @@ export default function JobTriagePage() {
 
   const hardReqs = getHardRequirements(job);
 
+  const PRIORITY_FINDING_KW = {
+    "Good shift notice":        "last-minute",
+    "Good team mates":          "team atmosphere",
+    "Career progression":       "progression",
+    "Good managers":            "respect",
+    "Recommended by students":  "recommended by students",
+    "Recommended by parents":   "recommended by parents",
+  };
+  const priorityHighlight = useMemo(() => {
+    const existing = new Set(job.highlights);
+    const eligible = profilePriorities
+      .filter(p => PRIORITY_FINDING_KW[p])
+      .map(p => (job.findings.good || []).find(f => f.label.toLowerCase().includes(PRIORITY_FINDING_KW[p])))
+      .filter(f => f && !existing.has(f.label));
+    if (eligible.length === 0) return null;
+    return eligible[Math.floor(Math.random() * eligible.length)];
+  }, [job.id, profilePriorities.join(",")]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const scrollToFindings = () => {
     if (!findingsSectionRef.current) return;
     const y = findingsSectionRef.current.getBoundingClientRect().top + window.scrollY - 70;
@@ -4456,9 +4484,10 @@ export default function JobTriagePage() {
         </div>
 
         {/* Highlights */}
-        {job.highlights.length > 0 && (
+        {(job.highlights.length > 0 || priorityHighlight) && (
           <div style={{ display: "flex", gap: S.s, flexWrap: "wrap", marginBottom: S.s }}>
             {job.highlights.map((h) => <VacancyHighlight key={h} label={h} onClick={() => handlePillClick(h)} />)}
+            {priorityHighlight && <VacancyHighlight key={priorityHighlight.label} label={priorityHighlight.label} onClick={() => handlePillClick(priorityHighlight.label)} />}
           </div>
         )}
 
@@ -4960,7 +4989,7 @@ export default function JobTriagePage() {
             <button onClick={() => setProfileOpen(true)} style={{ height: "100%", minWidth: 48, background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", gap: 5, padding: "14px 8px 0", position: "relative" }}>
               <IconUserNav />
               {hasPersonalisation && !isSignedIn && (() => {
-                const count = [profilePostcode, profileCurrentPay, profileTravel, profilePriorities.length > 0, userLicences.size > 0, Object.keys(profileBackground).length > 0, Object.keys(workStylePrefs).length > 0].filter(Boolean).length;
+                const count = [profilePostcode, profileCurrentPay, profileTravel.length > 0, profilePriorities.length > 0, userLicences.size > 0, Object.keys(profileBackground).length > 0, Object.keys(workStylePrefs).length > 0].filter(Boolean).length;
                 return (
                   <span key={count} className="badge-bounce" style={{ position: "absolute", top: 8, right: 2, minWidth: 16, height: 16, borderRadius: 8, background: COLORS.accent, border: `2px solid ${COLORS.card}`, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 3px", boxSizing: "border-box" }}>
                     <span style={{ fontSize: 10, fontWeight: 700, color: "#fff", fontFamily: FONT, lineHeight: 1 }}>{count}</span>
