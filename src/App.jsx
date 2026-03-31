@@ -4136,6 +4136,7 @@ const DesktopSidebar = ({ currentJobIdx, rating, personalised, isSignedIn, onOpe
 
       {/* Paginated job list with sort */}
       <div>
+        <h2 style={{ ...T.lead1, margin: `0 0 ${S.xs}px`, fontFamily: FONT, color: COLORS.text }}>Similar jobs nearby</h2>
         {/* Sort pills */}
         <div style={{ display: "flex", alignItems: "center", gap: S.xs, marginBottom: S.s, flexWrap: "wrap" }}>
           <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, whiteSpace: "nowrap" }}>Sort:</span>
@@ -4158,6 +4159,19 @@ const DesktopSidebar = ({ currentJobIdx, rating, personalised, isSignedIn, onOpe
         </div>
         {/* Job cards */}
         <div style={{ display: "flex", flexDirection: "column", gap: S.s2 }}>
+          {!personalised && (
+            <button onClick={onOpenDrawer} style={{
+              background: COLORS.accentBg, borderRadius: 5, border: `2px solid ${COLORS.accent}`,
+              padding: S.m, cursor: "pointer", fontFamily: FONT, textAlign: "left", width: "100%",
+              display: "flex", justifyContent: "space-between", alignItems: "center",
+            }}>
+              <div>
+                <div style={{ ...T.body1Bold, color: COLORS.accent, fontFamily: FONT, marginBottom: S.xs }}>Set your priorities</div>
+                <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>Your priorities, flagged on every job</div>
+              </div>
+              <span style={{ color: COLORS.accent, fontSize: 20, lineHeight: 1 }}>›</span>
+            </button>
+          )}
           {pageJobs.map(job => (
             <SearchResultCard key={job.id} job={job} onClick={() => onJobSelect(job.id)} profilePriorities={profilePriorities} />
           ))}
@@ -5094,7 +5108,7 @@ export default function JobTriagePage() {
       {isDesktop ? (
         <>
           {/* Search bar */}
-          <div style={{ background: COLORS.card, borderBottom: `1px solid ${COLORS.border}`, padding: `${S.m}px` }}>
+          <div style={{ background: COLORS.card, borderBottom: `1px solid ${COLORS.border}`, padding: `${S.m}px`, position: "relative", zIndex: 20 }}>
             <div style={{ maxWidth: 1032, margin: "0 auto" }}>
               <div style={{ display: "flex", gap: S.s }}>
                 <div style={{ flex: 1, minWidth: 0, border: `1px solid ${COLORS.border}`, borderRadius: 4, padding: `8px ${S.m}px`, background: COLORS.bg }}>
