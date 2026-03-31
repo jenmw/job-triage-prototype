@@ -4092,37 +4092,100 @@ const RequirementsNotice = ({ reqs }) => {
 
 // ─── Desktop sidebar ───────────────────────────────────────────────────────────
 
-const DesktopSidebar = ({ currentJobIdx, rating, personalised, isSignedIn, onOpenDrawer, onJobSelect, onOpenProfile, coords, location, onMapExpand, hardReqs }) => (
-  <div style={{ display: "flex", flexDirection: "column", gap: S.l2, paddingTop: S.m2 }}>
-    {/* CTA card — sticky below header (70px) + S.m gap */}
-    <div style={{ position: "sticky", top: 70 + S.m, zIndex: 10 }}>
-      {/* Fade above — reaches full opacity before the header boundary so the whole gap is solidly masked */}
-      <div style={{ position: "absolute", bottom: "100%", left: 0, right: 0, height: 48, background: `linear-gradient(to bottom, transparent, ${COLORS.bg} ${S.m}px)`, pointerEvents: "none" }} />
-      {/* Fade below — at zIndex 1 so the card's box-shadow (at zIndex 2) paints on top of it cleanly */}
-      <div style={{ position: "absolute", top: "100%", left: 0, right: 0, height: 40, background: `linear-gradient(to bottom, ${COLORS.bg}, transparent)`, pointerEvents: "none", zIndex: 1 }} />
-<div style={{ position: "relative", zIndex: 2, background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: `${S.m}px ${S.m2}px` }}>
-      <RequirementsNotice reqs={hardReqs ?? []} />
-<button style={{ width: "100%", padding: "6px 22px", borderRadius: 4, border: "2px solid transparent", background: COLORS.accent, color: "#fff", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, marginBottom: S.s, transition: "background-color 0.25s ease" }}>
-        Apply on external site
-      </button>
-      <div style={{ display: "flex", gap: S.s }}>
-        <button style={{ flex: 1, padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.text}`, background: "transparent", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
-          Save for later
-        </button>
-        <button onClick={onOpenDrawer} style={{ flex: 1, padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.accent }}>
-          Match me
-        </button>
+const DesktopSidebar = ({ currentJobIdx, rating, personalised, isSignedIn, onOpenDrawer, onJobSelect, onOpenProfile, coords, location, onMapExpand, hardReqs, jobs, profilePriorities }) => {
+  const [sortKey, setSortKey] = useState("relevant");
+  const [page, setPage] = useState(0);
+  const PAGE_SIZE = 6;
+
+  const sorted = useMemo(() => {
+    const arr = [...jobs];
+    if (sortKey === "rating") arr.sort((a, b) => b.rating - a.rating);
+    if (sortKey === "pay")    arr.sort((a, b) => parsePayToHourly(b.pay) - parsePayToHourly(a.pay));
+    return arr;
+  }, [jobs, sortKey]);
+
+  const pageCount = Math.ceil(sorted.length / PAGE_SIZE);
+  const pageJobs = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: S.l2, paddingTop: S.m2 }}>
+      {/* CTA card — sticky below header (70px) + S.m gap */}
+      <div style={{ position: "sticky", top: 70 + S.m, zIndex: 10 }}>
+        {/* Fade above — reaches full opacity before the header boundary so the whole gap is solidly masked */}
+        <div style={{ position: "absolute", bottom: "100%", left: 0, right: 0, height: 48, background: `linear-gradient(to bottom, transparent, ${COLORS.bg} ${S.m}px)`, pointerEvents: "none" }} />
+        {/* Fade below — at zIndex 1 so the card's box-shadow (at zIndex 2) paints on top of it cleanly */}
+        <div style={{ position: "absolute", top: "100%", left: 0, right: 0, height: 40, background: `linear-gradient(to bottom, ${COLORS.bg}, transparent)`, pointerEvents: "none", zIndex: 1 }} />
+        <div style={{ position: "relative", zIndex: 2, background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: `${S.m}px ${S.m2}px` }}>
+          <RequirementsNotice reqs={hardReqs ?? []} />
+          <button style={{ width: "100%", padding: "6px 22px", borderRadius: 4, border: "2px solid transparent", background: COLORS.accent, color: "#fff", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, marginBottom: S.s, transition: "background-color 0.25s ease" }}>
+            Apply on external site
+          </button>
+          <div style={{ display: "flex", gap: S.s }}>
+            <button style={{ flex: 1, padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.text}`, background: "transparent", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
+              Save for later
+            </button>
+            <button onClick={onOpenDrawer} style={{ flex: 1, padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.accent }}>
+              Match me
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Map — scrolls with page */}
+      <MapThumbnail coords={coords} onExpand={onMapExpand} height={180} label={location} />
+
+      {/* Paginated job list with sort */}
+      <div>
+        {/* Sort pills */}
+        <div style={{ display: "flex", alignItems: "center", gap: S.xs, marginBottom: S.s, flexWrap: "wrap" }}>
+          <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, whiteSpace: "nowrap" }}>Sort:</span>
+          {SORT_OPTIONS.map(o => (
+            <span
+              key={o.key}
+              onClick={() => { setSortKey(o.key); setPage(0); }}
+              style={{
+                ...T.body2, fontFamily: FONT, cursor: "pointer", whiteSpace: "nowrap",
+                border: `1px solid ${sortKey === o.key ? COLORS.accent : COLORS.border}`,
+                borderRadius: 20, padding: "4px 12px",
+                background: sortKey === o.key ? COLORS.accentBg : COLORS.bg,
+                color: sortKey === o.key ? COLORS.accent : COLORS.text,
+                fontWeight: sortKey === o.key ? 700 : 400,
+              }}
+            >
+              {o.label}
+            </span>
+          ))}
+        </div>
+        {/* Job cards */}
+        <div style={{ display: "flex", flexDirection: "column", gap: S.s2 }}>
+          {pageJobs.map(job => (
+            <SearchResultCard key={job.id} job={job} onClick={() => onJobSelect(job.id)} profilePriorities={profilePriorities} />
+          ))}
+        </div>
+        {/* Pagination */}
+        {pageCount > 1 && (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: S.m, marginTop: S.m }}>
+            <button
+              onClick={() => setPage(p => p - 1)}
+              disabled={page === 0}
+              style={{ background: "none", border: `1px solid ${COLORS.border}`, borderRadius: 4, padding: "4px 12px", cursor: page === 0 ? "default" : "pointer", color: page === 0 ? COLORS.muted : COLORS.text, ...T.body2, fontFamily: FONT }}
+            >
+              ← Prev
+            </button>
+            <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{page + 1} of {pageCount}</span>
+            <button
+              onClick={() => setPage(p => p + 1)}
+              disabled={page === pageCount - 1}
+              style={{ background: "none", border: `1px solid ${COLORS.border}`, borderRadius: 4, padding: "4px 12px", cursor: page === pageCount - 1 ? "default" : "pointer", color: page === pageCount - 1 ? COLORS.muted : COLORS.text, ...T.body2, fontFamily: FONT }}
+            >
+              Next →
+            </button>
+          </div>
+        )}
       </div>
     </div>
-    </div>
-
-    {/* Map — scrolls with page, sits above similar jobs */}
-    <MapThumbnail coords={coords} onExpand={onMapExpand} height={180} label={location} />
-
-    {/* Alternatives — not sticky, scrolls with page */}
-    <AlternativesList currentJobIdx={currentJobIdx} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={onOpenDrawer} onOpenProfile={onOpenProfile} onJobSelect={onJobSelect} />
-  </div>
-);
+  );
+};
 
 // ─── Pay benchmark helpers ──────────────────────────────────────────────────────
 
@@ -4273,13 +4336,14 @@ export default function JobTriagePage() {
   const [profileRolePrefs, setProfileRolePrefs] = useState({});
 
   const hasPersonalisation = personalised || userLicences.size > 0 || Object.keys(profileBackground).length > 0 || Object.keys(workStylePrefs).length > 0;
+  const isDesktop = useIsDesktop();
 
   // Lock body scroll when any drawer or modal is open
   useEffect(() => {
-    const anyOpen = drawerOpen || backgroundDrawerOpen || profileOpen || licenceModalOpen || allFindingsModalOpen || mapModalOpen;
+    const anyOpen = drawerOpen || backgroundDrawerOpen || profileOpen || licenceModalOpen || allFindingsModalOpen || mapModalOpen || (!isDesktop && view === "job");
     document.body.style.overflow = anyOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
-  }, [drawerOpen, backgroundDrawerOpen, profileOpen, licenceModalOpen]);
+  }, [drawerOpen, backgroundDrawerOpen, profileOpen, licenceModalOpen, isDesktop, view]);
 
   useEffect(() => {
     if (!profilePostcode) { setProfileCoords(null); return; }
@@ -4310,7 +4374,6 @@ export default function JobTriagePage() {
     setUserEmail(email);
   };
   const findingsSectionRef = useRef(null);
-  const isDesktop = useIsDesktop();
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 4);
@@ -4422,9 +4485,11 @@ export default function JobTriagePage() {
 
   const heroBlock = (
     <div style={{ paddingTop: S.m2, paddingBottom: 0 }}>
-      <div style={{ marginBottom: S.s }}>
-        <span onClick={handleBackToSearch} style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, cursor: "pointer" }}>← Search results</span>
-      </div>
+      {!isDesktop && (
+        <div style={{ marginBottom: S.s }}>
+          <span onClick={handleBackToSearch} style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, cursor: "pointer" }}>← Search results</span>
+        </div>
+      )}
       <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>
         {job.companyUrl ? <a href={job.companyUrl} style={{ color: "inherit", fontWeight: "inherit", textDecoration: "underline" }}>{job.company}</a> : job.company}
       </div>
@@ -5026,51 +5091,76 @@ export default function JobTriagePage() {
         </div>
       </div>
 
-      {view === "search" ? (
-        <SearchResultsPage jobs={JOBS} onJobSelect={handleJobSelect} isDesktop={isDesktop} profilePriorities={profilePriorities} />
+      {isDesktop ? (
+        <>
+          {/* Search bar */}
+          <div style={{ background: COLORS.card, borderBottom: `1px solid ${COLORS.border}`, padding: `${S.m}px` }}>
+            <div style={{ maxWidth: 1032, margin: "0 auto" }}>
+              <div style={{ display: "flex", gap: S.s }}>
+                <div style={{ flex: 1, minWidth: 0, border: `1px solid ${COLORS.border}`, borderRadius: 4, padding: `8px ${S.m}px`, background: COLORS.bg }}>
+                  <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>What</div>
+                  <div style={{ ...T.body1, color: COLORS.text, fontFamily: FONT }}>Warehouse</div>
+                </div>
+                <div style={{ flex: 1, minWidth: 0, border: `1px solid ${COLORS.border}`, borderRadius: 4, padding: `8px ${S.m}px`, background: COLORS.bg }}>
+                  <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>Where</div>
+                  <div style={{ ...T.body1, color: COLORS.text, fontFamily: FONT }}>Corby, Northamptonshire</div>
+                </div>
+                <button style={{ background: COLORS.accent, color: "#fff", border: "none", borderRadius: 4, padding: `0 ${S.m2}px`, ...T.body1Bold, fontFamily: FONT, cursor: "pointer" }}>Search</button>
+              </div>
+            </div>
+          </div>
+          {/* Combined layout: vacancy left, sidebar right */}
+          <div style={{ maxWidth: 1032, margin: "0 auto", padding: `0 ${S.m}px ${S.xl}px`, display: "grid", gridTemplateColumns: "1fr 380px", gap: S.xl, alignItems: "start" }}>
+            <div>
+              {heroBlock}
+              {sectionsBlock}
+            </div>
+            <DesktopSidebar currentJobIdx={selectedJobIdx} rating={JOBS[selectedJobIdx].rating} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} onOpenProfile={() => setProfileOpen(true)} coords={JOBS[selectedJobIdx].coords} location={JOBS[selectedJobIdx].location} onMapExpand={() => setMapModalOpen(true)} hardReqs={hardReqs} jobs={JOBS} profilePriorities={profilePriorities} />
+          </div>
+        </>
       ) : (
         <>
-          {isDesktop ? (
-            <div style={{ maxWidth: 1032, margin: "0 auto", padding: `0 ${S.m}px ${S.xl}px`, display: "grid", gridTemplateColumns: "1fr 380px", gap: S.xl, alignItems: "start" }}>
-              <div>
-                {heroBlock}
-                {sectionsBlock}
-              </div>
-              <DesktopSidebar currentJobIdx={selectedJobIdx} rating={JOBS[selectedJobIdx].rating} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} onOpenProfile={() => setProfileOpen(true)} coords={JOBS[selectedJobIdx].coords} location={JOBS[selectedJobIdx].location} onMapExpand={() => setMapModalOpen(true)} hardReqs={hardReqs} />
+          {/* Mobile: results list always visible behind drawer */}
+          <SearchResultsPage jobs={JOBS} onJobSelect={handleJobSelect} isDesktop={false} profilePriorities={profilePriorities} />
+
+          {/* Mobile vacancy drawer — 95% height, opens over results list */}
+          <div onClick={handleBackToSearch} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 99, opacity: view === "job" ? 1 : 0, pointerEvents: view === "job" ? "auto" : "none", transition: "opacity 0.35s ease" }} />
+          <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, height: "95dvh", zIndex: 100, background: COLORS.bg, borderRadius: "16px 16px 0 0", transform: view === "job" ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+            {/* Handle bar */}
+            <div style={{ flexShrink: 0, display: "flex", justifyContent: "center", padding: `${S.s}px 0 0` }}>
+              <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border }} />
             </div>
-          ) : (
-            <div style={{ padding: `0 ${S.m}px ${hardReqs.length > 0 ? S.xxl + hardReqs.length * 28 : S.xxl}px` }}>
+            {/* Scrollable content */}
+            <div style={{ flex: 1, overflowY: "auto", padding: `0 ${S.m}px` }}>
               {heroBlock}
               {sectionsBlock}
               <div style={{ marginTop: S.m2, marginBottom: S.s }}>
                 <AlternativesList currentJobIdx={selectedJobIdx} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={() => setDrawerOpen(true)} onOpenProfile={() => setProfileOpen(true)} onJobSelect={handleJobSelect} />
               </div>
+              <div style={{ height: S.xxl }} />
             </div>
-          )}
-
-          {/* Mobile sticky bottom bar */}
-          {!isDesktop && (
-        <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 40, background: COLORS.card, boxShadow: "0 -2px 8px rgba(0,0,0,0.08)", padding: `${S.s2}px ${S.m}px` }}>
-          <div style={{ maxWidth: 480, margin: "0 auto" }}>
-            {hardReqs.length > 0 && (
-              <div style={{ marginBottom: S.s }}>
-                <RequirementsNotice reqs={hardReqs} />
+            {/* Sticky CTA bar at bottom of drawer */}
+            <div style={{ flexShrink: 0, background: COLORS.card, boxShadow: "0 -2px 8px rgba(0,0,0,0.08)", padding: `${S.s2}px ${S.m}px` }}>
+              <div style={{ maxWidth: 480, margin: "0 auto" }}>
+                {hardReqs.length > 0 && (
+                  <div style={{ marginBottom: S.s }}>
+                    <RequirementsNotice reqs={hardReqs} />
+                  </div>
+                )}
+                <div style={{ display: "flex", gap: S.s2 }}>
+                  <button style={{ flex: 1, padding: "6px 22px", borderRadius: 4, border: "2px solid transparent", background: COLORS.accent, color: "#fff", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT }}>
+                    Apply
+                  </button>
+                  <button style={{ padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.text}`, background: "transparent", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
+                    Save
+                  </button>
+                  <button onClick={(e) => { e.stopPropagation(); setDrawerOpen(true); }} style={{ padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.accent, whiteSpace: "nowrap" }}>
+                    Match me
+                  </button>
+                </div>
               </div>
-            )}
-            <div style={{ display: "flex", gap: S.s2 }}>
-              <button style={{ flex: 1, padding: "6px 22px", borderRadius: 4, border: "2px solid transparent", background: COLORS.accent, color: "#fff", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT }}>
-                Apply
-              </button>
-              <button style={{ padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.text}`, background: "transparent", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
-                Save
-              </button>
-              <button onClick={() => setDrawerOpen(true)} style={{ padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.accent, whiteSpace: "nowrap" }}>
-                Match me
-              </button>
             </div>
           </div>
-        </div>
-        )}
         </>
       )}
 
