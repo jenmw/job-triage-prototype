@@ -3927,20 +3927,24 @@ const SearchResultCard = ({ job, onClick, viewedJob }) => {
 
   // Pay badge — green chip showing how much more this job pays vs the viewed job
   let payBadge = null;
-  if (job.payType === "annual" && viewedJob?.payType === "annual" && job.pay && viewedJob?.pay) {
-    const parseAnnual = (s) => {
-      const nums = [...s.replace(/[£\s]/g, "").matchAll(/[\d,]+/g)].map(m => parseFloat(m[0].replace(/,/g, "")));
-      return nums.length >= 2 ? { val: (nums[0] + nums[1]) / 2, isRange: true } : { val: nums[0] ?? 0, isRange: false };
+  if (viewedJob && job.pay && viewedJob.pay) {
+    const toHourly = (pay, payType) => {
+      const nums = [...pay.replace(/[£,]/g, "").matchAll(/[\d.]+/g)].map(m => parseFloat(m[0]));
+      if (!nums.length) return null;
+      const mid = nums.length >= 2 ? (nums[0] + nums[1]) / 2 : nums[0];
+      return (payType === "annual" || pay.includes("/yr")) ? mid / 2080 : mid;
     };
-    const alt = parseAnnual(job.pay);
-    const viewed = parseAnnual(viewedJob.pay);
-    if (alt.val > viewed.val) {
-      const diff = Math.round(alt.val - viewed.val);
-      const approx = alt.isRange || viewed.isRange;
-      payBadge = `↑ ${approx ? "About " : ""}£${diff.toLocaleString("en-GB")}/yr`;
+    const jobHr = toHourly(job.pay, job.payType);
+    const viewedHr = toHourly(viewedJob.pay, viewedJob.payType);
+    if (jobHr && viewedHr && jobHr > viewedHr) {
+      if (job.payType === "annual" || job.pay.includes("/yr")) {
+        const diff = Math.round((jobHr - viewedHr) * 2080);
+        payBadge = `↑ £${diff.toLocaleString("en-GB")}/yr`;
+      } else {
+        const diff = (jobHr - viewedHr).toFixed(2);
+        payBadge = `↑ £${diff}/hr`;
+      }
     }
-  } else if (job.altBadge && job.altBadge !== "Better rated" && job.payType !== "annual") {
-    payBadge = job.altBadge;
   }
 
   return (
