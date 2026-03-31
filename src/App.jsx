@@ -3922,11 +3922,33 @@ const getJobHighlights = (job) => {
   return chips;
 };
 
-const SearchResultCard = ({ job, onClick }) => {
+const SearchResultCard = ({ job, onClick, viewedJob }) => {
   const chips = getJobHighlights(job);
+
+  // Pay badge — green chip showing how much more this job pays vs the viewed job
+  let payBadge = null;
+  if (job.payType === "annual" && viewedJob?.payType === "annual" && job.pay && viewedJob?.pay) {
+    const parseAnnual = (s) => {
+      const nums = [...s.replace(/[£\s]/g, "").matchAll(/[\d,]+/g)].map(m => parseFloat(m[0].replace(/,/g, "")));
+      return nums.length >= 2 ? { val: (nums[0] + nums[1]) / 2, isRange: true } : { val: nums[0] ?? 0, isRange: false };
+    };
+    const alt = parseAnnual(job.pay);
+    const viewed = parseAnnual(viewedJob.pay);
+    if (alt.val > viewed.val) {
+      const diff = Math.round(alt.val - viewed.val);
+      const approx = alt.isRange || viewed.isRange;
+      payBadge = `↑ ${approx ? "About " : ""}£${diff.toLocaleString("en-GB")}/yr`;
+    }
+  } else if (job.altBadge && job.altBadge !== "Better rated" && job.payType !== "annual") {
+    payBadge = job.altBadge;
+  }
+
   return (
     <div onClick={onClick} style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: S.m, cursor: "pointer" }}>
-      <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>{job.title}</div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: S.s, marginBottom: S.xs }}>
+        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{job.title}</div>
+        {payBadge && <span style={{ ...T.body2Bold, border: `2px solid ${COLORS.green}`, color: COLORS.greenText, background: COLORS.card, borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT, flexShrink: 0 }}>{payBadge}</span>}
+      </div>
       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: S.xs }}>
         <TinyRatingDial score={job.rating} />
         <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{job.rating.toFixed(1)}</span>
@@ -4092,7 +4114,7 @@ const RequirementsNotice = ({ reqs }) => {
 
 // ─── Desktop sidebar ───────────────────────────────────────────────────────────
 
-const DesktopSidebar = ({ currentJobIdx, rating, personalised, isSignedIn, onOpenDrawer, onJobSelect, onOpenProfile, coords, location, onMapExpand, hardReqs, jobs, profilePriorities }) => {
+const DesktopSidebar = ({ currentJobIdx, rating, personalised, isSignedIn, onOpenDrawer, onJobSelect, onOpenProfile, coords, location, onMapExpand, hardReqs, jobs, profilePriorities, viewedJob }) => {
   const [sortKey, setSortKey] = useState("relevant");
   const [page, setPage] = useState(0);
   const PAGE_SIZE = 6;
@@ -4173,7 +4195,7 @@ const DesktopSidebar = ({ currentJobIdx, rating, personalised, isSignedIn, onOpe
             </button>
           )}
           {pageJobs.map(job => (
-            <SearchResultCard key={job.id} job={job} onClick={() => onJobSelect(job.id)} profilePriorities={profilePriorities} />
+            <SearchResultCard key={job.id} job={job} onClick={() => onJobSelect(job.id)} profilePriorities={profilePriorities} viewedJob={viewedJob} />
           ))}
         </div>
         {/* Pagination */}
@@ -5129,7 +5151,7 @@ export default function JobTriagePage() {
               {heroBlock}
               {sectionsBlock}
             </div>
-            <DesktopSidebar currentJobIdx={selectedJobIdx} rating={JOBS[selectedJobIdx].rating} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} onOpenProfile={() => setProfileOpen(true)} coords={JOBS[selectedJobIdx].coords} location={JOBS[selectedJobIdx].location} onMapExpand={() => setMapModalOpen(true)} hardReqs={hardReqs} jobs={JOBS} profilePriorities={profilePriorities} />
+            <DesktopSidebar currentJobIdx={selectedJobIdx} rating={JOBS[selectedJobIdx].rating} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} onOpenProfile={() => setProfileOpen(true)} coords={JOBS[selectedJobIdx].coords} location={JOBS[selectedJobIdx].location} onMapExpand={() => setMapModalOpen(true)} hardReqs={hardReqs} jobs={JOBS} profilePriorities={profilePriorities} viewedJob={JOBS[selectedJobIdx]} />
           </div>
         </>
       ) : (
