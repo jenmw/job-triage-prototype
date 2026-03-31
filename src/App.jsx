@@ -246,7 +246,7 @@ const JOBS = [
     findingDiffs: ["No experience required", "Better rated employer"],
     requiresFltLicence: false,
     aiSummary: {
-      text: "Amazon pays above the local average and genuinely doesn't require previous experience, making it one of the better entry points into warehouse work in the area. The pace is relentless and every minute is tracked, but hours are guaranteed and most people feel safe on site.",
+      text: "Amazon pays above the local average for warehouse work. The pace is relentless and every minute is tracked, but hours are guaranteed and most people feel safe on site.",
       quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
@@ -515,7 +515,7 @@ const JOBS = [
       note: "1 year FLT experience",
     },
     aiSummary: {
-      text: "The pay is fair for licence holders and overtime isn't expected, but last-minute shift notice is a real frustration that makes it hard to plan your life around work. Worth considering if steady money matters more to you than a predictable schedule.",
+      text: "Pay is above average and overtime isn't expected, but last-minute shift notice is a real frustration that workers say makes it hard to plan around. Hours are reliable but rotas can change unpredictably.",
       quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "solo", public: false, outdoors: false, children: false },
@@ -604,7 +604,7 @@ const JOBS = [
       note: "Team leader experience",
     },
     aiSummary: {
-      text: "Amazon rewards team leaders well — pay is strong, hours are guaranteed, and there's real scope to progress if you engage with the systems. The targets trickle down relentlessly and the pace never drops, but most people say it compares well to other logistics employers.",
+      text: "Amazon pays well and hours are guaranteed, with real scope for progression. The targets are relentless and the pace never drops, but workers generally rate the experience positively.",
       quoteIdx: 0,
     },
     workStyle: { activity: "feet", teamwork: "team", public: false, outdoors: false, children: false },
@@ -780,7 +780,7 @@ const JOBS = [
     findingDiffs: ["Better sick pay cover"],
     requiresFltLicence: false,
     aiSummary: {
-      text: "Royal Mail offers secure hours, a living wage, and the benefit of finishing early — typically before the afternoon — which suits people who value predictable, unsociable-free evenings. The early starts are demanding and management at the top are widely seen as out of touch with what the job is actually like.",
+      text: "Royal Mail offers secure hours and a living wage, with shifts that typically finish in the early afternoon. The early starts are demanding and management at the top are widely seen as out of touch with what the work is actually like.",
       quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
@@ -1235,7 +1235,7 @@ const JOBS = [
     findingDiffs: [],
     requiresFltLicence: false,
     aiSummary: {
-      text: "Group Nexus offer consistent hours and you're not expected to do unpaid overtime, which workers flag as a genuine positive. As with all agency work here, there's no sick pay and pay varies significantly depending on which shifts you're assigned — confirm your rota before accepting.",
+      text: "Group Nexus offer consistent hours and workers aren't expected to do unpaid overtime. As with all agency work, there's no sick pay and pay can vary significantly depending on which shifts are assigned.",
       quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
@@ -1305,7 +1305,7 @@ const JOBS = [
       note: "Warehouse experience",
     },
     aiSummary: {
-      text: "Yusen is a stable, direct-employed role with reliable hours and a rota that stays predictable — good conditions for people who value routine over variety. No sick pay is the standout weakness, and workers note that head office are essentially invisible when it comes to understanding day-to-day conditions.",
+      text: "Yusen is a stable direct employer with reliable hours and a rota that stays predictable. No sick pay is the standout weakness, and workers note that head office are essentially invisible when it comes to understanding day-to-day conditions.",
       quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
@@ -1375,7 +1375,7 @@ const JOBS = [
       note: "Warehouse supervisory experience",
     },
     aiSummary: {
-      text: "Rhenus runs a predictable operation where hours are secure and shifts don't get changed last-minute — a genuine positive for supervisors who need to plan ahead. No sick pay at supervisory level is a recurring frustration, and most workers feel head office doesn't understand what it's really like on site.",
+      text: "Rhenus runs a predictable operation where hours are secure and shifts don't get changed last-minute. No sick pay is a recurring frustration, and most workers feel head office doesn't understand what it's really like on site.",
       quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
@@ -1445,7 +1445,7 @@ const JOBS = [
       note: "Warehouse management experience",
     },
     aiSummary: {
-      text: "Rhenus offers a stable management role with genuine operational autonomy and a team that tends to work well day to day. The main frustrations echo the rest of the company — no sick pay even at manager level, and a head office that workers say is out of touch with site realities.",
+      text: "Rhenus is a stable employer with a team that tends to work well day to day. The main frustrations are no sick pay and a head office that workers say is out of touch with site realities.",
       quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
@@ -1577,7 +1577,7 @@ const JOBS = [
       note: "Warehouse experience",
     },
     aiSummary: {
-      text: "Millbrook stands out for the meaningful nature of the work — you're supporting the supply of medical equipment to patients — and the day-to-day fundamentals are solid, with reliable hours, predictable rotas, and no unpaid overtime expected. No sick pay is the main concern workers raise, alongside a sense that head office management are removed from realities on site.",
+      text: "Millbrook is a healthcare logistics employer — the work involves supplying medical equipment to patients — with reliable hours, predictable rotas, and no unpaid overtime. No sick pay is the main concern workers raise, alongside a sense that head office are removed from realities on site.",
       quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
@@ -1997,7 +1997,7 @@ const JOBS = [
       note: "Admin experience",
     },
     aiSummary: {
-      text: "Great Bear provides a desk-based admin role with reliable hours and predictable shifts — a quieter and less physical environment than operative roles. No sick pay and a management layer described as disconnected from site realities are consistent concerns alongside moderate stress levels.",
+      text: "Great Bear offers reliable hours and predictable shifts. No sick pay and a management layer described as disconnected from site realities are consistent concerns, alongside moderate stress levels.",
       quoteIdx: 0,
     },
     workStyle: { activity: "sitting", teamwork: "team", public: false, outdoors: false, children: false },
@@ -2209,7 +2209,7 @@ const JOBS = [
       note: "Warehouse training or coaching experience",
     },
     aiSummary: {
-      text: "DHL is reliable on the fundamentals — hours are secure, shift changes are rare, and the training role adds more purpose and variety than standard operative work. The main frustrations are no paid breaks and very little say over shift patterns, which can feel restrictive in a role that requires some forward planning.",
+      text: "DHL is reliable on the fundamentals — hours are secure and shift changes are rare. The main frustrations are no paid breaks and very little say over which shift patterns workers are assigned.",
       quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
@@ -2335,7 +2335,7 @@ const JOBS = [
     findingDiffs: [],
     requiresFltLicence: false,
     aiSummary: {
-      text: "GSF Car Parts offers steady, predictable work with reliable hours and shift rotas that don't tend to change at the last minute. At £10/hr it pays well below the area average for warehouse work, and there's no sick pay on top of that.",
+      text: "GSF Car Parts offers steady, predictable work with reliable hours and shift rotas that don't tend to change at the last minute. Pay is well below the area average for warehouse work, and there's no sick pay on top of that.",
       quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
@@ -2403,7 +2403,7 @@ const JOBS = [
       note: "Warehouse team leader or supervisor experience",
     },
     aiSummary: {
-      text: "GXO offers exceptional shift stability — almost no one worries about their hours and rotas rarely change — and the team leader role comes with real supervisory responsibility alongside a meaningful pay uplift. No sick pay even at team leader level is the main frustration, and most workers say head office don't understand what it's actually like managing a team on site.",
+      text: "GXO offers exceptional shift stability — almost no one worries about their hours and rotas rarely change. Pay is above average and workers note real scope for progression. No sick pay is the main frustration, and most workers say head office don't understand what it's actually like on site.",
       quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
@@ -2529,7 +2529,7 @@ const JOBS = [
     findingDiffs: [],
     requiresFltLicence: false,
     aiSummary: {
-      text: "DHL is well-organised and reliable — hours are secure, shift changes are rare, and there's no unpaid overtime expected. The night shift commitment is worth thinking through carefully for lifestyle fit, and workers note that breaks aren't paid and there's very little say over which shifts you work.",
+      text: "DHL is well-organised and reliable — hours are secure, shift changes are rare, and there's no unpaid overtime. Workers note that breaks aren't paid and there's very little say over which shifts are assigned.",
       quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
@@ -2592,7 +2592,7 @@ const JOBS = [
     findingDiffs: [],
     requiresFltLicence: false,
     aiSummary: {
-      text: "Group Nexus's night rate is very competitive and hours are reliable, but the day rate is close to minimum wage — your actual earnings depend entirely on which shifts you're assigned. Agency conditions apply throughout: no sick pay, no paid breaks, and a management structure workers say has little connection to what happens on site.",
+      text: "Group Nexus offer reliable hours, but pay can vary significantly depending on which shifts workers are assigned. Agency conditions apply throughout: no sick pay, no paid breaks, and a management structure workers say has little connection to what happens on site.",
       quoteIdx: 0,
     },
     workStyle: { activity: "active", teamwork: "team", public: false, outdoors: false, children: false },
