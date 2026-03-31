@@ -3936,7 +3936,7 @@ const SearchResultCard = ({ job, onClick, viewedJob }) => {
     };
     const jobHr = toHourly(job.pay, job.payType);
     const viewedHr = toHourly(viewedJob.pay, viewedJob.payType);
-    if (jobHr && viewedHr && jobHr > viewedHr) {
+    if (jobHr && viewedHr && jobHr > viewedHr && job.payType === viewedJob.payType) {
       if (job.payType === "annual" || job.pay.includes("/yr")) {
         const diff = Math.round((jobHr - viewedHr) * 2080);
         payBadge = `↑ £${diff.toLocaleString("en-GB")}/yr`;
