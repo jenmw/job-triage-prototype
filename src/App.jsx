@@ -4491,9 +4491,12 @@ export default function JobTriagePage() {
       if (r.label.toLowerCase().includes("experience") || (job.matchCriteria?.note && r.label.includes(job.matchCriteria.note))) {
         return { ...r, met: !!expRelevant };
       }
-      if (job.matchCriteria?.licences?.includes(r.label) || (r.label.includes("FLT") && job.requiresFltLicence)) {
-        const licId = r.label.includes("FLT") ? "flt" : null;
-        return { ...r, met: licId ? userLicences.has(licId) : false };
+      if (r.label.includes("FLT") && job.requiresFltLicence) {
+        const hasFlt = (profileBackground.qualifications || []).includes("FLT / Forklift licence (RTITB or ITSSAR)");
+        return { ...r, met: hasFlt };
+      }
+      if (job.matchCriteria?.licences?.includes(r.label)) {
+        return { ...r, met: userLicences.has(r.label) };
       }
       if (job.matchCriteria?.qualifications?.includes(r.label)) {
         return { ...r, met: bgQuals.includes(r.label) };
