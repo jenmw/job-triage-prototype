@@ -3387,7 +3387,7 @@ const LicencesSubSheet = ({ open, onClose, selected, other, onSave }) => {
   );
 };
 
-const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initialLicences = new Set(), autoFocusJobTitle = false, isDesktop = false }) => {
+const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initialLicences = new Set(), autoFocusJobTitle = false, autoOpenSection = null, isDesktop = false }) => {
   const [prevJobs, setPrevJobs] = useState(initialValues.prevJobs || [{ title: "", duration: "" }]);
   const [experience, setExperience] = useState(initialValues.experience || null);
   const [qualifications, setQualifications] = useState(new Set(initialValues.qualifications || []));
@@ -3402,7 +3402,13 @@ const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initial
     if (open && autoFocusJobTitle) {
       setTimeout(() => jobTitleRef.current?.focus(), 380);
     }
-  }, [open, autoFocusJobTitle]);
+    if (open && autoOpenSection === "qualifications") {
+      setTimeout(() => setQualifSubSheetOpen(true), 380);
+    }
+    if (open && autoOpenSection === "licences") {
+      setTimeout(() => setLicenceSubSheetOpen(true), 380);
+    }
+  }, [open, autoFocusJobTitle, autoOpenSection]);
 
   useEffect(() => {
     if (open) {
@@ -3475,7 +3481,7 @@ const BackgroundDrawer = ({ open, onClose, onSubmit, initialValues = {}, initial
         </button>
 
         {/* Licences summary row */}
-        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>Licences</div>
+        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>Driving licences</div>
         <button onClick={() => setLicenceSubSheetOpen(true)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", padding: `${S.s2}px ${S.m}px`, borderRadius: 8, border: `1px solid ${COLORS.border}`, background: COLORS.card, cursor: "pointer", fontFamily: FONT, textAlign: "left", marginBottom: S.m2, boxSizing: "border-box" }}>
           <span style={{ ...T.body1, color: licenceSummary.length > 0 ? COLORS.text : COLORS.muted, fontFamily: FONT, flex: 1, marginRight: S.m }}>
             {licenceSummary.length > 0 ? licenceSummary.join(", ") : "None added"}
@@ -4023,22 +4029,21 @@ const SearchResultsPage = ({ jobs, onJobSelect, isDesktop, profilePriorities }) 
   );
 
   const MobileSortPills = () => (
-    <div style={{ display: "flex", alignItems: "center", gap: S.xs, marginBottom: S.s, flexWrap: "wrap" }}>
-      <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, whiteSpace: "nowrap" }}>Sort:</span>
-      {SORT_OPTIONS.map(o => (
-        <span
-          key={o.key}
-          onClick={() => setSortKey(o.key)}
-          style={{
-            ...T.body2, fontFamily: FONT, cursor: "pointer", whiteSpace: "nowrap",
-            border: `1px solid ${sortKey === o.key ? COLORS.accent : COLORS.border}`,
-            borderRadius: 20, padding: "4px 12px",
-            background: sortKey === o.key ? COLORS.accentBg : COLORS.bg,
-            color: sortKey === o.key ? COLORS.accent : COLORS.text,
-            fontWeight: sortKey === o.key ? 700 : 400,
-          }}
-        >
-          {o.label}
+    <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: S.s, flexWrap: "wrap" }}>
+      <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, whiteSpace: "nowrap" }}>Sort by:</span>
+      {SORT_OPTIONS.map((o, i) => (
+        <span key={o.key} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          {i > 0 && <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>·</span>}
+          <span
+            onClick={() => setSortKey(o.key)}
+            style={{
+              ...T.body2, fontFamily: FONT, cursor: "pointer", whiteSpace: "nowrap",
+              color: sortKey === o.key ? COLORS.accent : COLORS.muted,
+              fontWeight: sortKey === o.key ? 700 : 400,
+            }}
+          >
+            {o.label}
+          </span>
         </span>
       ))}
     </div>
@@ -4094,18 +4099,18 @@ const AISummaryBlock = ({ text }) => (
 
 const getHardRequirements = (job) => {
   const reqs = [];
-  if (job.requiresFltLicence) reqs.push({ label: "A valid FLT licence", required: true });
-  for (const lic of (job.matchCriteria?.licences ?? [])) reqs.push({ label: lic, required: true });
-  for (const qual of (job.matchCriteria?.qualifications ?? [])) reqs.push({ label: qual, required: true });
+  if (job.requiresFltLicence) reqs.push({ label: "A valid FLT licence", required: true, section: "qualifications" });
+  for (const lic of (job.matchCriteria?.licences ?? [])) reqs.push({ label: lic, required: true, section: "qualifications" });
+  for (const qual of (job.matchCriteria?.qualifications ?? [])) reqs.push({ label: qual, required: true, section: "qualifications" });
   if (job.matchCriteria?.experience?.required === true) {
-    reqs.push({ label: job.matchCriteria.note ?? "Relevant experience", required: true });
+    reqs.push({ label: job.matchCriteria.note ?? "Relevant experience", required: true, section: "workHistory" });
   } else if (job.matchCriteria?.experience?.preferred === true) {
-    reqs.push({ label: (job.matchCriteria.note ?? "Experience") + " preferred", required: false });
+    reqs.push({ label: (job.matchCriteria.note ?? "Experience") + " preferred", required: false, section: "workHistory" });
   }
   return reqs;
 };
 
-const RequirementsNotice = ({ reqs }) => {
+const RequirementsNotice = ({ reqs, onAdd }) => {
   if (!reqs.length) return null;
   const visible = reqs.length > 3 ? [...reqs.slice(0, 2), { label: "And more…", required: true }] : reqs;
   return (
@@ -4115,6 +4120,17 @@ const RequirementsNotice = ({ reqs }) => {
         <div key={r.label} style={{ display: "flex", alignItems: "flex-start", gap: S.xs, marginBottom: 4 }}>
           <span style={{ width: 8, height: 8, borderRadius: "50%", background: r.met ? COLORS.green : r.required ? COLORS.red : COLORS.amber, flexShrink: 0, marginTop: 5 }} />
           <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>{r.label}</span>
+          {onAdd && r.section && !r.met && (
+            <>
+              <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>·</span>
+              <span
+                onClick={() => onAdd(r.section)}
+                style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0, textDecoration: "underline", fontStyle: "italic" }}
+              >
+                {r.section === "workHistory" ? "Add experience" : r.section === "licences" ? "Add licence" : "Add qualification"}
+              </span>
+            </>
+          )}
         </div>
       ))}
     </div>
@@ -4123,7 +4139,7 @@ const RequirementsNotice = ({ reqs }) => {
 
 // ─── Desktop sidebar ───────────────────────────────────────────────────────────
 
-const DesktopSidebar = ({ currentJobIdx, rating, personalised, isSignedIn, onOpenDrawer, onJobSelect, onOpenProfile, coords, location, onMapExpand, hardReqs, jobs, profilePriorities, viewedJob }) => {
+const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect, jobs, profilePriorities, viewedJob, what, where }) => {
   const [sortKey, setSortKey] = useState("relevant");
   const [page, setPage] = useState(0);
   const PAGE_SIZE = 6;
@@ -4140,51 +4156,27 @@ const DesktopSidebar = ({ currentJobIdx, rating, personalised, isSignedIn, onOpe
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: S.l2, paddingTop: S.m2 }}>
-      {/* CTA card — sticky below header (70px) + S.m gap */}
-      <div style={{ position: "sticky", top: 70 + S.m, zIndex: 10 }}>
-        {/* Fade above — reaches full opacity before the header boundary so the whole gap is solidly masked */}
-        <div style={{ position: "absolute", bottom: "100%", left: 0, right: 0, height: 48, background: `linear-gradient(to bottom, transparent, ${COLORS.bg} ${S.m}px)`, pointerEvents: "none" }} />
-        {/* Fade below — at zIndex 1 so the card's box-shadow (at zIndex 2) paints on top of it cleanly */}
-        <div style={{ position: "absolute", top: "100%", left: 0, right: 0, height: 40, background: `linear-gradient(to bottom, ${COLORS.bg}, transparent)`, pointerEvents: "none", zIndex: 1 }} />
-        <div style={{ position: "relative", zIndex: 2, background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: `${S.m}px ${S.m2}px` }}>
-          <RequirementsNotice reqs={hardReqs ?? []} />
-          <button style={{ width: "100%", padding: "6px 22px", borderRadius: 4, border: "2px solid transparent", background: COLORS.accent, color: "#fff", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, marginBottom: S.s, transition: "background-color 0.25s ease" }}>
-            Apply on external site
-          </button>
-          <div style={{ display: "flex", gap: S.s }}>
-            <button style={{ flex: 1, padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.text}`, background: "transparent", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
-              Save for later
-            </button>
-            <button onClick={onOpenDrawer} style={{ flex: 1, padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.accent }}>
-              Match me
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Map — scrolls with page */}
-      <MapThumbnail coords={coords} onExpand={onMapExpand} height={180} label={location} />
-
       {/* Paginated job list with sort */}
       <div>
-        <h2 style={{ ...T.lead1, margin: `0 0 ${S.xs}px`, fontFamily: FONT, color: COLORS.text }}>Similar jobs nearby</h2>
-        {/* Sort pills */}
-        <div style={{ display: "flex", alignItems: "center", gap: S.xs, marginBottom: S.s, flexWrap: "wrap" }}>
-          <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, whiteSpace: "nowrap" }}>Sort:</span>
-          {SORT_OPTIONS.map(o => (
-            <span
-              key={o.key}
-              onClick={() => { setSortKey(o.key); setPage(0); }}
-              style={{
-                ...T.body2, fontFamily: FONT, cursor: "pointer", whiteSpace: "nowrap",
-                border: `1px solid ${sortKey === o.key ? COLORS.accent : COLORS.border}`,
-                borderRadius: 20, padding: "4px 12px",
-                background: sortKey === o.key ? COLORS.accentBg : COLORS.bg,
-                color: sortKey === o.key ? COLORS.accent : COLORS.text,
-                fontWeight: sortKey === o.key ? 700 : 400,
-              }}
-            >
-              {o.label}
+        <h2 style={{ ...T.lead1, margin: `0 0 ${S.xs}px`, fontFamily: FONT, color: COLORS.text }}>
+          {what && where ? `${what} jobs near ${where.split(",")[0].trim()}` : "Similar jobs nearby"}
+        </h2>
+        {/* Sort options */}
+        <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: S.s, flexWrap: "wrap" }}>
+          <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, whiteSpace: "nowrap" }}>Sort by:</span>
+          {SORT_OPTIONS.map((o, i) => (
+            <span key={o.key} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              {i > 0 && <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT }}>·</span>}
+              <span
+                onClick={() => { setSortKey(o.key); setPage(0); }}
+                style={{
+                  ...T.body2, fontFamily: FONT, cursor: "pointer", whiteSpace: "nowrap",
+                  color: sortKey === o.key ? COLORS.accent : COLORS.muted,
+                  fontWeight: sortKey === o.key ? 700 : 400,
+                }}
+              >
+                {o.label}
+              </span>
             </span>
           ))}
         </div>
@@ -4353,6 +4345,7 @@ export default function JobTriagePage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [backgroundDrawerOpen, setBackgroundDrawerOpen] = useState(false);
   const [bgDrawerFocusTitle, setBgDrawerFocusTitle] = useState(false);
+  const [bgDrawerSection, setBgDrawerSection] = useState(null);
   const [profileBackground, setProfileBackground] = useState({});
   const [matchWhyOpen, setMatchWhyOpen] = useState(false);
   const [workStyleDrawerOpen, setWorkStyleDrawerOpen] = useState(false);
@@ -4488,10 +4481,10 @@ export default function JobTriagePage() {
 
   const hardReqs = (() => {
     const reqs = getHardRequirements(job);
-    const jobTitle = ((profileBackground.prevJobs || [])[0]?.title || "").toLowerCase();
+    const jobTitles = (profileBackground.prevJobs || []).map(j => (j.title || "").toLowerCase()).filter(Boolean);
     const bgQuals = profileBackground.qualifications || [];
     const keywords = job.matchCriteria?.experience?.keywords || [];
-    const expRelevant = jobTitle && (keywords.length === 0 || keywords.some(k => jobTitle.includes(k.toLowerCase())));
+    const expRelevant = jobTitles.length > 0 && (keywords.length === 0 || jobTitles.some(t => keywords.some(k => t.includes(k.toLowerCase()))));
     return reqs.map(r => {
       if (r.label.toLowerCase().includes("experience") || (job.matchCriteria?.note && r.label.includes(job.matchCriteria.note))) {
         return { ...r, met: !!expRelevant };
@@ -4509,6 +4502,8 @@ export default function JobTriagePage() {
       return { ...r, met: false };
     });
   })();
+
+  const allReqsMet = hardReqs.length > 0 && hardReqs.every(r => r.met);
 
   const PRIORITY_FINDING_KW = {
     "Good shift notice":        "last-minute",
@@ -4599,13 +4594,44 @@ export default function JobTriagePage() {
           </div>
         );
         return (
-          <div style={{ borderTop: `1px solid ${COLORS.border}`, marginTop: S.m, marginBottom: S.m2, paddingTop: S.m, paddingBottom: 0 }}>
-            {renderRow({ icon: <IconPay />, text: job.pay, benchmark: job.payBenchmark })}
-            {renderRow({ icon: <IconLocation />, text: job.location, commuteRow: true })}
-            {renderRow({ icon: <IconClock />, text: [job.hours, job.hoursSub ? `(${job.hoursSub})` : null, job.shifts].filter(Boolean).join(" · ") })}
+          <div style={{ borderTop: `1px solid ${COLORS.border}`, marginTop: S.m, marginBottom: S.m2, paddingTop: S.m, paddingBottom: 0, display: "flex", gap: S.m, alignItems: "flex-start" }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              {renderRow({ icon: <IconPay />, text: job.pay, benchmark: job.payBenchmark })}
+              {renderRow({ icon: <IconLocation />, text: job.location, commuteRow: true })}
+              {renderRow({ icon: <IconClock />, text: [job.hours, job.hoursSub ? `(${job.hoursSub})` : null, job.shifts].filter(Boolean).join(" · ") })}
+            </div>
+            {isDesktop && (
+              <div style={{ flexShrink: 0, width: 180, alignSelf: "stretch", display: "flex", flexDirection: "column" }}>
+                <MapThumbnail coords={job.coords} onExpand={() => setMapModalOpen(true)} height="100%" label={job.location} />
+              </div>
+            )}
           </div>
         );
       })()}
+
+      {/* CTA card — desktop only (mobile has sticky bar at bottom of drawer) */}
+      {isDesktop && (
+        <div style={{ marginBottom: S.m2 }}>
+<div style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: `${S.m}px ${S.m2}px` }}>
+            <RequirementsNotice reqs={hardReqs ?? []} onAdd={(section) => { setBgDrawerSection(section); setBgDrawerFocusTitle(section === "workHistory"); setBackgroundDrawerOpen(true); }} />
+            <button style={{
+              width: "100%", padding: "6px 22px", borderRadius: 4, border: "2px solid transparent",
+              color: "#fff", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, marginBottom: S.s,
+              background: COLORS.accent,
+            }}>
+              Apply on external site
+            </button>
+            <div style={{ display: "flex", gap: S.s }}>
+              <button style={{ flex: 1, padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.text}`, background: "transparent", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
+                Save for later
+              </button>
+              <button onClick={() => setDrawerOpen(true)} style={{ flex: 1, padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.accent }}>
+                Match me
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* The Breakroom Take — card with brand accent top border */}
       <div style={{ background: COLORS.card, borderRadius: "0 0 5px 5px", borderTop: `3px solid ${COLORS.accent}`, padding: S.m, marginBottom: S.m2 }}>
@@ -5168,7 +5194,7 @@ export default function JobTriagePage() {
               {heroBlock}
               {sectionsBlock}
             </div>
-            <DesktopSidebar currentJobIdx={selectedJobIdx} rating={JOBS[selectedJobIdx].rating} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} onOpenProfile={() => setProfileOpen(true)} coords={JOBS[selectedJobIdx].coords} location={JOBS[selectedJobIdx].location} onMapExpand={() => setMapModalOpen(true)} hardReqs={hardReqs} jobs={JOBS} profilePriorities={profilePriorities} viewedJob={JOBS[selectedJobIdx]} />
+            <DesktopSidebar currentJobIdx={selectedJobIdx} personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} jobs={JOBS} profilePriorities={profilePriorities} viewedJob={JOBS[selectedJobIdx]} what="Warehouse" where="Corby, Northamptonshire" />
           </div>
         </>
       ) : (
@@ -5197,7 +5223,7 @@ export default function JobTriagePage() {
               <div style={{ maxWidth: 480, margin: "0 auto" }}>
                 {hardReqs.length > 0 && (
                   <div style={{ marginBottom: S.s }}>
-                    <RequirementsNotice reqs={hardReqs} />
+                    <RequirementsNotice reqs={hardReqs} onAdd={(section) => { setBgDrawerSection(section); setBgDrawerFocusTitle(section === "workHistory"); setBackgroundDrawerOpen(true); }} />
                   </div>
                 )}
                 <div style={{ display: "flex", gap: S.s2 }}>
@@ -5221,12 +5247,13 @@ export default function JobTriagePage() {
         initialValues={{ postcode: profilePostcode, currentPay: profileCurrentPay, payType: profilePayType, travel: profileTravel, priorities: profilePriorities }}
         onSubmit={(data) => { handleSavePrefs(data); setDrawerOpen(false); }} />
 
-      <BackgroundDrawer open={backgroundDrawerOpen} onClose={() => { setBackgroundDrawerOpen(false); setBgDrawerFocusTitle(false); }}
+      <BackgroundDrawer open={backgroundDrawerOpen} onClose={() => { setBackgroundDrawerOpen(false); setBgDrawerFocusTitle(false); setBgDrawerSection(null); }}
         initialValues={profileBackground}
         initialLicences={userLicences}
         autoFocusJobTitle={bgDrawerFocusTitle}
+        autoOpenSection={bgDrawerSection}
         isDesktop={isDesktop}
-        onSubmit={(data) => { const { licences, licenceOther, ...bgData } = data; setProfileBackground(bgData); setUserLicences(licences); setBackgroundDrawerOpen(false); setBgDrawerFocusTitle(false); }} />
+        onSubmit={(data) => { const { licences, licenceOther, ...bgData } = data; setProfileBackground(bgData); setUserLicences(licences); setBackgroundDrawerOpen(false); setBgDrawerFocusTitle(false); setBgDrawerSection(null); }} />
 
       <WorkStyleDrawer open={workStyleDrawerOpen} onClose={() => setWorkStyleDrawerOpen(false)}
         initialValues={workStylePrefs}
