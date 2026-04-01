@@ -2999,7 +2999,7 @@ const FindingTile = ({ pct, label, heading, primary, secondary, why, variant, li
 
 // ─── Signal row — matches .finding-group__finding linear style ─────────────────
 // White card container wraps all signals in a section; each row has a coloured dot
-const Signal = ({ status, label, detail, subtext, subtextClick, labelClick, isLast, badge }) => {
+const Signal = ({ status, label, detail, subtext, subtextClick, subtextAction, labelClick, isLast, badge }) => {
   const dot = status === "good" ? COLORS.green : status === "warning" ? COLORS.amber : COLORS.red;
   const badgeBg = status === "good" ? COLORS.greenBg : COLORS.amberBg;
   const badgeColor = status === "good" ? COLORS.greenText : COLORS.amberText;
@@ -3013,9 +3013,14 @@ const Signal = ({ status, label, detail, subtext, subtextClick, labelClick, isLa
             {badge && <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.3px", padding: "2px 7px", borderRadius: 10, background: badgeBg, color: badgeColor, marginLeft: S.s, display: "inline-block", verticalAlign: "middle", lineHeight: "18px" }}>{badge}</span>}
           </div>
           {detail && <div style={{ ...T.body1, color: COLORS.muted, marginTop: S.xs, fontWeight: 400 }}>{detail}</div>}
-          {subtext && (
-            <div onClick={subtextClick} style={{ ...T.body2, fontWeight: 400, color: subtextClick ? COLORS.text : COLORS.muted, textDecoration: subtextClick ? "underline" : "none", marginTop: S.xs, cursor: subtextClick ? "pointer" : "default" }}>
-              {subtext}
+          {(subtext || subtextAction) && (
+            <div style={{ ...T.body2, fontWeight: 400, color: COLORS.muted, marginTop: S.xs }}>
+              {subtext && (
+                <span onClick={subtextClick} style={{ color: subtextClick ? COLORS.text : "inherit", textDecoration: subtextClick ? "underline" : "none", cursor: subtextClick ? "pointer" : "default" }}>
+                  {subtext}
+                </span>
+              )}
+              {subtextAction && <>{subtext ? " · " : ""}<span onClick={subtextAction.onClick} style={{ color: COLORS.text, textDecoration: "underline", cursor: "pointer" }}>{subtextAction.label}</span></>}
             </div>
           )}
         </div>
@@ -4834,6 +4839,7 @@ export default function JobTriagePage() {
                     detail="A valid counterbalance forklift licence is required. Reach truck licence is desirable."
                     subtext={hasFlt ? "✓ You told us you hold an FLT licence" : "Tell us if you have a forklift licence"}
                     subtextClick={hasFlt ? null : () => setBackgroundDrawerOpen(true)}
+                    subtextAction={hasFlt ? { label: "Edit", onClick: () => setBackgroundDrawerOpen(true) } : null}
                     isLast={false}
                   />
                 );
@@ -4868,7 +4874,7 @@ export default function JobTriagePage() {
               } else {
                 bgSignal = { status: "good", label: "Your background looks right for this job", detail: note };
               }
-              return <Signal status={bgSignal.status} label={bgSignal.label} detail={bgSignal.detail} subtext="Update your background" subtextClick={() => setBackgroundDrawerOpen(true)} isLast={false} />;
+              return <Signal status={bgSignal.status} label={bgSignal.label} detail={bgSignal.detail} subtextAction={{ label: "Edit", onClick: () => setBackgroundDrawerOpen(true) }} isLast={false} />;
             })() : (() => {
               const expRequired = job?.matchCriteria?.experience?.required;
               const expPreferred = job?.matchCriteria?.experience?.preferred;
