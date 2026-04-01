@@ -3311,6 +3311,17 @@ const QUALIFICATIONS = [
   "GCSE English & Maths (grade C/4 or above)",
 ];
 
+// Keywords used to fuzzy-match stored qualifications against job requirement labels
+const QUAL_MATCH_KEYWORDS = {
+  "Food hygiene certificate (Level 2)": ["food hygiene"],
+  "CSCS card": ["cscs"],
+  "First aid certificate": ["first aid"],
+  "FLT / Forklift licence (RTITB or ITSSAR)": ["flt", "forklift"],
+  "SIA licence": ["sia"],
+  "NVQ Level 2 or above": ["nvq"],
+  "GCSE English & Maths (grade C/4 or above)": ["gcse"],
+};
+
 // ─── Sub-sheet (drawer within a drawer) ────────────────────────────────────────
 const SubSheet = ({ open, onClose, title, children }) => (
   <>
@@ -3933,8 +3944,18 @@ const getJobHighlights = (job) => {
   return chips;
 };
 
-const SearchResultCard = ({ job, onClick, viewedJob }) => {
+const SearchResultCard = ({ job, onClick, viewedJob, isActive, profileCoords, profileTravel }) => {
   const chips = getJobHighlights(job);
+
+  // Commute chip — show when this job is 5+ mins closer than the viewed job
+  let commuteBadge = null;
+  if (!isActive && profileCoords && profileTravel?.length > 0 && viewedJob?.coords && job.coords) {
+    const primaryMode = profileTravel[0];
+    const viewedMins = commuteMin(haversineKm(profileCoords[0], profileCoords[1], viewedJob.coords[0], viewedJob.coords[1]), primaryMode);
+    const thisMins = commuteMin(haversineKm(profileCoords[0], profileCoords[1], job.coords[0], job.coords[1]), primaryMode);
+    const saving = viewedMins - thisMins;
+    if (saving >= 5) commuteBadge = `${saving} min closer`;
+  }
 
   // Pay badge — green chip showing how much more this job pays vs the viewed job
   let payBadge = null;
@@ -3959,7 +3980,7 @@ const SearchResultCard = ({ job, onClick, viewedJob }) => {
   }
 
   return (
-    <div onClick={onClick} style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: S.m, cursor: "pointer" }}>
+    <div onClick={isActive ? undefined : onClick} style={{ background: COLORS.card, borderRadius: 5, boxShadow: isActive ? `0 0 0 2px #F9D5D3` : "0px 4px 4px rgba(0,0,0,0.05)", padding: S.m, cursor: isActive ? "default" : "pointer" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: S.s, marginBottom: S.xs }}>
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{job.title}</div>
         {payBadge && <span style={{ ...T.body2Bold, border: `2px solid ${COLORS.green}`, color: COLORS.greenText, background: COLORS.card, borderRadius: 20, padding: "2px 8px", whiteSpace: "nowrap", fontFamily: FONT, flexShrink: 0 }}>{payBadge}</span>}
@@ -3969,9 +3990,10 @@ const SearchResultCard = ({ job, onClick, viewedJob }) => {
         <span style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>{job.rating.toFixed(1)}</span>
         <span style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>{job.company}</span>
       </div>
-      <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, marginBottom: chips.length > 0 ? S.xs : 0 }}>{job.pay} · {job.location}</div>
-      {chips.length > 0 && (
+      <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, marginBottom: chips.length > 0 || commuteBadge ? S.xs : 0 }}>{job.pay} · {job.location}</div>
+      {(chips.length > 0 || commuteBadge) && (
         <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginTop: S.s }}>
+          {commuteBadge && <span style={{ ...T.body2, color: COLORS.muted, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT }}>{commuteBadge}</span>}
           {chips.map(c => (
             <span key={c} style={{ ...T.body2, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT }}>{c}</span>
           ))}
@@ -4139,10 +4161,10 @@ const RequirementsNotice = ({ reqs, onAdd }) => {
 
 // ─── Desktop sidebar ───────────────────────────────────────────────────────────
 
-const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect, jobs, profilePriorities, viewedJob, what, where }) => {
+const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect, jobs, profilePriorities, viewedJob, what, where, profileCoords, profileTravel }) => {
   const [sortKey, setSortKey] = useState("relevant");
   const [page, setPage] = useState(0);
-  const PAGE_SIZE = 6;
+  const PAGE_SIZE = 10;
 
   const sorted = useMemo(() => {
     const arr = [...jobs];
@@ -4200,7 +4222,7 @@ const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect
             </p>
           )}
           {pageJobs.map(job => (
-            <SearchResultCard key={job.id} job={job} onClick={() => onJobSelect(job.id)} profilePriorities={profilePriorities} viewedJob={viewedJob} />
+            <SearchResultCard key={job.id} job={job} onClick={() => onJobSelect(job.id)} profilePriorities={profilePriorities} viewedJob={viewedJob} isActive={job.id === viewedJob?.id} profileCoords={profileCoords} profileTravel={profileTravel} />
           ))}
         </div>
         {/* Pagination */}
@@ -4497,7 +4519,12 @@ export default function JobTriagePage() {
         return { ...r, met: userLicences.has(r.label) };
       }
       if (job.matchCriteria?.qualifications?.includes(r.label)) {
-        return { ...r, met: bgQuals.includes(r.label) };
+        const reqLower = r.label.toLowerCase();
+        const met = bgQuals.some(q => {
+          const keywords = QUAL_MATCH_KEYWORDS[q] || [q.toLowerCase()];
+          return keywords.some(kw => reqLower.includes(kw));
+        });
+        return { ...r, met };
       }
       return { ...r, met: false };
     });
@@ -4563,13 +4590,13 @@ export default function JobTriagePage() {
               })()}
               {f.commuteRow && (() => {
                 if (!profilePostcode) {
-                  return <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>Check your commute</div>;
+                  return <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>Get commute time</div>;
                 }
                 if (profileCoords === null) {
                   return <div style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, marginTop: 2 }}>Checking distance from {profilePostcode}…</div>;
                 }
                 if (profileCoords === false) {
-                  return <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>Check your commute</div>;
+                  return <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>Get commute time</div>;
                 }
                 const distKm = haversineKm(profileCoords[0], profileCoords[1], job.coords[0], job.coords[1]);
                 const distMi = (distKm * 0.621371).toFixed(1);
@@ -5194,7 +5221,7 @@ export default function JobTriagePage() {
               {heroBlock}
               {sectionsBlock}
             </div>
-            <DesktopSidebar currentJobIdx={selectedJobIdx} personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} jobs={JOBS} profilePriorities={profilePriorities} viewedJob={JOBS[selectedJobIdx]} what="Warehouse" where="Corby, Northamptonshire" />
+            <DesktopSidebar currentJobIdx={selectedJobIdx} personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} jobs={JOBS} profilePriorities={profilePriorities} viewedJob={JOBS[selectedJobIdx]} what="Warehouse" where="Corby, Northamptonshire" profileCoords={profileCoords} profileTravel={profileTravel} />
           </div>
         </>
       ) : (
