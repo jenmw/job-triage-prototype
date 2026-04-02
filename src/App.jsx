@@ -5240,9 +5240,6 @@ export default function JobTriagePage() {
             <div style={{ flex: 1, overflowY: "auto", padding: `0 ${S.m}px` }}>
               {heroBlock}
               {sectionsBlock}
-              <div style={{ marginTop: S.m2, marginBottom: S.s }}>
-                <AlternativesList currentJobIdx={selectedJobIdx} personalised={personalised} isSignedIn={isSignedIn} onOpenDrawer={() => setDrawerOpen(true)} onOpenProfile={() => setProfileOpen(true)} onJobSelect={handleJobSelect} />
-              </div>
               <div style={{ height: S.xxl }} />
             </div>
             {/* Sticky CTA bar at bottom of drawer */}
