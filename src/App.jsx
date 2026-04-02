@@ -4364,6 +4364,8 @@ function MapThumbnail({ coords, onExpand, height = 180, label }) {
 // ─── Main page ─────────────────────────────────────────────────────────────────
 
 export default function JobTriagePage() {
+  const listScrollRef = useRef(0);
+  const vacancyScrollRef = useRef(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [backgroundDrawerOpen, setBackgroundDrawerOpen] = useState(false);
   const [bgDrawerFocusTitle, setBgDrawerFocusTitle] = useState(false);
@@ -4454,13 +4456,22 @@ export default function JobTriagePage() {
     setView("job");
     setFindingsForceOpen(false);
     setHighlightFinding(null);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (isDesktop) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      listScrollRef.current = window.scrollY;
+      if (vacancyScrollRef.current) vacancyScrollRef.current.scrollTop = 0;
+    }
     history.pushState({ view: "job", idx }, "", `#job-${idx}`);
   };
 
   const handleBackToSearch = () => {
     setView("search");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (isDesktop) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      requestAnimationFrame(() => window.scrollTo({ top: listScrollRef.current }));
+    }
     history.pushState({ view: "search" }, "", location.pathname + location.search);
   };
 
@@ -5237,7 +5248,7 @@ export default function JobTriagePage() {
               <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border }} />
             </div>
             {/* Scrollable content */}
-            <div style={{ flex: 1, overflowY: "auto", padding: `0 ${S.m}px` }}>
+            <div ref={vacancyScrollRef} style={{ flex: 1, overflowY: "auto", padding: `0 ${S.m}px` }}>
               {heroBlock}
               {sectionsBlock}
               <div style={{ height: S.xxl }} />
