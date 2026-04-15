@@ -3154,7 +3154,7 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {}, filterL
     <>
       <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity 0.3s", zIndex: 100 }} />
       <div ref={scrollRef} style={{ position: "fixed", bottom: 0, left: 0, right: 0, maxHeight: "85vh", background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, overflowY: "auto", boxShadow: open ? "0 -8px 40px rgba(0,0,0,0.15)" : "none" }}>
-        <div ref={onboardingHandleRef} style={{ padding: `${S.m}px 0`, display: "flex", justifyContent: "center", cursor: "grab" }}>
+        <div ref={onboardingHandleRef} style={{ padding: `${S.m}px 0`, display: "flex", justifyContent: "center", cursor: "grab", touchAction: "none" }}>
           <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border }} />
         </div>
         <h3 style={{ ...T.lead1, margin: 0, color: COLORS.text, fontFamily: FONT, marginBottom: S.m2 }}>Help us find you better jobs</h3>
@@ -3546,7 +3546,7 @@ const WorkStyleDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
     <>
       <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity 0.3s", zIndex: 100 }} />
       <div ref={drawerRef} style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, boxShadow: open ? "0 -8px 40px rgba(0,0,0,0.15)" : "none", touchAction: "pan-y" }}>
-        <div ref={wsHandleRef} style={{ padding: `${S.m}px 0`, display: "flex", justifyContent: "center", cursor: "grab" }}>
+        <div ref={wsHandleRef} style={{ padding: `${S.m}px 0`, display: "flex", justifyContent: "center", cursor: "grab", touchAction: "none" }}>
           <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border }} />
         </div>
 
@@ -5268,7 +5268,7 @@ export default function JobTriagePage() {
           <div onClick={handleBackToSearch} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 99, opacity: view === "job" ? 1 : 0, pointerEvents: view === "job" ? "auto" : "none", transition: "opacity 0.35s ease" }} />
           <div ref={vacancyDrawerRef} style={{ position: "fixed", bottom: 0, left: 0, right: 0, height: "95dvh", zIndex: 100, background: COLORS.bg, borderRadius: "16px 16px 0 0", transform: view === "job" ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", display: "flex", flexDirection: "column", overflow: "hidden" }}>
             {/* Handle bar */}
-            <div ref={vacancyHandleRef} style={{ flexShrink: 0, display: "flex", justifyContent: "center", padding: `${S.m}px 0`, cursor: "grab" }}>
+            <div ref={vacancyHandleRef} style={{ flexShrink: 0, display: "flex", justifyContent: "center", padding: `${S.m}px 0`, cursor: "grab", touchAction: "none" }}>
               <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border }} />
             </div>
             {/* Scrollable content */}
