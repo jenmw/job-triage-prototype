@@ -4107,7 +4107,7 @@ const SearchResultsPage = ({ jobs, onJobSelect, isDesktop, profilePriorities, pe
           </div>
         )}
         {!isDesktop && personalised && (
-          <p style={{ ...T.body2, color: COLORS.muted, margin: `0 0 ${S.xs}px`, fontFamily: FONT }}>
+          <p style={{ ...T.body2, color: COLORS.muted, margin: `0 0 8px`, fontFamily: FONT }}>
             Personalised for you · <span onClick={onOpenDrawer} style={{ textDecoration: "underline", cursor: "pointer", color: COLORS.accent }}>Edit</span>
           </p>
         )}
