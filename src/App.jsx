@@ -5169,11 +5169,17 @@ export default function JobTriagePage() {
         {/* Good things group — .finding-group */}
         {(() => {
           const good = job.findings.good;
+          // If a priority-highlighted finding sits beyond the top 3, surface it so chip taps can highlight it
+          let visibleGood = good.slice(0, 3);
+          if (priorityHighlight) {
+            const phIdx = good.findIndex(f => f.label === priorityHighlight.label);
+            if (phIdx >= 3) visibleGood = [...visibleGood, good[phIdx]];
+          }
           return (
             <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0` }}>
               <div style={{ ...T.smallcaps, color: COLORS.text, display: "inline-block", textTransform: "uppercase", fontFamily: FONT }}>Good</div>
               <div>
-                {good.slice(0, 3).map((v, i, arr) => (
+                {visibleGood.map((v, i, arr) => (
                   <FindingTile key={v.label} {...v} variant="green" lit={highlightFinding === v.label} forceOpen={highlightFinding === v.label} isLast={i === arr.length - 1} />
                 ))}
               </div>
