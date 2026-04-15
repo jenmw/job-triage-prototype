@@ -5148,7 +5148,6 @@ export default function JobTriagePage() {
         {/* Red flags group — .finding-group */}
         {(() => {
           const bad = job.findings.bad;
-          const moreCount = bad.length - 3;
           return (
             <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0`, marginBottom: S.m, marginTop: S.m }}>
               <div style={{ ...T.smallcaps, color: COLORS.text, display: "inline-block", textTransform: "uppercase", fontFamily: FONT }}>Needs improving</div>
@@ -5157,11 +5156,6 @@ export default function JobTriagePage() {
                   <FindingTile key={v.label} {...v} variant="red" lit={highlightFinding === v.label} forceOpen={highlightFinding === v.label} isLast={i === arr.length - 1} />
                 ))}
               </div>
-              {moreCount > 0 && (
-                <div onClick={() => setAllFindingsModalOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", cursor: "pointer", padding: `${S.s2}px 0`, fontFamily: FONT, borderTop: `1px solid ${COLORS.border}` }}>
-                  See {moreCount} more {moreCount === 1 ? "thing" : "things"} that need improving
-                </div>
-              )}
             </div>
           );
         })()}
