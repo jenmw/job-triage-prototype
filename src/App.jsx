@@ -4097,7 +4097,7 @@ const SearchResultsPage = ({ jobs, onJobSelect, isDesktop, profilePriorities, pe
         </p>
         {!isDesktop && <MobileSortPills />}
         {!isDesktop && !personalised && (
-          <div onClick={onOpenDrawer} style={{ display: "flex", alignItems: "flex-start", gap: S.s, background: COLORS.accentBg, borderRadius: 5, padding: `${S.s}px ${S.s2}px`, cursor: "pointer", marginTop: S.m, marginBottom: S.m }}>
+          <div onClick={onOpenDrawer} style={{ display: "flex", alignItems: "flex-start", gap: S.s, background: COLORS.accentBg, borderRadius: 5, padding: `${S.s}px ${S.s2}px`, cursor: "pointer", marginTop: 24, marginBottom: S.m }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginTop: 2 }}>
               <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" stroke={COLORS.text} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               <rect x="9" y="3" width="6" height="4" rx="1" stroke={COLORS.text} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
