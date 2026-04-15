@@ -3107,11 +3107,12 @@ const AltJob = ({ job, viewedJob, onClick }) => {
       computedAnnualBadge = `↑ ${approx ? "About " : ""}£${diff.toLocaleString("en-GB")}/yr`;
     }
   }
-  const showPayBadge = (altBadge && altBadge !== "Better rated" && job.payType !== "annual") || !!computedAnnualBadge;
+  const samePayType = !viewedJob || job.payType === viewedJob.payType;
+  const showPayBadge = (altBadge && altBadge !== "Better rated" && job.payType !== "annual" && samePayType) || !!computedAnnualBadge;
   const displayBadge = computedAnnualBadge ?? altBadge;
   // Suppress pay-related diffs if we're showing a badge, or if the similar job
   // doesn't actually pay more than the viewed job (avoids misleading "Higher pay" chips)
-  const altPaysMore = computedAnnualBadge !== null || (altBadge && altBadge !== "Better rated" && job.payType !== "annual");
+  const altPaysMore = computedAnnualBadge !== null || (altBadge && altBadge !== "Better rated" && job.payType !== "annual" && samePayType);
   const visibleDiffs = (findingDiffs ?? []).filter(d => {
     const l = d.toLowerCase();
     if (l.includes("better rated")) return false;
@@ -5283,8 +5284,27 @@ export default function JobTriagePage() {
               <div style={{ marginTop: S.l2, paddingBottom: S.xxl }}>
                 <h2 style={{ ...T.lead1, color: COLORS.text, fontFamily: FONT, margin: `0 0 ${S.m}px` }}>Similar jobs nearby</h2>
                 <div style={{ display: "flex", flexDirection: "column", gap: S.s2 }}>
-                  {JOBS.filter(j => j.id !== JOBS[selectedJobIdx]?.id).slice(0, 5).map(j => (
-                    <SearchResultCard key={j.id} job={j} onClick={() => handleJobSelect(j.id)} profilePriorities={profilePriorities} profileCoords={profileCoords} profileTravel={profileTravel} />
+                  {(() => {
+                    const viewed = JOBS[selectedJobIdx];
+                    const vWords = new Set((viewed?.title || "").toLowerCase().split(/\s+/));
+                    const hasChip = (j) => {
+                      if (!viewed) return false;
+                      if (j.payType === "annual" && viewed.payType === "annual" && j.pay && viewed.pay) {
+                        const parse = (s) => { const nums = [...s.replace(/[£\s]/g,"").matchAll(/[\d,]+/g)].map(m=>parseFloat(m[0].replace(/,/g,""))); return nums.length>=2?(nums[0]+nums[1])/2:nums[0]??0; };
+                        return parse(j.pay) > parse(viewed.pay);
+                      }
+                      return j.payType !== "annual" && viewed.payType !== "annual" && j.altBadge && j.altBadge !== "Better rated";
+                    };
+                    return JOBS.filter(j => j.id !== viewed?.id).sort((a, b) => {
+                      const titleA = a.title.toLowerCase().split(/\s+/).filter(w => vWords.has(w)).length;
+                      const titleB = b.title.toLowerCase().split(/\s+/).filter(w => vWords.has(w)).length;
+                      if (titleB !== titleA) return titleB - titleA;
+                      const chipA = hasChip(a) ? 1 : 0;
+                      const chipB = hasChip(b) ? 1 : 0;
+                      return chipB - chipA || b.rating - a.rating;
+                    });
+                  })().slice(0, 5).map(j => (
+                    <AltJob key={j.id} job={j} viewedJob={JOBS[selectedJobIdx]} onClick={() => handleJobSelect(j.id)} />
                   ))}
                 </div>
               </div>
