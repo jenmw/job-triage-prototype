@@ -92,17 +92,13 @@ const PRIORITIES = ["Good shift notice", "Well rated employer", "Good team mates
 
 // Maps each priority to a keyword found in job.findings.good labels
 const PRIORITY_KW = {
-  "Good shift notice":       "last-minute",
+  "Good shift notice":       "weeks notice of shifts",
   "Good team mates":         "team",
   "Career progression":      "progress",
   "Recommended by students": "recommended by students",
   "Recommended by parents":  "recommended by parents",
   "Good managers":           "respect",
 };
-
-// Returns true if a job's shift notice finding is bad or okay (i.e. not genuinely good)
-const hasNonGoodShiftNotice = (job) =>
-  [...(job.findings?.bad || []), ...(job.findings?.okay || [])].some(f => f.label.toLowerCase().includes("shift notice"));
 
 const getPriorityChips = (job, profilePriorities) => {
   if (!profilePriorities?.length) return [];
@@ -114,11 +110,6 @@ const getPriorityChips = (job, profilePriorities) => {
       if (job.rating >= 7.0) results.push(p);
     } else if (p === "No experience required") {
       if (job.matchCriteria?.experience?.required === false && job.matchCriteria?.experience?.preferred !== true) results.push(p);
-    } else if (p === "Good shift notice") {
-      if (!hasNonGoodShiftNotice(job)) {
-        const match = good.find(f => f.label.toLowerCase().includes(PRIORITY_KW[p]));
-        if (match) results.push(p);
-      }
     } else {
       const kw = PRIORITY_KW[p];
       if (kw) {
@@ -4625,7 +4616,7 @@ export default function JobTriagePage() {
   const allReqsMet = hardReqs.length > 0 && hardReqs.every(r => r.met);
 
   const PRIORITY_FINDING_KW = {
-    "Good shift notice":        "last-minute",
+    "Good shift notice":        "weeks notice of shifts",
     "Good team mates":          "team atmosphere",
     "Career progression":       "progression",
     "Good managers":            "respect",
@@ -4635,7 +4626,6 @@ export default function JobTriagePage() {
   const priorityHighlight = useMemo(() => {
     const existing = new Set(job.highlights);
     for (const p of profilePriorities) {
-      if (p === "Good shift notice" && hasNonGoodShiftNotice(job)) continue;
       const kw = PRIORITY_FINDING_KW[p];
       if (!kw) continue;
       const match = (job.findings.good || []).find(f => f.label.toLowerCase().includes(kw));
@@ -4774,8 +4764,6 @@ export default function JobTriagePage() {
           <div style={{ display: "flex", gap: S.s, flexWrap: "wrap", marginBottom: S.s }}>
             {job.highlights.map((h) => {
               const priorityName = (() => { for (const p of profilePriorities) { const kw = PRIORITY_KW[p]; if (kw && h.toLowerCase().includes(kw)) return p; } return null; })();
-              // Suppress "Good shift notice" chip if the job's shift notice finding is bad or okay
-              if (priorityName === "Good shift notice" && hasNonGoodShiftNotice(job)) return null;
               return <VacancyHighlight key={h} label={priorityName || h} onClick={() => handlePillClick(h)} />;
             })}
             {priorityHighlight && <VacancyHighlight key={priorityHighlight.label} label={priorityHighlight.priorityName} onClick={() => handlePillClick(priorityHighlight.label)} />}
