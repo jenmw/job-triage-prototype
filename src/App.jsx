@@ -100,6 +100,10 @@ const PRIORITY_KW = {
   "Good managers":           "respect",
 };
 
+// Returns true if a job's shift notice finding is bad or okay (i.e. not genuinely good)
+const hasNonGoodShiftNotice = (job) =>
+  [...(job.findings?.bad || []), ...(job.findings?.okay || [])].some(f => f.label.toLowerCase().includes("shift notice"));
+
 const getPriorityChips = (job, profilePriorities) => {
   if (!profilePriorities?.length) return [];
   const good = job.findings?.good || [];
@@ -110,6 +114,11 @@ const getPriorityChips = (job, profilePriorities) => {
       if (job.rating >= 7.0) results.push(p);
     } else if (p === "No experience required") {
       if (job.matchCriteria?.experience?.required === false && job.matchCriteria?.experience?.preferred !== true) results.push(p);
+    } else if (p === "Good shift notice") {
+      if (!hasNonGoodShiftNotice(job)) {
+        const match = good.find(f => f.label.toLowerCase().includes(PRIORITY_KW[p]));
+        if (match) results.push(p);
+      }
     } else {
       const kw = PRIORITY_KW[p];
       if (kw) {
@@ -4626,6 +4635,7 @@ export default function JobTriagePage() {
   const priorityHighlight = useMemo(() => {
     const existing = new Set(job.highlights);
     for (const p of profilePriorities) {
+      if (p === "Good shift notice" && hasNonGoodShiftNotice(job)) continue;
       const kw = PRIORITY_FINDING_KW[p];
       if (!kw) continue;
       const match = (job.findings.good || []).find(f => f.label.toLowerCase().includes(kw));
@@ -4764,13 +4774,9 @@ export default function JobTriagePage() {
           <div style={{ display: "flex", gap: S.s, flexWrap: "wrap", marginBottom: S.s }}>
             {job.highlights.map((h) => {
               const priorityName = (() => { for (const p of profilePriorities) { const kw = PRIORITY_KW[p]; if (kw && h.toLowerCase().includes(kw)) return p; } return null; })();
-              // "Good shift notice" should navigate to the 4-weeks-notice finding, not "No last-minute shift changes"
-              const scrollLabel = (() => {
-                if (priorityName !== "Good shift notice") return h;
-                const allFindings = [...(job.findings.bad || []), ...(job.findings.okay || []), ...(job.findings.good || [])];
-                return allFindings.find(f => f.label.toLowerCase().includes("shift notice"))?.label ?? h;
-              })();
-              return <VacancyHighlight key={h} label={priorityName || h} onClick={() => handlePillClick(scrollLabel)} />;
+              // Suppress "Good shift notice" chip if the job's shift notice finding is bad or okay
+              if (priorityName === "Good shift notice" && hasNonGoodShiftNotice(job)) return null;
+              return <VacancyHighlight key={h} label={priorityName || h} onClick={() => handlePillClick(h)} />;
             })}
             {priorityHighlight && <VacancyHighlight key={priorityHighlight.label} label={priorityHighlight.priorityName} onClick={() => handlePillClick(priorityHighlight.label)} />}
           </div>
