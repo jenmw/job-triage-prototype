@@ -4092,10 +4092,10 @@ const SearchResultsPage = ({ jobs, onJobSelect, isDesktop, profilePriorities, pe
       </div>
       {/* Results */}
       <div style={{ maxWidth: 1032, margin: "0 auto", padding: `${S.m}px ${S.m}px ${S.xxl}px` }}>
-        {!isDesktop && <MobileSortPills />}
-        <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m}px` }}>
+        <p style={{ ...T.body2, fontWeight: 700, color: COLORS.text, fontFamily: FONT, margin: `0 0 ${S.s}px` }}>
           {sorted.length} warehouse jobs near Corby{isDesktop ? ` · ${sortLabel}` : ""}
         </p>
+        {!isDesktop && <MobileSortPills />}
         {!isDesktop && !personalised && (
           <div onClick={onOpenDrawer} style={{ display: "flex", alignItems: "flex-start", gap: S.s, background: COLORS.accentBg, borderRadius: 5, padding: `${S.s}px ${S.s2}px`, cursor: "pointer", marginBottom: S.m }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginTop: 2 }}>
