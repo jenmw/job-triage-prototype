@@ -4092,7 +4092,7 @@ const SearchResultsPage = ({ jobs, onJobSelect, isDesktop, profilePriorities, pe
       </div>
       {/* Results */}
       <div style={{ maxWidth: 1032, margin: "0 auto", padding: `${S.m}px ${S.m}px ${S.xxl}px` }}>
-        <p style={{ ...T.body2, fontSize: 18, fontWeight: 700, color: COLORS.text, fontFamily: FONT, margin: `0 0 ${S.s}px` }}>
+        <p style={{ ...T.body2, fontSize: 18, fontWeight: 700, color: COLORS.text, fontFamily: FONT, margin: `36px 0 ${S.s}px` }}>
           {sorted.length} warehouse jobs near Corby{isDesktop ? ` · ${sortLabel}` : ""}
         </p>
         {!isDesktop && <MobileSortPills />}
