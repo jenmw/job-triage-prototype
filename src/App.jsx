@@ -3898,17 +3898,14 @@ const AlternativesList = ({ currentJobIdx, personalised, isSignedIn, onOpenDrawe
       )}
       <div style={{ display: "flex", flexDirection: "column", gap: S.s2 }}>
         {!personalised && (
-          <button onClick={onOpenDrawer} style={{
-            background: COLORS.accentBg, borderRadius: 5, border: `2px solid ${COLORS.accent}`,
-            padding: S.m, cursor: "pointer", fontFamily: FONT, textAlign: "left", width: "100%",
-            display: "flex", justifyContent: "space-between", alignItems: "center",
-          }}>
-            <div>
-              <div style={{ ...T.body1Bold, color: COLORS.accent, fontFamily: FONT, marginBottom: S.xs }}>Set your priorities</div>
-              <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>Your priorities, flagged on every job</div>
-            </div>
-            <span style={{ color: COLORS.accent, fontSize: 20, lineHeight: 1 }}>›</span>
-          </button>
+          <div onClick={onOpenDrawer} style={{ display: "flex", alignItems: "flex-start", gap: S.s, background: COLORS.accentBg, borderRadius: 5, padding: `${S.s}px ${S.m}px`, cursor: "pointer", marginBottom: S.xs }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginTop: 2 }}>
+              <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" stroke={COLORS.text} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <rect x="9" y="3" width="6" height="4" rx="1" stroke={COLORS.text} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M9 12l2 2 4-4" stroke={COLORS.text} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <span style={{ ...T.body2, color: COLORS.text, fontFamily: FONT }}><strong>Set your priorities</strong> to see how these jobs compare to what matters to you.</span>
+          </div>
         )}
         {altJobs.map((j) => (
           <AltJob key={j.id} job={j} viewedJob={currentJob} onClick={() => onJobSelect(j.id)} />
@@ -4198,7 +4195,7 @@ const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect
           {what && where ? `${what} jobs near ${where.split(",")[0].trim()}` : "Similar jobs nearby"}
         </h2>
         {/* Sort options */}
-        <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: S.s, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: S.m, flexWrap: "wrap" }}>
           <span style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, whiteSpace: "nowrap" }}>Sort by:</span>
           {SORT_OPTIONS.map((o, i) => (
             <span key={o.key} style={{ display: "flex", alignItems: "center", gap: 4 }}>
@@ -4219,17 +4216,14 @@ const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect
         {/* Job cards */}
         <div style={{ display: "flex", flexDirection: "column", gap: S.s2 }}>
           {!personalised ? (
-            <button onClick={onOpenDrawer} style={{
-              background: COLORS.accentBg, borderRadius: 5, border: `2px solid ${COLORS.accent}`,
-              padding: S.m, cursor: "pointer", fontFamily: FONT, textAlign: "left", width: "100%",
-              display: "flex", justifyContent: "space-between", alignItems: "center",
-            }}>
-              <div>
-                <div style={{ ...T.body1Bold, color: COLORS.accent, fontFamily: FONT, marginBottom: S.xs }}>Set your priorities</div>
-                <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>Your priorities, flagged on every job</div>
-              </div>
-              <span style={{ color: COLORS.accent, fontSize: 20, lineHeight: 1 }}>›</span>
-            </button>
+            <div onClick={onOpenDrawer} style={{ display: "flex", alignItems: "flex-start", gap: S.s, background: COLORS.accentBg, borderRadius: 5, padding: `${S.s}px ${S.m}px`, cursor: "pointer", marginBottom: S.s }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginTop: 2 }}>
+                <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" stroke={COLORS.text} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <rect x="9" y="3" width="6" height="4" rx="1" stroke={COLORS.text} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M9 12l2 2 4-4" stroke={COLORS.text} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span style={{ ...T.body2, color: COLORS.text, fontFamily: FONT }}><strong>Set your priorities</strong> to see how these jobs compare to what matters to you.</span>
+            </div>
           ) : (
             <p style={{ ...T.body2, color: COLORS.muted, margin: `0 0 ${S.xs}px`, fontFamily: FONT }}>
               Personalised for you · <span onClick={onOpenDrawer} style={{ textDecoration: "underline", cursor: "pointer", color: COLORS.accent }}>Edit</span>
@@ -4686,14 +4680,9 @@ export default function JobTriagePage() {
             }}>
               Apply on external site
             </button>
-            <div style={{ display: "flex", gap: S.s }}>
-              <button style={{ flex: 1, padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.text}`, background: "transparent", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
-                Save for later
-              </button>
-              <button onClick={() => setDrawerOpen(true)} style={{ flex: 1, padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.accent }}>
-                Match me
-              </button>
-            </div>
+            <button style={{ width: "100%", padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.text}`, background: "transparent", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
+              Save for later
+            </button>
           </div>
         </div>
       )}
@@ -4901,7 +4890,7 @@ export default function JobTriagePage() {
       {/* "What you need to know" — always visible, no accordion */}
       <div style={{ paddingBottom: S.l2 }}>
         <div style={{ background: COLORS.card, borderRadius: "0 0 5px 5px", borderTop: `3px solid ${COLORS.accent}`, padding: `${S.m}px ${S.m}px 0` }}>
-        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>See how you fit</div>
+        <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>See how you fit</div>
           {(() => {
             const hasBackground = Object.keys(profileBackground).length > 0;
             const hasWorkStyle = Object.keys(workStylePrefs).length > 0;
@@ -5097,7 +5086,6 @@ export default function JobTriagePage() {
           })()}
         </div>
       </div>
-
       <Section title="What it's really like here" badgeEl={<span style={{ display: "inline-flex", alignItems: "center", gap: S.xs }}><TinyRatingDial score={rating} /><span style={{ fontFamily: FONT }}><span style={{ ...T.body1Bold, color: COLORS.text }}>{rating.toFixed(1)}</span><span style={{ ...T.body1, color: COLORS.muted }}> out of 10</span></span></span>} forceOpen={findingsForceOpen} sectionRef={findingsSectionRef} subtext={`Based on ${job.quizCount.toLocaleString("en-GB")} employees who took The Breakroom Quiz`}>
         {/* Red flags group — .finding-group */}
         {(() => {
@@ -5281,9 +5269,6 @@ export default function JobTriagePage() {
                   </button>
                   <button style={{ padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.text}`, background: "transparent", fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
                     Save
-                  </button>
-                  <button onClick={(e) => { e.stopPropagation(); setDrawerOpen(true); }} style={{ padding: "6px 22px", borderRadius: 4, border: `2px solid ${COLORS.accent}`, background: COLORS.accentBg, fontSize: 16, fontWeight: 700, lineHeight: "24px", cursor: "pointer", fontFamily: FONT, color: COLORS.accent, whiteSpace: "nowrap" }}>
-                    Match me
                   </button>
                 </div>
               </div>
