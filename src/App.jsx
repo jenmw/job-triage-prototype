@@ -4036,7 +4036,7 @@ const parsePayToHourly = (pay) => {
   return num; // already hourly
 };
 
-const SearchResultsPage = ({ jobs, onJobSelect, isDesktop, profilePriorities }) => {
+const SearchResultsPage = ({ jobs, onJobSelect, isDesktop, profilePriorities, personalised, onOpenDrawer }) => {
   const [sortKey, setSortKey] = useState("relevant");
 
   const sorted = useMemo(() => {
@@ -4113,6 +4113,16 @@ const SearchResultsPage = ({ jobs, onJobSelect, isDesktop, profilePriorities }) 
         <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m}px` }}>
           {sorted.length} warehouse jobs near Corby · {sortLabel}
         </p>
+        {!isDesktop && !personalised && (
+          <div onClick={onOpenDrawer} style={{ display: "flex", alignItems: "flex-start", gap: S.s, background: COLORS.accentBg, borderRadius: 5, padding: `${S.s}px ${S.s2}px`, cursor: "pointer", marginBottom: S.m }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginTop: 2 }}>
+              <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" stroke={COLORS.text} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <rect x="9" y="3" width="6" height="4" rx="1" stroke={COLORS.text} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M9 12l2 2 4-4" stroke={COLORS.text} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <span style={{ ...T.body2, color: COLORS.text, fontFamily: FONT }}><strong style={{ textDecoration: "underline" }}>Set your priorities</strong> to see how these jobs compare to what matters to you.</span>
+          </div>
+        )}
         <div style={{ display: "flex", gap: S.l, alignItems: "flex-start" }}>
           {isDesktop && <SortSidebar />}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: S.s2 }}>
@@ -5256,7 +5266,7 @@ export default function JobTriagePage() {
       ) : (
         <>
           {/* Mobile: results list always visible behind drawer */}
-          <SearchResultsPage jobs={JOBS} onJobSelect={handleJobSelect} isDesktop={false} profilePriorities={profilePriorities} />
+          <SearchResultsPage jobs={JOBS} onJobSelect={handleJobSelect} isDesktop={false} profilePriorities={profilePriorities} personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} />
 
           {/* Mobile vacancy drawer — 95% height, opens over results list */}
           <div onClick={handleBackToSearch} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 99, opacity: view === "job" ? 1 : 0, pointerEvents: view === "job" ? "auto" : "none", transition: "opacity 0.35s ease" }} />
