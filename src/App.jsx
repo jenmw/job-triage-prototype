@@ -90,6 +90,37 @@ const WORK_STYLE_QUESTIONS = [
 
 const PRIORITIES = ["Good shift notice", "Well rated employer", "Good team mates", "Career progression", "Recommended by students", "Recommended by parents", "Good managers", "No experience required"];
 
+// Maps each priority to a keyword found in job.findings.good labels
+const PRIORITY_KW = {
+  "Good shift notice":       "last-minute",
+  "Good team mates":         "team",
+  "Career progression":      "progress",
+  "Recommended by students": "recommended by students",
+  "Recommended by parents":  "recommended by parents",
+  "Good managers":           "respect",
+};
+
+const getPriorityChips = (job, profilePriorities) => {
+  if (!profilePriorities?.length) return [];
+  const good = job.findings?.good || [];
+  const results = [];
+  for (const p of profilePriorities) {
+    if (results.length >= 2) break;
+    if (p === "Well rated employer") {
+      if (job.rating >= 7.0) results.push("Well rated");
+    } else if (p === "No experience required") {
+      // Already shown by getJobHighlights — skip to avoid duplication
+    } else {
+      const kw = PRIORITY_KW[p];
+      if (kw) {
+        const match = good.find(f => f.label.toLowerCase().includes(kw));
+        if (match) results.push(match.label);
+      }
+    }
+  }
+  return results;
+};
+
 
 // Three transport modes — matches Breakroom onboarding options
 const TRANSPORT_MODES = [
@@ -3911,8 +3942,9 @@ const getJobHighlights = (job) => {
   return chips;
 };
 
-const SearchResultCard = ({ job, onClick, viewedJob, isActive, profileCoords, profileTravel }) => {
+const SearchResultCard = ({ job, onClick, viewedJob, isActive, profileCoords, profileTravel, profilePriorities }) => {
   const chips = getJobHighlights(job);
+  const priorityChips = getPriorityChips(job, profilePriorities).filter(c => !chips.includes(c));
 
   // Commute chip — show when this job is 5+ mins closer than the viewed job
   let commuteBadge = null;
@@ -3958,9 +3990,12 @@ const SearchResultCard = ({ job, onClick, viewedJob, isActive, profileCoords, pr
         <span style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>{job.company}</span>
       </div>
       <div style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, marginBottom: chips.length > 0 || commuteBadge ? S.xs : 0 }}>{job.pay} · {job.location}</div>
-      {(chips.length > 0 || commuteBadge) && (
+      {(chips.length > 0 || commuteBadge || priorityChips.length > 0) && (
         <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginTop: S.s }}>
           {commuteBadge && <span style={{ ...T.body2, color: COLORS.muted, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT }}>{commuteBadge}</span>}
+          {priorityChips.map(c => (
+            <span key={c} style={{ ...T.body2Bold, color: COLORS.greenText, background: COLORS.greenBg, border: `1.5px solid ${COLORS.green}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT }}>👍 {c}</span>
+          ))}
           {chips.map(c => (
             <span key={c} style={{ ...T.body2, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT }}>{c}</span>
           ))}
