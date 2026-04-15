@@ -5013,7 +5013,7 @@ export default function JobTriagePage() {
           const bad = job.findings.bad;
           const moreCount = bad.length - 3;
           return (
-            <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0`, marginBottom: S.m, marginTop: S.m2 }}>
+            <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0`, marginBottom: S.m, marginTop: S.m }}>
               <div style={{ ...T.smallcaps, color: COLORS.text, display: "inline-block", textTransform: "uppercase", fontFamily: FONT }}>Needs improving</div>
               <div>
                 {bad.slice(0, 3).map((v, i, arr) => (
