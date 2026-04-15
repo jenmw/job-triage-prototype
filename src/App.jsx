@@ -3260,11 +3260,11 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {}, filterL
           })}
         </div>
         {(!postcode || travel.length === 0) && (
-          <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m}px` }}>
+          <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.l}px` }}>
             {!postcode && travel.length === 0 ? "Fill in your postcode and travel mode to see commute times on listings." : !postcode ? "Add your postcode to see commute times." : "Pick a travel mode to see commute times."}
           </p>
         )}
-        {postcode && travel.length > 0 && <div style={{ marginBottom: S.m }} />}
+        {postcode && travel.length > 0 && <div style={{ marginBottom: S.l }} />}
 
         <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>What do you currently earn?</label>
         <div style={{ display: "flex", gap: S.s, alignItems: "center", marginBottom: S.m }}>
@@ -3279,14 +3279,14 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {}, filterL
           </div>
         </div>
 
-        <div onClick={() => currentPay && onFilterLowPayChange && onFilterLowPayChange(!filterLowPay)} style={{ display: "flex", alignItems: "center", gap: S.s, cursor: currentPay ? "pointer" : "default", marginBottom: S.m, opacity: currentPay ? 1 : 0.4 }}>
+        <div onClick={() => currentPay && onFilterLowPayChange && onFilterLowPayChange(!filterLowPay)} style={{ display: "flex", alignItems: "center", gap: S.s, cursor: currentPay ? "pointer" : "default", marginBottom: S.l, opacity: currentPay ? 1 : 0.4 }}>
           <div style={{ width: 40, height: 22, borderRadius: 11, background: filterLowPay && currentPay ? COLORS.accent : COLORS.border, position: "relative", flexShrink: 0, transition: "background 0.2s" }}>
             <div style={{ position: "absolute", top: 2, left: filterLowPay && currentPay ? 20 : 2, width: 18, height: 18, borderRadius: "50%", background: "#fff", transition: "left 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
           </div>
           <span style={{ ...T.body2, color: COLORS.text, fontFamily: FONT }}>Don't show me jobs that pay less than this</span>
         </div>
         <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>What matters most to you? <span style={{ fontWeight: 400, color: COLORS.muted }}>(pick up to 3)</span></label>
-        <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginBottom: S.m2 }}>
+        <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginBottom: S.l }}>
           {PRIORITIES.map((p) => (
             <button key={p} onClick={() => { if (priorities.has(p) || priorities.size < 3) togglePriority(p); }}
               style={{ padding: "2px 8px", borderRadius: 20, border: `${priorities.has(p) ? "2px" : "1px"} solid ${priorities.has(p) ? COLORS.green : COLORS.border}`, background: COLORS.card, ...(priorities.has(p) ? T.body2Bold : T.body2), cursor: "pointer", fontFamily: FONT, color: priorities.has(p) ? COLORS.greenText : COLORS.text }}>
