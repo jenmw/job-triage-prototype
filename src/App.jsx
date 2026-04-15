@@ -3101,6 +3101,7 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {}, filterL
   const [priorities, setPriorities] = useState(new Set(initialValues.priorities || []));
   const [rolePrefs, setRolePrefs] = useState(initialValues.rolePrefs || {});
   const scrollRef = useRef(null);
+  const onboardingDragY = useRef(null);
   useEffect(() => {
     if (open) {
       setPostcode(initialValues.postcode || "");
@@ -3122,7 +3123,22 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {}, filterL
     <>
       <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity 0.3s", zIndex: 100 }} />
       <div ref={scrollRef} style={{ position: "fixed", bottom: 0, left: 0, right: 0, maxHeight: "85vh", background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, overflowY: "auto", boxShadow: open ? "0 -8px 40px rgba(0,0,0,0.15)" : "none" }}>
-        <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px` }} />
+        <div
+          style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px`, cursor: "grab" }}
+          onTouchStart={(e) => { onboardingDragY.current = e.touches[0].clientY; }}
+          onTouchMove={(e) => {
+            if (onboardingDragY.current === null || !scrollRef.current) return;
+            const dy = e.touches[0].clientY - onboardingDragY.current;
+            if (dy > 0) { scrollRef.current.style.transition = "none"; scrollRef.current.style.transform = `translateY(${dy}px)`; }
+          }}
+          onTouchEnd={(e) => {
+            if (onboardingDragY.current === null || !scrollRef.current) return;
+            const dy = e.changedTouches[0].clientY - onboardingDragY.current;
+            scrollRef.current.style.transition = "transform 0.35s ease";
+            if (dy > 80) { onClose(); } else { scrollRef.current.style.transform = "translateY(0)"; }
+            onboardingDragY.current = null;
+          }}
+        />
         <h3 style={{ ...T.lead1, margin: 0, color: COLORS.text, fontFamily: FONT, marginBottom: S.m2 }}>Help us find you better jobs</h3>
 
         <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>Your postcode</label>
@@ -3426,6 +3442,7 @@ const WorkStyleDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState(initialValues);
   const drawerRef = useRef(null);
+  const wsDragY = useRef(null);
   // Refs so native event listeners always see current values without stale closures
   const stepRef = useRef(step);
   const answersRef = useRef(answers);
@@ -3481,7 +3498,22 @@ const WorkStyleDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
     <>
       <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity 0.3s", zIndex: 100 }} />
       <div ref={drawerRef} style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, boxShadow: open ? "0 -8px 40px rgba(0,0,0,0.15)" : "none", touchAction: "pan-y" }}>
-        <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px` }} />
+        <div
+          style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px`, cursor: "grab" }}
+          onTouchStart={(e) => { wsDragY.current = e.touches[0].clientY; }}
+          onTouchMove={(e) => {
+            if (wsDragY.current === null || !drawerRef.current) return;
+            const dy = e.touches[0].clientY - wsDragY.current;
+            if (dy > 0) { drawerRef.current.style.transition = "none"; drawerRef.current.style.transform = `translateY(${dy}px)`; }
+          }}
+          onTouchEnd={(e) => {
+            if (wsDragY.current === null || !drawerRef.current) return;
+            const dy = e.changedTouches[0].clientY - wsDragY.current;
+            drawerRef.current.style.transition = "transform 0.35s ease";
+            if (dy > 80) { onClose(); } else { drawerRef.current.style.transform = "translateY(0)"; }
+            wsDragY.current = null;
+          }}
+        />
 
         {/* Progress dots */}
         <div style={{ display: "flex", justifyContent: "center", gap: S.xs, marginBottom: S.m2 }}>
@@ -4294,6 +4326,8 @@ function MapThumbnail({ coords, onExpand, height = 180, label }) {
 export default function JobTriagePage() {
   const listScrollRef = useRef(0);
   const vacancyScrollRef = useRef(null);
+  const vacancyDrawerRef = useRef(null);
+  const vacancyDragY = useRef(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [backgroundDrawerOpen, setBackgroundDrawerOpen] = useState(false);
   const [bgDrawerFocusTitle, setBgDrawerFocusTitle] = useState(false);
@@ -5167,9 +5201,24 @@ export default function JobTriagePage() {
 
           {/* Mobile vacancy drawer — 95% height, opens over results list */}
           <div onClick={handleBackToSearch} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 99, opacity: view === "job" ? 1 : 0, pointerEvents: view === "job" ? "auto" : "none", transition: "opacity 0.35s ease" }} />
-          <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, height: "95dvh", zIndex: 100, background: COLORS.bg, borderRadius: "16px 16px 0 0", transform: view === "job" ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+          <div ref={vacancyDrawerRef} style={{ position: "fixed", bottom: 0, left: 0, right: 0, height: "95dvh", zIndex: 100, background: COLORS.bg, borderRadius: "16px 16px 0 0", transform: view === "job" ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", display: "flex", flexDirection: "column", overflow: "hidden" }}>
             {/* Handle bar */}
-            <div style={{ flexShrink: 0, display: "flex", justifyContent: "center", padding: `${S.s}px 0 0` }}>
+            <div
+              style={{ flexShrink: 0, display: "flex", justifyContent: "center", padding: `${S.m}px 0`, cursor: "grab" }}
+              onTouchStart={(e) => { vacancyDragY.current = e.touches[0].clientY; }}
+              onTouchMove={(e) => {
+                if (vacancyDragY.current === null || !vacancyDrawerRef.current) return;
+                const dy = e.touches[0].clientY - vacancyDragY.current;
+                if (dy > 0) { vacancyDrawerRef.current.style.transition = "none"; vacancyDrawerRef.current.style.transform = `translateY(${dy}px)`; }
+              }}
+              onTouchEnd={(e) => {
+                if (vacancyDragY.current === null || !vacancyDrawerRef.current) return;
+                const dy = e.changedTouches[0].clientY - vacancyDragY.current;
+                vacancyDrawerRef.current.style.transition = "transform 0.35s ease";
+                if (dy > 80) { handleBackToSearch(); } else { vacancyDrawerRef.current.style.transform = "translateY(0)"; }
+                vacancyDragY.current = null;
+              }}
+            >
               <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border }} />
             </div>
             {/* Scrollable content */}
