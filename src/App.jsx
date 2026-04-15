@@ -4106,6 +4106,11 @@ const SearchResultsPage = ({ jobs, onJobSelect, isDesktop, profilePriorities, pe
             <span style={{ ...T.body2, color: COLORS.text, fontFamily: FONT }}><strong style={{ textDecoration: "underline" }}>Set your priorities</strong> to see how these jobs compare to what matters to you.</span>
           </div>
         )}
+        {!isDesktop && personalised && (
+          <p style={{ ...T.body2, color: COLORS.muted, margin: `0 0 ${S.xs}px`, fontFamily: FONT }}>
+            Personalised for you · <span onClick={onOpenDrawer} style={{ textDecoration: "underline", cursor: "pointer", color: COLORS.accent }}>Edit</span>
+          </p>
+        )}
         <div style={{ display: "flex", gap: S.l, alignItems: "flex-start" }}>
           {isDesktop && <SortSidebar />}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: S.s2 }}>
