@@ -4432,9 +4432,14 @@ export default function JobTriagePage() {
     setHighlightFinding(label);
     // Wait for accordion to open (350ms transition) before scrolling
     setTimeout(() => {
-      if (findingsSectionRef.current) {
+      if (!findingsSectionRef.current) return;
+      if (isDesktop) {
         const y = findingsSectionRef.current.getBoundingClientRect().top + window.scrollY - 60;
         window.scrollTo({ top: y, behavior: "smooth" });
+      } else if (vacancyScrollRef.current) {
+        const containerTop = vacancyScrollRef.current.getBoundingClientRect().top;
+        const elTop = findingsSectionRef.current.getBoundingClientRect().top;
+        vacancyScrollRef.current.scrollBy({ top: elTop - containerTop - 16, behavior: "smooth" });
       }
     }, 380);
     // Clear highlight after 2s
@@ -4491,10 +4496,18 @@ export default function JobTriagePage() {
   }, [job.id, profilePriorities.join(",")]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const scrollToFindings = () => {
-    if (!findingsSectionRef.current) return;
-    const y = findingsSectionRef.current.getBoundingClientRect().top + window.scrollY - 70;
-    window.scrollTo({ top: y, behavior: "smooth" });
     setFindingsForceOpen(true);
+    setTimeout(() => {
+      if (!findingsSectionRef.current) return;
+      if (isDesktop) {
+        const y = findingsSectionRef.current.getBoundingClientRect().top + window.scrollY - 70;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      } else if (vacancyScrollRef.current) {
+        const containerTop = vacancyScrollRef.current.getBoundingClientRect().top;
+        const elTop = findingsSectionRef.current.getBoundingClientRect().top;
+        vacancyScrollRef.current.scrollBy({ top: elTop - containerTop - 16, behavior: "smooth" });
+      }
+    }, 380);
   };
 
   const heroBlock = (
