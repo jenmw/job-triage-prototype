@@ -4879,19 +4879,7 @@ export default function JobTriagePage() {
             const hasBackground = Object.keys(profileBackground).length > 0;
             const hasWorkStyle = Object.keys(workStylePrefs).length > 0;
 
-            // ── Card 1: Findings & reviews synthesis ────────────────────────────
-            const synth = synthSignal(job);
-            const synthCard = (
-              <Signal
-                status={synth.status}
-                label={synth.label}
-                detail={synth.detail}
-                subtext={`Based on ${job.quizCount.toLocaleString()} Breakroom Quiz responses`}
-                isLast={false}
-              />
-            );
-
-            // ── Card 2: Experience & qualifications ─────────────────────────────
+            // ── Card 1: Experience & qualifications ─────────────────────────────
             const bgCard = hasBackground ? (() => {
               // FLT licence takes priority if the job requires it
               if (job.requiresFltLicence) {
@@ -5075,7 +5063,6 @@ export default function JobTriagePage() {
 
             return (
               <>
-                {synthCard}
                 {bgCard}
                 {wsCard}
 </>
