@@ -88,7 +88,7 @@ const WORK_STYLE_QUESTIONS = [
   { id: "caring",   question: "Are you interested in helping people in need?", subtext: "These jobs can be stressful and difficult at times, but you'll be making a difference to people's lives.", options: [["yes", "Yes"], ["no", "No"], ["either", "I don't mind"]] },
 ];
 
-const PRIORITIES = ["Good shift notice", "Well rated employer", "Good team mates", "Career progression", "Recommended by students", "Recommended by parents", "Good managers", "No experience required", "Enough hours"];
+const PRIORITIES = ["Good shift notice", "Well rated employer", "Good team mates", "Career progression", "Recommended by students", "Recommended by parents", "Good managers", "No experience required"];
 
 // Maps each priority to a keyword found in job.findings.good labels
 const PRIORITY_KW = {
@@ -98,7 +98,6 @@ const PRIORITY_KW = {
   "Recommended by students": "recommended by students",
   "Recommended by parents":  "recommended by parents",
   "Good managers":           "respect",
-  "Enough hours":            "enough hours",
 };
 
 const getPriorityChips = (job, profilePriorities) => {
@@ -4623,7 +4622,6 @@ export default function JobTriagePage() {
     "Good managers":            "respect",
     "Recommended by students":  "recommended by students",
     "Recommended by parents":   "recommended by parents",
-    "Enough hours":             "enough hours",
   };
   const priorityHighlight = useMemo(() => {
     const existing = new Set(job.highlights);
