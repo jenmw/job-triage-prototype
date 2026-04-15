@@ -3291,7 +3291,7 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
 
         <button onClick={() => onSubmit({ postcode, currentPay, payType, travel: [...travel], priorities: [...priorities] })}
           style={{ width: "100%", padding: S.m, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
-          Save my priorities
+          Save
         </button>
         <button onClick={onClose} style={{ width: "100%", padding: `${S.s2}px`, background: "none", border: "none", ...T.body1, color: COLORS.muted, cursor: "pointer", marginTop: S.s, fontFamily: FONT }}>
           Maybe later
@@ -4663,7 +4663,7 @@ export default function JobTriagePage() {
 
       {/* CTA card — desktop only (mobile has sticky bar at bottom of drawer) */}
       {isDesktop && (
-        <div style={{ marginBottom: S.m2 }}>
+        <div style={{ marginBottom: S.l2 }}>
 <div style={{ background: COLORS.card, borderRadius: 5, boxShadow: "0px 4px 4px rgba(0,0,0,0.05)", padding: `${S.m}px ${S.m2}px` }}>
             <RequirementsNotice reqs={hardReqs ?? []} onAdd={(section) => { setBgDrawerSection(section); setBgDrawerFocusTitle(section === "workHistory"); setBackgroundDrawerOpen(true); }} />
             <button style={{
@@ -4686,7 +4686,7 @@ export default function JobTriagePage() {
       )}
 
       {/* The Breakroom Take — card with brand accent top border */}
-      <div style={{ background: COLORS.card, borderRadius: "0 0 5px 5px", borderTop: `3px solid ${COLORS.accent}`, padding: S.m, marginBottom: S.m2 }}>
+      <div style={{ background: COLORS.card, borderRadius: "0 0 5px 5px", borderTop: `3px solid ${COLORS.accent}`, padding: S.m, marginBottom: S.l2 }}>
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.m }}>The Breakroom Take</div>
 
         {/* Rating row */}
@@ -4719,7 +4719,7 @@ export default function JobTriagePage() {
 
       {/* Map — mobile only, after Breakroom Take */}
       {!isDesktop && (
-        <div style={{ marginBottom: S.m2 }}>
+        <div style={{ marginBottom: S.l2 }}>
           <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.s }}>Where it is</div>
           <MapThumbnail coords={job.coords} onExpand={() => setMapModalOpen(true)} height={180} />
         </div>
@@ -4886,7 +4886,7 @@ export default function JobTriagePage() {
     <>
       {matchCard}
       {/* "What you need to know" — always visible, no accordion */}
-      <div style={{ paddingBottom: S.m2 }}>
+      <div style={{ paddingBottom: S.l2 }}>
         <div style={{ background: COLORS.card, borderRadius: "0 0 5px 5px", borderTop: `3px solid ${COLORS.accent}`, padding: `${S.m}px ${S.m}px 0` }}>
         <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT }}>See how you fit</div>
           {(() => {
