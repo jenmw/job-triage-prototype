@@ -4613,6 +4613,19 @@ export default function JobTriagePage() {
                 const color = verdict === "below" ? COLORS.red : COLORS.greenText;
                 return <div style={{ ...T.body2, fontWeight: 500, color, fontFamily: FONT, marginTop: 2 }}>{arrow} {label} · {range}</div>;
               })()}
+              {f.showUserPayComparison && (() => {
+                if (!profileCurrentPay || !profilePayType || profilePayType !== job.payType) return null;
+                const jobPay = parsePayValue(job.pay);
+                const userPay = parseFloat(String(profileCurrentPay).replace(/[£,]/g, "").replace(/\/.*/, ""));
+                if (!jobPay || isNaN(userPay) || userPay <= 0) return null;
+                const unit = job.payType === "annual" ? "/yr" : "/hr";
+                const userPayFmt = job.payType === "annual"
+                  ? `£${Math.round(userPay).toLocaleString("en-GB")}${unit}`
+                  : `£${userPay.toFixed(2)}${unit}`;
+                if (jobPay > userPay) return <div style={{ ...T.body2, fontWeight: 500, color: COLORS.greenText, fontFamily: FONT, marginTop: 2 }}>↑ Pays more than your current {userPayFmt}</div>;
+                if (jobPay < userPay) return <div style={{ ...T.body2, fontWeight: 500, color: COLORS.red, fontFamily: FONT, marginTop: 2 }}>↓ Pays less than your current {userPayFmt}</div>;
+                return null;
+              })()}
               {f.commuteRow && (() => {
                 if (!profilePostcode) {
                   return <div onClick={() => setDrawerOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", fontFamily: FONT, marginTop: 2, cursor: "pointer" }}>Get commute time</div>;
@@ -4648,7 +4661,7 @@ export default function JobTriagePage() {
         return (
           <div style={{ borderTop: `1px solid ${COLORS.border}`, marginTop: S.m, marginBottom: S.m2, paddingTop: S.m, paddingBottom: 0, display: "flex", gap: S.m, alignItems: "flex-start" }}>
             <div style={{ flex: 1, minWidth: 0 }}>
-              {renderRow({ icon: <IconPay />, text: job.pay, benchmark: job.payBenchmark })}
+              {renderRow({ icon: <IconPay />, text: job.pay, benchmark: job.payBenchmark, showUserPayComparison: true })}
               {renderRow({ icon: <IconLocation />, text: job.location, commuteRow: true })}
               {renderRow({ icon: <IconClock />, text: [job.hours, job.hoursSub ? `(${job.hoursSub})` : null, job.shifts].filter(Boolean).join(" · ") })}
             </div>
