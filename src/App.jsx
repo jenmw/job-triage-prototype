@@ -5041,23 +5041,16 @@ export default function JobTriagePage() {
                   <FindingTile key={v.label} {...v} variant="green" lit={highlightFinding === v.label} forceOpen={highlightFinding === v.label} isLast={i === arr.length - 1} />
                 ))}
               </div>
-              {moreCount > 0 && (
-                <div onClick={() => setAllFindingsModalOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", cursor: "pointer", padding: `${S.s2}px 0`, fontFamily: FONT, borderTop: `1px solid ${COLORS.border}` }}>
-                  See {moreCount} more good {moreCount === 1 ? "thing" : "things"}
-                </div>
-              )}
             </div>
           );
         })()}
 
         {/* Full picture link — sits below both cards */}
         {(() => {
-          const okayCount = (job.findings.okay ?? []).length;
+          const totalCount = (job.findings.good ?? []).length + (job.findings.okay ?? []).length + (job.findings.bad ?? []).length;
           return (
             <div onClick={() => setAllFindingsModalOpen(true)} style={{ ...T.body2, color: COLORS.text, textDecoration: "underline", cursor: "pointer", padding: `${S.s2}px 0`, fontFamily: FONT, marginTop: S.s }}>
-              {okayCount > 0
-                ? `See the full picture including ${okayCount} ${okayCount === 1 ? "thing" : "things"} that ${okayCount === 1 ? "is" : "are"} okay`
-                : "See the full picture"}
+              {`See the full list of ${totalCount} findings`}
             </div>
           );
         })()}
