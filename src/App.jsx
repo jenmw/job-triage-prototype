@@ -109,7 +109,7 @@ const getPriorityChips = (job, profilePriorities) => {
     if (p === "Well rated employer") {
       if (job.rating >= 7.0) results.push(p);
     } else if (p === "No experience required") {
-      if (job.matchCriteria?.experience?.required === false || (job.findingDiffs || []).some(d => d.toLowerCase().includes("no experience"))) results.push(p);
+      if (job.matchCriteria?.experience?.required === false && job.matchCriteria?.experience?.preferred !== true) results.push(p);
     } else {
       const kw = PRIORITY_KW[p];
       if (kw) {
@@ -3913,10 +3913,7 @@ const getJobHighlights = (job) => {
   const isStandout = job.rating >= 7.0;
 
   // No experience required — eligibility fact, always shown
-  if (
-    job.matchCriteria?.experience?.required === false ||
-    (job.findingDiffs || []).some(d => d.toLowerCase().includes("no experience"))
-  ) {
+  if (job.matchCriteria?.experience?.required === false && job.matchCriteria?.experience?.preferred !== true) {
     chips.push("No experience required");
   }
 
