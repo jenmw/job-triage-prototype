@@ -4506,7 +4506,7 @@ export default function JobTriagePage() {
       )}
       <h1 style={{ ...(isDesktop ? T.heading1Lg : T.heading1), margin: `0 0 ${S.xs}px`, fontFamily: FONT, color: COLORS.text }}>{job.title}</h1>
 
-      <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>
+      <div style={{ ...T.lead2, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>
         {job.companyUrl ? <a href={job.companyUrl} style={{ color: "inherit", fontWeight: "inherit", textDecoration: "underline" }}>{job.company}</a> : job.company}
       </div>
 
