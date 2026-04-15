@@ -4994,7 +4994,7 @@ export default function JobTriagePage() {
           })()}
         </div>
       </div>
-      <Section title="What it's really like here" badgeEl={<span style={{ display: "inline-flex", alignItems: "center", gap: S.xs }}><TinyRatingDial score={rating} /><span style={{ fontFamily: FONT }}><span style={{ ...T.body1Bold, color: COLORS.text }}>{rating.toFixed(1)}</span><span style={{ ...T.body1, color: COLORS.muted }}> out of 10</span></span></span>} forceOpen={findingsForceOpen} sectionRef={findingsSectionRef} subtext={`Based on ${job.quizCount.toLocaleString("en-GB")} employees who took The Breakroom Quiz`}>
+      <Section key={`findings-${job.id}`} title="What it's really like here" badgeEl={<span style={{ display: "inline-flex", alignItems: "center", gap: S.xs }}><TinyRatingDial score={rating} /><span style={{ fontFamily: FONT }}><span style={{ ...T.body1Bold, color: COLORS.text }}>{rating.toFixed(1)}</span><span style={{ ...T.body1, color: COLORS.muted }}> out of 10</span></span></span>} forceOpen={findingsForceOpen} sectionRef={findingsSectionRef} subtext={`Based on ${job.quizCount.toLocaleString("en-GB")} employees who took The Breakroom Quiz`}>
         {/* Red flags group — .finding-group */}
         {(() => {
           const bad = job.findings.bad;
@@ -5050,7 +5050,7 @@ export default function JobTriagePage() {
         })()}
       </Section>
 
-      <Section title="Worker reviews">
+      <Section key={`reviews-${job.id}`} title="Worker reviews">
         <ReviewCard
           best="Flexible when needed, good team atmosphere"
           worst="The managers, the stress levels — it gets to you"
