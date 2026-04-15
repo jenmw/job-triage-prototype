@@ -2861,8 +2861,9 @@ const IconMenuNav = () => (
 const IconUserNav = () => (
   <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
     <g stroke="#323232" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-      <circle cx="12" cy="7" r="4"/>
+      <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+      <rect x="9" y="3" width="6" height="4" rx="1"/>
+      <path d="M9 12l2 2 4-4"/>
     </g>
   </svg>
 );
@@ -3290,10 +3291,10 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
 
         <button onClick={() => onSubmit({ postcode, currentPay, payType, travel: [...travel], priorities: [...priorities] })}
           style={{ width: "100%", padding: S.m, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
-          Show me better matches
+          Save my priorities
         </button>
         <button onClick={onClose} style={{ width: "100%", padding: `${S.s2}px`, background: "none", border: "none", ...T.body1, color: COLORS.muted, cursor: "pointer", marginTop: S.s, fontFamily: FONT }}>
-          Not now, I'll keep browsing
+          Maybe later
         </button>
       </div>
     </>
@@ -3689,21 +3690,34 @@ const ProfileHub = ({ open, onClose, isSignedIn, userEmail, onSignIn, postcode, 
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, maxHeight: "90vh", background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 111, overflowY: "auto", boxShadow: open ? "0 -8px 40px rgba(0,0,0,0.15)" : "none" }}>
         <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px` }} />
         <h3 style={{ ...T.lead1, margin: `0 0 ${S.s}px`, color: COLORS.text, fontFamily: FONT }}>
-          {stateHasPersonalisation ? "Don't lose your preferences" : "Your Breakroom profile"}
+          {isSignedIn ? "Your Breakroom profile" : stateHasPersonalisation ? "Don't lose your preferences" : "Nothing added yet"}
         </h3>
 
         {/* ── State 1: no personalisation, not signed in ── */}
         {stateNoPersonalisation && (
           <>
             <p style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.m2}px` }}>
-              Create a free account to get personalised job matches, save jobs for later, and see how jobs compare to your current one.
+              Add your priorities and we'll flag what matters to you on every job.
             </p>
-            <button onClick={() => { if (!email) { setEmailError(true); } else { onSignIn(email); } }}
-              style={{ width: "100%", padding: S.s2, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT, marginBottom: S.m }}>
-              Create a free account
-            </button>
-            <button style={{ width: "100%", padding: S.s2, borderRadius: 4, border: `2px solid #323232`, background: COLORS.card, ...T.body1Bold, cursor: "pointer", fontFamily: FONT, color: COLORS.text }}>
-              Sign in
+            <div style={{ marginBottom: S.m2 }}>
+              {[
+                "See if a job pays more than you currently earn",
+                "Get your commute time shown on every listing",
+                "Apply for jobs that match your experience",
+                "Find out how well each job fits your work style",
+              ].map(line => (
+                <div key={line} style={{ display: "flex", alignItems: "flex-start", gap: S.s, marginBottom: S.s }}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginTop: 3 }}>
+                    <path d="M3 8l3.5 3.5L13 5" stroke={COLORS.border} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span style={{ ...T.body1, color: COLORS.muted, fontFamily: FONT }}>{line}</span>
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={() => { onClose(); onOpenDrawer(); }}
+              style={{ width: "100%", padding: S.s2, borderRadius: 4, border: "none", background: COLORS.accent, color: "#fff", ...T.body1Bold, cursor: "pointer", fontFamily: FONT }}>
+              Set your priorities
             </button>
           </>
         )}
@@ -4575,11 +4589,11 @@ export default function JobTriagePage() {
           <span onClick={handleBackToSearch} style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, cursor: "pointer" }}>← Search results</span>
         </div>
       )}
+      <h1 style={{ ...(isDesktop ? T.heading1Lg : T.heading1), margin: `0 0 ${S.xs}px`, fontFamily: FONT, color: COLORS.text }}>{job.title}</h1>
+
       <div style={{ ...T.body1Bold, color: COLORS.text, fontFamily: FONT, marginBottom: S.xs }}>
         {job.companyUrl ? <a href={job.companyUrl} style={{ color: "inherit", fontWeight: "inherit", textDecoration: "underline" }}>{job.company}</a> : job.company}
       </div>
-
-      <h1 style={{ ...(isDesktop ? T.heading1Lg : T.heading1), margin: `0 0 ${S.xs}px`, fontFamily: FONT, color: COLORS.text }}>{job.title}</h1>
 
       {job.occupationDesc && <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, margin: `0 0 ${S.s2}px` }}>{job.occupationDesc}</p>}
 
@@ -5179,12 +5193,12 @@ export default function JobTriagePage() {
               {hasPersonalisation && !isSignedIn && (() => {
                 const count = [profilePostcode, profileCurrentPay, profileTravel.length > 0, profilePriorities.length > 0, userLicences.size > 0, Object.keys(profileBackground).length > 0, Object.keys(workStylePrefs).length > 0].filter(Boolean).length;
                 return (
-                  <span key={count} className="badge-bounce" style={{ position: "absolute", top: 8, right: 2, minWidth: 16, height: 16, borderRadius: 8, background: COLORS.accent, border: `2px solid ${COLORS.card}`, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 3px", boxSizing: "border-box" }}>
+                  <span key={count} className="badge-bounce" style={{ position: "absolute", top: 8, right: 8, minWidth: 16, height: 16, borderRadius: 8, background: COLORS.accent, border: `2px solid ${COLORS.card}`, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 3px", boxSizing: "border-box" }}>
                     <span style={{ fontSize: 10, fontWeight: 700, color: "#fff", fontFamily: FONT, lineHeight: 1 }}>{count}</span>
                   </span>
                 );
               })()}
-              <span style={{ fontSize: 12, fontWeight: 700, color: COLORS.text, fontFamily: FONT, lineHeight: 1 }}>Profile</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: COLORS.text, fontFamily: FONT, lineHeight: 1 }}>Priorities</span>
             </button>
             {/* .header__btn .header__menu */}
             <button style={{ height: "100%", minWidth: 48, background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", gap: 5, padding: "14px 8px 0" }}>
