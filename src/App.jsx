@@ -5279,7 +5279,15 @@ export default function JobTriagePage() {
             <div ref={vacancyScrollRef} style={{ flex: 1, overflowY: "auto", padding: `0 ${S.m}px` }}>
               {heroBlock}
               {sectionsBlock}
-              <div style={{ height: S.xxl }} />
+              {/* Similar jobs — mobile only */}
+              <div style={{ marginTop: S.l2, paddingBottom: S.xxl }}>
+                <h2 style={{ ...T.lead1, color: COLORS.text, fontFamily: FONT, margin: `0 0 ${S.m}px` }}>Similar jobs nearby</h2>
+                <div style={{ display: "flex", flexDirection: "column", gap: S.s2 }}>
+                  {JOBS.filter(j => j.id !== JOBS[selectedJobIdx]?.id).slice(0, 5).map(j => (
+                    <SearchResultCard key={j.id} job={j} onClick={() => handleJobSelect(j.id)} profilePriorities={profilePriorities} profileCoords={profileCoords} profileTravel={profileTravel} />
+                  ))}
+                </div>
+              </div>
             </div>
             {/* Sticky CTA bar at bottom of drawer */}
             <div style={{ flexShrink: 0, background: COLORS.card, boxShadow: "0 -2px 8px rgba(0,0,0,0.08)", padding: `${S.s2}px ${S.m}px` }}>
