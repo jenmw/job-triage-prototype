@@ -107,14 +107,14 @@ const getPriorityChips = (job, profilePriorities) => {
   for (const p of profilePriorities) {
     if (results.length >= 2) break;
     if (p === "Well rated employer") {
-      if (job.rating >= 7.0) results.push("Well rated");
+      if (job.rating >= 7.0) results.push(p);
     } else if (p === "No experience required") {
-      // Already shown by getJobHighlights — skip to avoid duplication
+      if (job.matchCriteria?.experience?.required === false || (job.findingDiffs || []).some(d => d.toLowerCase().includes("no experience"))) results.push(p);
     } else {
       const kw = PRIORITY_KW[p];
       if (kw) {
         const match = good.find(f => f.label.toLowerCase().includes(kw));
-        if (match) results.push(match.label);
+        if (match) results.push(p);
       }
     }
   }
@@ -3943,8 +3943,10 @@ const getJobHighlights = (job) => {
 };
 
 const SearchResultCard = ({ job, onClick, viewedJob, isActive, profileCoords, profileTravel, profilePriorities }) => {
-  const chips = getJobHighlights(job);
-  const priorityChips = getPriorityChips(job, profilePriorities).filter(c => !chips.includes(c));
+  const priorityChips = getPriorityChips(job, profilePriorities);
+  // Suppress grey chips that the active priority chips already cover (by label or by keyword match)
+  const coveredKws = priorityChips.flatMap(p => PRIORITY_KW[p] ? [PRIORITY_KW[p]] : []);
+  const chips = getJobHighlights(job).filter(c => !priorityChips.includes(c) && !coveredKws.some(kw => c.toLowerCase().includes(kw)));
 
   // Commute chip — show when this job is 5+ mins closer than the viewed job
   let commuteBadge = null;
@@ -3994,7 +3996,7 @@ const SearchResultCard = ({ job, onClick, viewedJob, isActive, profileCoords, pr
         <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginTop: S.s }}>
           {commuteBadge && <span style={{ ...T.body2, color: COLORS.muted, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT }}>{commuteBadge}</span>}
           {priorityChips.map(c => (
-            <span key={c} style={{ ...T.body2Bold, color: COLORS.greenText, background: COLORS.greenBg, border: `1.5px solid ${COLORS.green}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT }}>👍 {c}</span>
+            <span key={c} style={{ ...T.body2, color: COLORS.text, background: COLORS.greenBg, border: `1px solid ${COLORS.green}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT }}>{c}</span>
           ))}
           {chips.map(c => (
             <span key={c} style={{ ...T.body2, color: COLORS.text, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: "2px 8px", fontFamily: FONT }}>{c}</span>
@@ -4621,12 +4623,13 @@ export default function JobTriagePage() {
   };
   const priorityHighlight = useMemo(() => {
     const existing = new Set(job.highlights);
-    const eligible = profilePriorities
-      .filter(p => PRIORITY_FINDING_KW[p])
-      .map(p => (job.findings.good || []).find(f => f.label.toLowerCase().includes(PRIORITY_FINDING_KW[p])))
-      .filter(f => f && !existing.has(f.label));
-    if (eligible.length === 0) return null;
-    return eligible[Math.floor(Math.random() * eligible.length)];
+    for (const p of profilePriorities) {
+      const kw = PRIORITY_FINDING_KW[p];
+      if (!kw) continue;
+      const match = (job.findings.good || []).find(f => f.label.toLowerCase().includes(kw));
+      if (match && !existing.has(match.label)) return { label: match.label, priorityName: p };
+    }
+    return null;
   }, [job.id, profilePriorities.join(",")]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const scrollToFindings = () => {
@@ -4757,8 +4760,11 @@ export default function JobTriagePage() {
         {/* Highlights */}
         {(job.highlights.length > 0 || priorityHighlight) && (
           <div style={{ display: "flex", gap: S.s, flexWrap: "wrap", marginBottom: S.s }}>
-            {job.highlights.map((h) => <VacancyHighlight key={h} label={h} onClick={() => handlePillClick(h)} />)}
-            {priorityHighlight && <VacancyHighlight key={priorityHighlight.label} label={priorityHighlight.label} onClick={() => handlePillClick(priorityHighlight.label)} />}
+            {job.highlights.map((h) => {
+              const priorityName = (() => { for (const p of profilePriorities) { const kw = PRIORITY_KW[p]; if (kw && h.toLowerCase().includes(kw)) return p; } return null; })();
+              return <VacancyHighlight key={h} label={priorityName || h} onClick={() => handlePillClick(h)} />;
+            })}
+            {priorityHighlight && <VacancyHighlight key={priorityHighlight.label} label={priorityHighlight.priorityName} onClick={() => handlePillClick(priorityHighlight.label)} />}
           </div>
         )}
 
@@ -5166,7 +5172,6 @@ export default function JobTriagePage() {
         {/* Good things group — .finding-group */}
         {(() => {
           const good = job.findings.good;
-          const moreCount = good.length - 3;
           return (
             <div style={{ background: COLORS.card, borderRadius: 5, padding: `${S.s}px ${S.m}px 0` }}>
               <div style={{ ...T.smallcaps, color: COLORS.text, display: "inline-block", textTransform: "uppercase", fontFamily: FONT }}>Good</div>
