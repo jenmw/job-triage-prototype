@@ -3101,7 +3101,7 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {}, filterL
   const [priorities, setPriorities] = useState(new Set(initialValues.priorities || []));
   const [rolePrefs, setRolePrefs] = useState(initialValues.rolePrefs || {});
   const scrollRef = useRef(null);
-  const onboardingDragY = useRef(null);
+  const onboardingHandleRef = useRef(null);
   useEffect(() => {
     if (open) {
       setPostcode(initialValues.postcode || "");
@@ -3113,6 +3113,37 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {}, filterL
       if (scrollRef.current) scrollRef.current.scrollTop = 0;
     }
   }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Handle-bar drag-to-close
+  useEffect(() => {
+    const handle = onboardingHandleRef.current;
+    const drawer = scrollRef.current;
+    if (!handle || !drawer) return;
+    let startY = null;
+    const onStart = (e) => { startY = e.touches[0].clientY; };
+    const onMove = (e) => {
+      if (startY === null) return;
+      e.preventDefault();
+      const dy = e.touches[0].clientY - startY;
+      if (dy > 0) { drawer.style.transition = "none"; drawer.style.transform = `translateY(${dy}px)`; }
+    };
+    const onEnd = (e) => {
+      if (startY === null) return;
+      const dy = e.changedTouches[0].clientY - startY;
+      drawer.style.transition = "transform 0.35s ease";
+      if (dy > 80) { onClose(); } else { drawer.style.transform = "translateY(0)"; }
+      startY = null;
+    };
+    handle.addEventListener('touchstart', onStart, { passive: true });
+    handle.addEventListener('touchmove', onMove, { passive: false });
+    handle.addEventListener('touchend', onEnd, { passive: true });
+    return () => {
+      handle.removeEventListener('touchstart', onStart);
+      handle.removeEventListener('touchmove', onMove);
+      handle.removeEventListener('touchend', onEnd);
+    };
+  }, [onClose]);
+
   const togglePriority = (p) => setPriorities((s) => { const n = new Set(s); n.has(p) ? n.delete(p) : n.add(p); return n; });
   const toggleTravel = (m) => setTravel(t => t.includes(m) ? t.filter(x => x !== m) : [...t, m]);
   const toggleRolePref = (id, val) => setRolePrefs(p => ({ ...p, [id]: p[id] === val ? null : val }));
@@ -3123,22 +3154,9 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {}, filterL
     <>
       <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity 0.3s", zIndex: 100 }} />
       <div ref={scrollRef} style={{ position: "fixed", bottom: 0, left: 0, right: 0, maxHeight: "85vh", background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, overflowY: "auto", boxShadow: open ? "0 -8px 40px rgba(0,0,0,0.15)" : "none" }}>
-        <div
-          style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px`, cursor: "grab" }}
-          onTouchStart={(e) => { onboardingDragY.current = e.touches[0].clientY; }}
-          onTouchMove={(e) => {
-            if (onboardingDragY.current === null || !scrollRef.current) return;
-            const dy = e.touches[0].clientY - onboardingDragY.current;
-            if (dy > 0) { scrollRef.current.style.transition = "none"; scrollRef.current.style.transform = `translateY(${dy}px)`; }
-          }}
-          onTouchEnd={(e) => {
-            if (onboardingDragY.current === null || !scrollRef.current) return;
-            const dy = e.changedTouches[0].clientY - onboardingDragY.current;
-            scrollRef.current.style.transition = "transform 0.35s ease";
-            if (dy > 80) { onClose(); } else { scrollRef.current.style.transform = "translateY(0)"; }
-            onboardingDragY.current = null;
-          }}
-        />
+        <div ref={onboardingHandleRef} style={{ padding: `${S.m}px 0`, display: "flex", justifyContent: "center", cursor: "grab" }}>
+          <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border }} />
+        </div>
         <h3 style={{ ...T.lead1, margin: 0, color: COLORS.text, fontFamily: FONT, marginBottom: S.m2 }}>Help us find you better jobs</h3>
 
         <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>Your postcode</label>
@@ -3442,7 +3460,7 @@ const WorkStyleDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState(initialValues);
   const drawerRef = useRef(null);
-  const wsDragY = useRef(null);
+  const wsHandleRef = useRef(null);
   // Refs so native event listeners always see current values without stale closures
   const stepRef = useRef(step);
   const answersRef = useRef(answers);
@@ -3494,26 +3512,43 @@ const WorkStyleDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
     };
   }, [onSubmit]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Handle-bar drag-to-close — native listeners so touchmove can be non-passive
+  useEffect(() => {
+    const handle = wsHandleRef.current;
+    const drawer = drawerRef.current;
+    if (!handle || !drawer) return;
+    let startY = null;
+    const onStart = (e) => { startY = e.touches[0].clientY; };
+    const onMove = (e) => {
+      if (startY === null) return;
+      e.preventDefault();
+      const dy = e.touches[0].clientY - startY;
+      if (dy > 0) { drawer.style.transition = "none"; drawer.style.transform = `translateY(${dy}px)`; }
+    };
+    const onEnd = (e) => {
+      if (startY === null) return;
+      const dy = e.changedTouches[0].clientY - startY;
+      drawer.style.transition = "transform 0.35s ease";
+      if (dy > 80) { onClose(); } else { drawer.style.transform = "translateY(0)"; }
+      startY = null;
+    };
+    handle.addEventListener('touchstart', onStart, { passive: true });
+    handle.addEventListener('touchmove', onMove, { passive: false });
+    handle.addEventListener('touchend', onEnd, { passive: true });
+    return () => {
+      handle.removeEventListener('touchstart', onStart);
+      handle.removeEventListener('touchmove', onMove);
+      handle.removeEventListener('touchend', onEnd);
+    };
+  }, [onClose]);
+
   return (
     <>
       <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity 0.3s", zIndex: 100 }} />
       <div ref={drawerRef} style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, boxShadow: open ? "0 -8px 40px rgba(0,0,0,0.15)" : "none", touchAction: "pan-y" }}>
-        <div
-          style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px`, cursor: "grab" }}
-          onTouchStart={(e) => { wsDragY.current = e.touches[0].clientY; }}
-          onTouchMove={(e) => {
-            if (wsDragY.current === null || !drawerRef.current) return;
-            const dy = e.touches[0].clientY - wsDragY.current;
-            if (dy > 0) { drawerRef.current.style.transition = "none"; drawerRef.current.style.transform = `translateY(${dy}px)`; }
-          }}
-          onTouchEnd={(e) => {
-            if (wsDragY.current === null || !drawerRef.current) return;
-            const dy = e.changedTouches[0].clientY - wsDragY.current;
-            drawerRef.current.style.transition = "transform 0.35s ease";
-            if (dy > 80) { onClose(); } else { drawerRef.current.style.transform = "translateY(0)"; }
-            wsDragY.current = null;
-          }}
-        />
+        <div ref={wsHandleRef} style={{ padding: `${S.m}px 0`, display: "flex", justifyContent: "center", cursor: "grab" }}>
+          <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border }} />
+        </div>
 
         {/* Progress dots */}
         <div style={{ display: "flex", justifyContent: "center", gap: S.xs, marginBottom: S.m2 }}>
@@ -4327,7 +4362,7 @@ export default function JobTriagePage() {
   const listScrollRef = useRef(0);
   const vacancyScrollRef = useRef(null);
   const vacancyDrawerRef = useRef(null);
-  const vacancyDragY = useRef(null);
+  const vacancyHandleRef = useRef(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [backgroundDrawerOpen, setBackgroundDrawerOpen] = useState(false);
   const [bgDrawerFocusTitle, setBgDrawerFocusTitle] = useState(false);
@@ -4437,6 +4472,36 @@ export default function JobTriagePage() {
     }
     history.pushState({ view: "search" }, "", location.pathname + location.search);
   };
+
+  // Vacancy drawer handle-bar drag-to-close
+  useEffect(() => {
+    const handle = vacancyHandleRef.current;
+    const drawer = vacancyDrawerRef.current;
+    if (!handle || !drawer) return;
+    let startY = null;
+    const onStart = (e) => { startY = e.touches[0].clientY; };
+    const onMove = (e) => {
+      if (startY === null) return;
+      e.preventDefault();
+      const dy = e.touches[0].clientY - startY;
+      if (dy > 0) { drawer.style.transition = "none"; drawer.style.transform = `translateY(${dy}px)`; }
+    };
+    const onEnd = (e) => {
+      if (startY === null) return;
+      const dy = e.changedTouches[0].clientY - startY;
+      drawer.style.transition = "transform 0.35s ease";
+      if (dy > 80) { handleBackToSearch(); } else { drawer.style.transform = "translateY(0)"; }
+      startY = null;
+    };
+    handle.addEventListener('touchstart', onStart, { passive: true });
+    handle.addEventListener('touchmove', onMove, { passive: false });
+    handle.addEventListener('touchend', onEnd, { passive: true });
+    return () => {
+      handle.removeEventListener('touchstart', onStart);
+      handle.removeEventListener('touchmove', onMove);
+      handle.removeEventListener('touchend', onEnd);
+    };
+  }); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Back/forward button support
   useEffect(() => {
@@ -5203,22 +5268,7 @@ export default function JobTriagePage() {
           <div onClick={handleBackToSearch} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 99, opacity: view === "job" ? 1 : 0, pointerEvents: view === "job" ? "auto" : "none", transition: "opacity 0.35s ease" }} />
           <div ref={vacancyDrawerRef} style={{ position: "fixed", bottom: 0, left: 0, right: 0, height: "95dvh", zIndex: 100, background: COLORS.bg, borderRadius: "16px 16px 0 0", transform: view === "job" ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", display: "flex", flexDirection: "column", overflow: "hidden" }}>
             {/* Handle bar */}
-            <div
-              style={{ flexShrink: 0, display: "flex", justifyContent: "center", padding: `${S.m}px 0`, cursor: "grab" }}
-              onTouchStart={(e) => { vacancyDragY.current = e.touches[0].clientY; }}
-              onTouchMove={(e) => {
-                if (vacancyDragY.current === null || !vacancyDrawerRef.current) return;
-                const dy = e.touches[0].clientY - vacancyDragY.current;
-                if (dy > 0) { vacancyDrawerRef.current.style.transition = "none"; vacancyDrawerRef.current.style.transform = `translateY(${dy}px)`; }
-              }}
-              onTouchEnd={(e) => {
-                if (vacancyDragY.current === null || !vacancyDrawerRef.current) return;
-                const dy = e.changedTouches[0].clientY - vacancyDragY.current;
-                vacancyDrawerRef.current.style.transition = "transform 0.35s ease";
-                if (dy > 80) { handleBackToSearch(); } else { vacancyDrawerRef.current.style.transform = "translateY(0)"; }
-                vacancyDragY.current = null;
-              }}
-            >
+            <div ref={vacancyHandleRef} style={{ flexShrink: 0, display: "flex", justifyContent: "center", padding: `${S.m}px 0`, cursor: "grab" }}>
               <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border }} />
             </div>
             {/* Scrollable content */}
