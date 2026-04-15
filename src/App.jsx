@@ -4764,7 +4764,13 @@ export default function JobTriagePage() {
           <div style={{ display: "flex", gap: S.s, flexWrap: "wrap", marginBottom: S.s }}>
             {job.highlights.map((h) => {
               const priorityName = (() => { for (const p of profilePriorities) { const kw = PRIORITY_KW[p]; if (kw && h.toLowerCase().includes(kw)) return p; } return null; })();
-              return <VacancyHighlight key={h} label={priorityName || h} onClick={() => handlePillClick(h)} />;
+              // "Good shift notice" should navigate to the 4-weeks-notice finding, not "No last-minute shift changes"
+              const scrollLabel = (() => {
+                if (priorityName !== "Good shift notice") return h;
+                const allFindings = [...(job.findings.bad || []), ...(job.findings.okay || []), ...(job.findings.good || [])];
+                return allFindings.find(f => f.label.toLowerCase().includes("shift notice"))?.label ?? h;
+              })();
+              return <VacancyHighlight key={h} label={priorityName || h} onClick={() => handlePillClick(scrollLabel)} />;
             })}
             {priorityHighlight && <VacancyHighlight key={priorityHighlight.label} label={priorityHighlight.priorityName} onClick={() => handlePillClick(priorityHighlight.label)} />}
           </div>
