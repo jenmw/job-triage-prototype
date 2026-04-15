@@ -3221,6 +3221,7 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {}, filterL
   const [travel, setTravel] = useState(Array.isArray(initialValues.travel) ? initialValues.travel : []);
   const [priorities, setPriorities] = useState(new Set(initialValues.priorities || []));
   const [rolePrefs, setRolePrefs] = useState(initialValues.rolePrefs || {});
+  const scrollRef = useRef(null);
   useEffect(() => {
     if (open) {
       setPostcode(initialValues.postcode || "");
@@ -3229,6 +3230,7 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {}, filterL
       setTravel(Array.isArray(initialValues.travel) ? initialValues.travel : []);
       setPriorities(new Set(initialValues.priorities || []));
       setRolePrefs(initialValues.rolePrefs || {});
+      if (scrollRef.current) scrollRef.current.scrollTop = 0;
     }
   }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
   const togglePriority = (p) => setPriorities((s) => { const n = new Set(s); n.has(p) ? n.delete(p) : n.add(p); return n; });
@@ -3240,7 +3242,7 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {}, filterL
   return (
     <>
       <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity 0.3s", zIndex: 100 }} />
-      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, maxHeight: "85vh", background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, overflowY: "auto", boxShadow: open ? "0 -8px 40px rgba(0,0,0,0.15)" : "none" }}>
+      <div ref={scrollRef} style={{ position: "fixed", bottom: 0, left: 0, right: 0, maxHeight: "85vh", background: COLORS.bg, borderRadius: "16px 16px 0 0", padding: `${S.m2}px ${S.m2}px ${S.l}px`, transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.35s ease", zIndex: 101, overflowY: "auto", boxShadow: open ? "0 -8px 40px rgba(0,0,0,0.15)" : "none" }}>
         <div style={{ width: 36, height: 4, borderRadius: 2, background: COLORS.border, margin: `0 auto ${S.m}px` }} />
         <h3 style={{ ...T.lead1, margin: 0, color: COLORS.text, fontFamily: FONT, marginBottom: S.m2 }}>Help us find you better jobs</h3>
 
