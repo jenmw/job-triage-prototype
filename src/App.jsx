@@ -3213,7 +3213,7 @@ const LicenceModal = ({ open, onClose, userLicences, onSave }) => {
 };
 
 // ─── Onboarding drawer ─────────────────────────────────────────────────────────
-const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
+const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {}, filterLowPay = false, onFilterLowPayChange }) => {
   const [postcode, setPostcode] = useState(initialValues.postcode || "");
   const [currentPay, setCurrentPay] = useState(initialValues.currentPay || "");
   const [payType, setPayType] = useState(initialValues.payType || "hourly");
@@ -3279,6 +3279,12 @@ const OnboardingDrawer = ({ open, onClose, onSubmit, initialValues = {} }) => {
           </div>
         </div>
 
+        <div onClick={() => currentPay && onFilterLowPayChange && onFilterLowPayChange(!filterLowPay)} style={{ display: "flex", alignItems: "center", gap: S.s, cursor: currentPay ? "pointer" : "default", marginBottom: S.m, opacity: currentPay ? 1 : 0.4 }}>
+          <div style={{ width: 40, height: 22, borderRadius: 11, background: filterLowPay && currentPay ? COLORS.accent : COLORS.border, position: "relative", flexShrink: 0, transition: "background 0.2s" }}>
+            <div style={{ position: "absolute", top: 2, left: filterLowPay && currentPay ? 20 : 2, width: 18, height: 18, borderRadius: "50%", background: "#fff", transition: "left 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
+          </div>
+          <span style={{ ...T.body2, color: COLORS.text, fontFamily: FONT }}>Don't show me jobs that pay less than this</span>
+        </div>
         <label style={{ ...T.body1Bold, color: COLORS.text, display: "block", marginBottom: S.s, fontFamily: FONT }}>What matters most to you? <span style={{ fontWeight: 400, color: COLORS.muted }}>(pick up to 3)</span></label>
         <div style={{ display: "flex", gap: S.xs, flexWrap: "wrap", marginBottom: S.m2 }}>
           {PRIORITIES.map((p) => (
@@ -4172,7 +4178,7 @@ const RequirementsNotice = ({ reqs, onAdd }) => {
 
 // ─── Desktop sidebar ───────────────────────────────────────────────────────────
 
-const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect, jobs, profilePriorities, viewedJob, what, where, profileCoords, profileTravel }) => {
+const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect, jobs, profilePriorities, viewedJob, what, where, profileCoords, profileTravel, profileCurrentPay, profilePayType, filterLowPay, onSetFilterLowPay }) => {
   const [sortKey, setSortKey] = useState("relevant");
   const [page, setPage] = useState(0);
   const PAGE_SIZE = 10;
@@ -4184,8 +4190,22 @@ const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect
     return arr;
   }, [jobs, sortKey]);
 
-  const pageCount = Math.ceil(sorted.length / PAGE_SIZE);
-  const pageJobs = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const userPayHourly = useMemo(() => {
+    if (!profileCurrentPay) return null;
+    const raw = parseFloat(String(profileCurrentPay).replace(/[£,]/g, "").replace(/\/.*/, ""));
+    if (isNaN(raw) || raw <= 0) return null;
+    return profilePayType === "annual" ? raw / 2080 : raw;
+  }, [profileCurrentPay, profilePayType]);
+
+  const filtered = useMemo(() => {
+    if (!filterLowPay || !userPayHourly) return sorted;
+    return sorted.filter(job => parsePayToHourly(job.pay) >= userPayHourly);
+  }, [sorted, filterLowPay, userPayHourly]);
+
+  const hiddenCount = sorted.length - filtered.length;
+
+  const pageCount = Math.ceil(filtered.length / PAGE_SIZE);
+  const pageJobs = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: S.l2, paddingTop: S.m2 }}>
@@ -4252,6 +4272,13 @@ const DesktopSidebar = ({ currentJobIdx, personalised, onOpenDrawer, onJobSelect
               Next →
             </button>
           </div>
+        )}
+        {hiddenCount > 0 && (
+          <p style={{ ...T.body2, color: COLORS.muted, fontFamily: FONT, textAlign: "center", marginTop: S.m, marginBottom: 0 }}>
+            {hiddenCount} {hiddenCount === 1 ? "job" : "jobs"} hidden that pay less than {profilePayType === "annual" ? `£${Math.round(parseFloat(String(profileCurrentPay).replace(/[£,]/g, ""))).toLocaleString("en-GB")}/yr` : `£${parseFloat(String(profileCurrentPay).replace(/[£,]/g, "")).toFixed(2)}/hr`}
+            {" · "}
+            <span onClick={() => onSetFilterLowPay(false)} style={{ textDecoration: "underline", cursor: "pointer", color: COLORS.text }}>Show all jobs</span>
+          </p>
         )}
       </div>
     </div>
@@ -4405,6 +4432,7 @@ export default function JobTriagePage() {
   const [profileCoords, setProfileCoords] = useState(null);
   const [profileCurrentPay, setProfileCurrentPay] = useState("");
   const [profilePayType, setProfilePayType] = useState("hourly");
+  const [filterLowPay, setFilterLowPay] = useState(false);
   const [profileTravel, setProfileTravel] = useState([]);
   const [profilePriorities, setProfilePriorities] = useState([]);
   const [profileRolePrefs, setProfileRolePrefs] = useState({});
@@ -4606,19 +4634,6 @@ export default function JobTriagePage() {
                 const { verdict, label, range, arrow } = computed;
                 const color = verdict === "below" ? COLORS.red : COLORS.greenText;
                 return <div style={{ ...T.body2, fontWeight: 500, color, fontFamily: FONT, marginTop: 2 }}>{arrow} {label} · {range}</div>;
-              })()}
-              {f.showUserPayComparison && (() => {
-                if (!profileCurrentPay || !profilePayType || profilePayType !== job.payType) return null;
-                const jobPay = parsePayValue(job.pay);
-                const userPay = parseFloat(String(profileCurrentPay).replace(/[£,]/g, "").replace(/\/.*/, ""));
-                if (!jobPay || isNaN(userPay) || userPay <= 0) return null;
-                const unit = job.payType === "annual" ? "/yr" : "/hr";
-                const userPayFmt = job.payType === "annual"
-                  ? `£${Math.round(userPay).toLocaleString("en-GB")}${unit}`
-                  : `£${userPay.toFixed(2)}${unit}`;
-                if (jobPay > userPay) return <div style={{ ...T.body2, fontWeight: 500, color: COLORS.greenText, fontFamily: FONT, marginTop: 2 }}>↑ Pays more than your current {userPayFmt}</div>;
-                if (jobPay < userPay) return <div style={{ ...T.body2, fontWeight: 500, color: COLORS.red, fontFamily: FONT, marginTop: 2 }}>↓ Pays less than your current {userPayFmt}</div>;
-                return null;
               })()}
               {f.commuteRow && (() => {
                 if (!profilePostcode) {
@@ -5234,7 +5249,7 @@ export default function JobTriagePage() {
               {heroBlock}
               {sectionsBlock}
             </div>
-            <DesktopSidebar currentJobIdx={selectedJobIdx} personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} jobs={JOBS} profilePriorities={profilePriorities} viewedJob={JOBS[selectedJobIdx]} what="Warehouse" where="Corby, Northamptonshire" profileCoords={profileCoords} profileTravel={profileTravel} />
+            <DesktopSidebar currentJobIdx={selectedJobIdx} personalised={personalised} onOpenDrawer={() => setDrawerOpen(true)} onJobSelect={handleJobSelect} jobs={JOBS} profilePriorities={profilePriorities} viewedJob={JOBS[selectedJobIdx]} what="Warehouse" where="Corby, Northamptonshire" profileCoords={profileCoords} profileTravel={profileTravel} profileCurrentPay={profileCurrentPay} profilePayType={profilePayType} filterLowPay={filterLowPay} onSetFilterLowPay={setFilterLowPay} />
           </div>
         </>
       ) : (
@@ -5279,6 +5294,7 @@ export default function JobTriagePage() {
 
       <OnboardingDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)}
         initialValues={{ postcode: profilePostcode, currentPay: profileCurrentPay, payType: profilePayType, travel: profileTravel, priorities: profilePriorities }}
+        filterLowPay={filterLowPay} onFilterLowPayChange={setFilterLowPay}
         onSubmit={(data) => { handleSavePrefs(data); setDrawerOpen(false); }} />
 
       <BackgroundDrawer open={backgroundDrawerOpen} onClose={() => { setBackgroundDrawerOpen(false); setBgDrawerFocusTitle(false); setBgDrawerSection(null); }}
