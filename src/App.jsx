@@ -388,6 +388,7 @@ const JOBS = [
         { pct: 78, label: "Proper breaks", subtext: "Based on 364 Breakroom Quiz responses", heading: "Most people get proper breaks", primary: "Most people get proper breaks.", secondary: "78% of people report that they get to take proper breaks.", why: "When you take a break it should be a proper rest. It should last the full duration and you shouldn't get pulled off it." },
         { pct: 74, label: "Safe workplace", subtext: "Based on 364 Breakroom Quiz responses", heading: "Most people think their workplace is safe", primary: "Most people think their workplace is safe.", secondary: "74% of people think their workplace is safe.", why: "Everyone has the right to work in a safe environment. Safety should always come first." },
         { pct: 78, label: "Hours match contract", subtext: "Based on 364 Breakroom Quiz responses", heading: "Most people work the same hours as their contract", primary: "Most people work the same hours as their contract.", secondary: "78% of people say they work the same number of hours as stated in their contract.", why: "Your contract should accurately reflect the hours you work. Working significantly more than your contracted hours without pay is unfair." },
+        { pct: 72, label: "Most people get support to progress", subtext: "Based on 364 Breakroom Quiz responses", heading: "Most people get support to progress", primary: "Most people get support to progress.", secondary: "72% of people say they are given support to learn new skills or take on more responsibility.", why: "A good job should help you progress at work, if you want to." },
       ],
     },
     reviews: [
@@ -721,6 +722,8 @@ const JOBS = [
         { pct: 80, label: "Hours match contract", subtext: "Based on 320 Breakroom Quiz responses", heading: "Most people work the same hours as their contract", primary: "Most people work the same hours as their contract.", secondary: "80% of people say they work the same number of hours as stated in their contract.", why: "Your contract should accurately reflect the hours you work." },
         { pct: 69, label: "Treated with respect", subtext: "Based on 320 Breakroom Quiz responses", heading: "Most people feel treated with respect by their managers", primary: "Most people feel treated with respect by their managers.", secondary: "69% of people feel treated with respect by their managers.", why: "Everyone deserves to be treated with respect at work." },
         { pct: 71, label: "Recommended by students", subtext: "Based on 320 Breakroom Quiz responses", heading: "Most students recommend Greencore", primary: "Most students recommend working at Greencore.", secondary: "71% of students say they would recommend Greencore to other students looking for work.", why: "A recommendation from people in a similar situation to you is a reliable signal that a job is worth considering." },
+        { pct: 68, label: "Most people get support to progress", subtext: "Based on 320 Breakroom Quiz responses", heading: "Most people get support to progress", primary: "Most people get support to progress.", secondary: "68% of people say they are given support to learn new skills or take on more responsibility.", why: "A good job should help you progress at work, if you want to." },
+        { pct: 76, label: "4 weeks notice of shifts", subtext: "Based on 320 Breakroom Quiz responses", heading: "Most people get 4 weeks notice of when they're working", primary: "Most people get 4 weeks notice of when they're working.", secondary: "76% of people with changing schedules get 4 weeks notice of their shifts.", why: "At a good job, you get plenty of notice about when you're working. This makes it easy for you to plan the rest of your life and your finances." },
       ],
     },
     reviews: [
@@ -4618,7 +4621,7 @@ export default function JobTriagePage() {
   const PRIORITY_FINDING_KW = {
     "Good shift notice":        "weeks notice of shifts",
     "Good team mates":          "team atmosphere",
-    "Career progression":       "progression",
+    "Career progression":       "support to progress",
     "Good managers":            "respect",
     "Recommended by students":  "recommended by students",
     "Recommended by parents":   "recommended by parents",
